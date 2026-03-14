@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Visitor Management — Urbanest</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: { extend: {
+        colors: { 
+          base: '#0B0B0B',
+          sidebar: '#070707',
+          surface: '#121212',
+          'surface-hover': '#18181B',
+          'surface-2': '#1E1E24',
+          gold: '#EAB308',
+          'gold-light': '#FBBF24',
+          'gold-dim': 'rgba(234,179,8,0.1)',
+          muted: '#A1A1AA',
+          'muted-2': '#71717A',
+          'border-dark': '#27272A',
+          emerald: '#10B981',
+          crimson: '#EF4444',
+          amber: '#F59E0B'
+        },
+        fontFamily: { heading: ['"Space Grotesk"', 'sans-serif'], body: ['"Inter"', 'sans-serif'], mono: ['"JetBrains Mono"', 'monospace'] }
+      }}
+    }
+  </script>
+  <style>
+    body { font-family: 'Inter', sans-serif; background-color: #0B0B0B; color: #EDEDED; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+    
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #27272A; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #3F3F46; }
+
+    .interactive-element { transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
+    .interactive-row:hover { background-color: rgba(255, 255, 255, 0.02); }
+    
+    @media (max-width: 768px) {
+      .desktop-sidebar { display: none !important; }
+      .main-content { margin-left: 0 !important; }
+      .mobile-nav { display: flex !important; }
+    }
+    .mobile-nav { display: none; }
+  </style>
+</head>
+<body class="flex min-h-screen">
+
+<aside class="desktop-sidebar fixed left-0 top-0 bottom-0 w-[260px] bg-sidebar border-r border-border-dark flex flex-col z-40">
+  <div class="px-6 py-6 flex items-center gap-3">
+    <div class="w-8 h-8 bg-gold rounded flex items-center justify-center flex-shrink-0 shadow-[0_0_15px_rgba(234,179,8,0.3)]">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0B0B0B" stroke-width="2.5"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    </div>
+    <span class="font-heading font-bold text-lg text-white tracking-tight">Urbanest</span>
+  </div>
+  
+  <nav class="flex-1 px-4 py-4 space-y-1 overflow-y-auto">
+    <p class="text-[11px] font-semibold text-muted-2 uppercase tracking-[0.15em] px-3 mb-3 mt-2">Workspace</p>
+    <a href="index.html" class="flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium text-muted hover:text-white hover:bg-white/5 interactive-element"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Dashboard</a>
+    <a href="residents.html" class="flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium text-muted hover:text-white hover:bg-white/5 interactive-element"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4-4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>Residents</a>
+    <a href="financials.html" class="flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium text-muted hover:text-white hover:bg-white/5 interactive-element"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>Financials</a>
+    <a href="helpdesk.html" class="flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium text-muted hover:text-white hover:bg-white/5 interactive-element"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg>Helpdesk</a>
+    <a href="visitors.html" class="flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium text-gold bg-gold/10 border border-gold/10 interactive-element"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>Visitors</a>
+    <a href="notices.html" class="flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium text-muted hover:text-white hover:bg-white/5 interactive-element"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>Notice Board</a>
+  </nav>
+</aside>
+
+<nav class="mobile-nav fixed bottom-0 left-0 right-0 z-50 bg-[#070707] border-t border-border-dark justify-around px-2 py-2">
+  <a href="index.html" class="flex flex-col items-center gap-1 text-muted text-[10px] font-medium p-2"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></a>
+  <a href="residents.html" class="flex flex-col items-center gap-1 text-muted text-[10px] font-medium p-2"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4-4v2"/><circle cx="9" cy="7" r="4"/></svg></a>
+  <a href="financials.html" class="flex flex-col items-center gap-1 text-muted text-[10px] font-medium p-2"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></a>
+  <a href="helpdesk.html" class="flex flex-col items-center gap-1 text-muted text-[10px] font-medium p-2"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg></a>
+  <a href="visitors.html" class="flex flex-col items-center gap-1 text-gold text-[10px] font-medium p-2"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg></a>
+</nav>
+
+<main class="main-content ml-[260px] flex-1 flex flex-col min-h-screen">
+  
+  <header class="px-8 py-8 flex flex-col lg:flex-row lg:items-end justify-between gap-6 border-b border-border-dark bg-base/80 backdrop-blur-md sticky top-0 z-30">
+    <div class="flex-1">
+      <h1 class="font-heading font-semibold text-3xl text-white tracking-tight">Visitor Management</h1>
+      <p class="text-sm text-muted mt-2">Monitor real-time gate entry and security pass creation.</p>
+    </div>
+    
+    <div class="flex items-center gap-3 w-full lg:w-auto">
+      <button class="flex items-center gap-2 px-4 py-2 bg-surface hover:bg-surface-hover text-sm font-medium text-white border border-border-dark rounded-md interactive-element">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Export Daily Log
+      </button>
+      <button class="flex items-center gap-2 px-4 py-2 bg-gold hover:bg-gold-light text-black text-sm font-semibold rounded-md interactive-element shadow-[0_4px_14px_rgba(234,179,8,0.2)]">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+        Create Pass
+      </button>
+    </div>
+  </header>
+
+  <!-- KPI Grid -->
+  <div class="p-8 pb-4">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+      <div class="bg-surface border border-border-dark rounded-xl p-5 relative overflow-hidden flex flex-col justify-between h-[120px]">
+        <div class="absolute inset-0 bg-gradient-to-br from-emerald/5 to-transparent opacity-100 pointer-events-none"></div>
+        <p class="text-[11px] font-semibold text-muted-2 uppercase tracking-wider relative z-10">Active Inside</p>
+        <div class="relative z-10">
+          <p class="font-mono text-3xl font-medium text-white tracking-tight">07</p>
+          <p class="text-xs text-emerald mt-1 font-medium flex gap-1.5 items-center"><span class="w-1.5 h-1.5 rounded-full bg-emerald animate-pulse"></span> Tracked Live</p>
+        </div>
+      </div>
+
+      <div class="bg-surface border border-border-dark rounded-xl p-5 relative overflow-hidden flex flex-col justify-between h-[120px]">
+        <p class="text-[11px] font-semibold text-muted-2 uppercase tracking-wider relative z-10">Total Entries Today</p>
+        <div class="relative z-10">
+          <p class="font-mono text-3xl font-medium text-white tracking-tight">45</p>
+          <p class="text-xs text-muted mt-1 font-medium">12 from Zomato / Swiggy</p>
+        </div>
+      </div>
+
+      <div class="bg-surface border border-border-dark rounded-xl p-5 relative overflow-hidden flex flex-col justify-between h-[120px]">
+        <div class="absolute inset-0 bg-gradient-to-br from-amber/5 to-transparent opacity-100 pointer-events-none"></div>
+        <p class="text-[11px] font-semibold text-muted-2 uppercase tracking-wider relative z-10">Overstay Alerts</p>
+        <div class="relative z-10">
+          <p class="font-mono text-3xl font-medium text-white tracking-tight">01</p>
+          <p class="text-xs text-amber mt-1 font-medium">> 45 mins limit</p>
+        </div>
+      </div>
+      
+      <div class="bg-surface border border-border-dark rounded-xl p-5 relative overflow-hidden flex flex-col justify-between h-[120px] items-center justify-center border-dashed group cursor-pointer hover:border-gold hover:bg-gold/5 transition-colors">
+         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-muted group-hover:text-gold mb-2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
+         <span class="text-sm font-medium text-muted group-hover:text-gold">Verify QR Code</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="px-8 mt-4 mb-4 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <h2 class="font-heading text-lg font-semibold text-white">Live Gate Access Log</h2>
+      <span class="hidden sm:inline-flex items-center gap-1.5 px-2 py-0.5 rounded bg-surface border border-border-dark text-[10px] text-muted font-mono"><span class="w-1.5 h-1.5 rounded-full bg-emerald"></span> Auto-Sync On</span>
+    </div>
+  </div>
+
+  <!-- Table Container w/ Horizontal Scroll -->
+  <div class="flex-1 w-full overflow-x-auto">
+    <div class="min-w-[900px] flex flex-col w-full pb-20 border-t border-border-dark">
+      
+      <!-- Table Header -->
+      <div class="grid grid-cols-[100px_2.5fr_1.5fr_1fr_100px] px-8 py-3 bg-[#0D0D0D] border-b border-border-dark text-[11px] font-semibold text-muted-2 uppercase tracking-[0.05em] sticky top-[105px] z-20">
+        <div>Time</div>
+        <div>Visitor Profile</div>
+        <div>Destination & Host</div>
+        <div>Entry Gate</div>
+        <div class="text-right">Status</div>
+      </div>
+
+      <!-- Table Body -->
+      <div class="divide-y divide-border-dark/60">
+        
+        <!-- Row 1 -->
+        <div class="grid grid-cols-[100px_2.5fr_1.5fr_1fr_100px] px-8 py-4 items-center interactive-row">
+          <div class="text-[13px] font-mono text-muted">15:02</div>
+          <div class="flex items-center gap-3">
+             <div class="w-8 h-8 rounded bg-surface-2 border border-border-dark flex items-center justify-center text-muted">
+               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+             </div>
+             <div>
+                <p class="text-[13px] font-medium text-white mb-0.5">Amazon Package Delivery</p>
+                <p class="text-xs text-muted">Service / Delivery</p>
+             </div>
+          </div>
+          <div>
+            <p class="text-[13px] text-white">Flat C-205</p>
+            <p class="text-xs text-muted">Kavita Singh</p>
+          </div>
+          <div class="text-[13px] text-muted">Main Gate 1</div>
+          <div class="flex justify-end">
+            <span class="inline-flex items-center justify-center px-2.5 py-1 rounded text-[10px] font-semibold tracking-wide uppercase border border-emerald/20 bg-emerald/10 text-emerald">Inside</span>
+          </div>
+        </div>
+
+        <!-- Row 2 -->
+        <div class="grid grid-cols-[100px_2.5fr_1.5fr_1fr_100px] px-8 py-4 items-center interactive-row">
+          <div class="text-[13px] font-mono text-muted">14:55</div>
+          <div class="flex items-center gap-3">
+             <div class="w-8 h-8 rounded bg-gold/10 border border-gold/20 flex items-center justify-center text-gold">
+               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+             </div>
+             <div>
+                <p class="text-[13px] font-medium text-gold mb-0.5 flex items-center gap-1.5">Rahul M. <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg></p>
+                <p class="text-xs text-gold/70">Guest (Pre-approved)</p>
+             </div>
+          </div>
+          <div>
+            <p class="text-[13px] text-white">Flat A-301</p>
+            <p class="text-xs text-muted">Varun K.</p>
+          </div>
+          <div class="text-[13px] text-muted">Main Gate 1</div>
+          <div class="flex justify-end">
+            <span class="inline-flex items-center justify-center px-2.5 py-1 rounded text-[10px] font-semibold tracking-wide uppercase border border-emerald/20 bg-emerald/10 text-emerald">Inside</span>
+          </div>
+        </div>
+
+        <!-- Row 3 (Alert) -->
+        <div class="grid grid-cols-[100px_2.5fr_1.5fr_1fr_100px] px-8 py-4 items-center interactive-row bg-amber/5">
+          <div class="text-[13px] font-mono text-amber">13:40</div>
+          <div class="flex items-center gap-3">
+             <div class="w-8 h-8 rounded bg-surface border border-border-dark flex items-center justify-center text-muted">
+               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+             </div>
+             <div>
+                <p class="text-[13px] font-medium text-white mb-0.5">UrbanCompany Tech</p>
+                <p class="text-xs text-muted">Repair Service</p>
+             </div>
+          </div>
+          <div>
+            <p class="text-[13px] text-white">Flat B-102</p>
+            <p class="text-xs text-amber">Anita D.</p>
+          </div>
+          <div class="text-[13px] text-muted">Service Gate 2</div>
+          <div class="flex justify-end">
+            <span class="inline-flex items-center justify-center px-2.5 py-1 rounded text-[10px] font-semibold tracking-wide uppercase border border-amber/20 bg-amber/10 text-amber animate-pulse">Overstay</span>
+          </div>
+        </div>
+
+        <!-- Row 4 (Exited) -->
+        <div class="grid grid-cols-[100px_2.5fr_1.5fr_1fr_100px] px-8 py-4 items-center relative group">
+          <div class="absolute inset-0 bg-base z-0"></div> <!-- Cover base to look washed out without losing structure -->
+          <div class="relative z-10 w-full grid grid-cols-[100px_2.5fr_1.5fr_1fr_100px] opacity-40 group-hover:opacity-100 transition-opacity">
+            <div class="text-[13px] font-mono text-muted">12:15</div>
+            <div class="flex items-center gap-3">
+               <div class="w-8 h-8 rounded bg-surface border border-border-dark flex items-center justify-center text-muted">
+                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+               </div>
+               <div>
+                  <p class="text-[13px] font-medium text-white mb-0.5">Zomato Order</p>
+                  <p class="text-xs text-muted">Food Delivery</p>
+               </div>
+            </div>
+            <div>
+              <p class="text-[13px] text-white">Flat A-101</p>
+              <p class="text-xs text-muted">Priya S.</p>
+            </div>
+            <div class="text-[13px] text-muted">Main Gate 1</div>
+            <div class="flex justify-end">
+              <span class="inline-flex items-center justify-center px-2.5 py-1 rounded text-[10px] font-semibold tracking-wide uppercase border border-border-dark bg-surface-2 text-muted">Exited</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</main>
+</body>
+</html>

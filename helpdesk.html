@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Helpdesk & Complaints — Urbanest</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: { extend: {
+        colors: { 
+          base: '#0B0B0B',
+          sidebar: '#070707',
+          surface: '#121212',
+          'surface-hover': '#18181B',
+          'surface-2': '#1E1E24',
+          gold: '#EAB308',
+          'gold-light': '#FBBF24',
+          'gold-dim': 'rgba(234,179,8,0.1)',
+          muted: '#A1A1AA',
+          'muted-2': '#71717A',
+          'border-dark': '#27272A',
+          emerald: '#10B981',
+          crimson: '#EF4444',
+          amber: '#F59E0B'
+        },
+        fontFamily: { heading: ['"Space Grotesk"', 'sans-serif'], body: ['"Inter"', 'sans-serif'], mono: ['"JetBrains Mono"', 'monospace'] }
+      }}
+    }
+  </script>
+  <style>
+    body { font-family: 'Inter', sans-serif; background-color: #0B0B0B; color: #EDEDED; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+    
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #27272A; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #3F3F46; }
+
+    .interactive-element { transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
+    
+    /* Kanban Card Styles */
+    .kanban-card { background: #121212; border: 1px solid #27272A; border-radius: 8px; padding: 16px; cursor: grab; transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s; position: relative; overflow: hidden; }
+    .kanban-card:active { cursor: grabbing; transform: scale(0.98); }
+    .kanban-card:hover { border-color: rgba(255,255,255,0.15); box-shadow: 0 4px 20px rgba(0,0,0,0.4); }
+    .kanban-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: transparent; }
+    
+    .kanban-card.urgent::before { background: #EF4444; }
+    .kanban-card.medium::before { background: #F59E0B; }
+    .kanban-card.low::before { background: #3F3F46; }
+
+    @media (max-width: 768px) {
+      .desktop-sidebar { display: none !important; }
+      .main-content { margin-left: 0 !important; }
+      .mobile-nav { display: flex !important; }
+    }
+    .mobile-nav { display: none; }
+  </style>
+</head>
+<body class="flex min-h-screen h-screen overflow-hidden">
+
+<aside class="desktop-sidebar fixed left-0 top-0 bottom-0 w-[260px] bg-sidebar border-r border-border-dark flex flex-col z-40">
+  <div class="px-6 py-6 flex items-center gap-3">
+    <div class="w-8 h-8 bg-gold rounded flex items-center justify-center flex-shrink-0 shadow-[0_0_15px_rgba(234,179,8,0.3)]">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0B0B0B" stroke-width="2.5"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    </div>
+    <span class="font-heading font-bold text-lg text-white tracking-tight">Urbanest</span>
+  </div>
+  
+  <nav class="flex-1 px-4 py-4 space-y-1 overflow-y-auto">
+    <p class="text-[11px] font-semibold text-muted-2 uppercase tracking-[0.15em] px-3 mb-3 mt-2">Workspace</p>
+    <a href="index.html" class="flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium text-muted hover:text-white hover:bg-white/5 interactive-element"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Dashboard</a>
+    <a href="residents.html" class="flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium text-muted hover:text-white hover:bg-white/5 interactive-element"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4-4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>Residents</a>
+    <a href="financials.html" class="flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium text-muted hover:text-white hover:bg-white/5 interactive-element"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>Financials</a>
+    <a href="helpdesk.html" class="flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium text-gold bg-gold/10 border border-gold/10 interactive-element"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg>Helpdesk</a>
+    <a href="visitors.html" class="flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium text-muted hover:text-white hover:bg-white/5 interactive-element"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>Visitors</a>
+    <a href="notices.html" class="flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium text-muted hover:text-white hover:bg-white/5 interactive-element"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>Notice Board</a>
+  </nav>
+</aside>
+
+<nav class="mobile-nav fixed bottom-0 left-0 right-0 z-50 bg-[#070707] border-t border-border-dark justify-around px-2 py-2">
+  <a href="index.html" class="flex flex-col items-center gap-1 text-muted text-[10px] font-medium p-2"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></a>
+  <a href="residents.html" class="flex flex-col items-center gap-1 text-muted text-[10px] font-medium p-2"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4-4v2"/><circle cx="9" cy="7" r="4"/></svg></a>
+  <a href="financials.html" class="flex flex-col items-center gap-1 text-muted text-[10px] font-medium p-2"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></a>
+  <a href="helpdesk.html" class="flex flex-col items-center gap-1 text-gold text-[10px] font-medium p-2"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg></a>
+</nav>
+
+<main class="main-content ml-[260px] flex-1 flex flex-col h-screen overflow-hidden">
+  
+  <header class="px-8 py-6 flex flex-col lg:flex-row lg:items-end justify-between gap-6 border-b border-border-dark bg-base/80 backdrop-blur-md flex-shrink-0 z-30">
+    <div class="flex-1">
+      <h1 class="font-heading font-semibold text-3xl text-white tracking-tight">Helpdesk</h1>
+      <div class="flex items-center gap-3 mt-2 text-sm text-muted">
+        <span>12 Open Tickets</span>
+        <span class="w-1 h-1 rounded-full bg-border-dark"></span>
+        <span class="flex items-center gap-1.5 text-crimson font-medium bg-crimson/10 px-2 py-0.5 rounded"><span class="w-1.5 h-1.5 rounded-full bg-crimson animate-pulse"></span> 3 Urgent</span>
+      </div>
+    </div>
+    
+    <div class="flex items-center gap-3 w-full lg:w-auto">
+      <div class="relative hidden sm:block w-64 group">
+        <svg class="absolute left-3 top-1/2 -translate-y-1/2 text-muted-2 group-focus-within:text-gold transition-colors" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" placeholder="Search T-XXXX..." class="w-full bg-surface border border-border-dark text-sm text-white rounded-md pl-9 pr-3 py-2 focus:outline-none focus:border-gold/50 transition-all placeholder:text-muted-2">
+      </div>
+      <button class="flex items-center justify-center gap-2 px-4 py-2 bg-gold hover:bg-gold-light text-black text-sm font-semibold rounded-md interactive-element shadow-[0_4px_14px_rgba(234,179,8,0.2)]">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        New Ticket
+      </button>
+    </div>
+  </header>
+
+  <!-- Kanban Board -->
+  <div class="flex-1 overflow-x-auto overflow-y-hidden p-8">
+    <div class="flex gap-6 h-full min-w-[1000px] pb-24 md:pb-0">
+      
+      <!-- Open Column -->
+      <div class="flex flex-col w-[320px] flex-shrink-0 h-full">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="font-heading font-semibold text-sm text-white uppercase tracking-wider flex items-center gap-2">
+            Open 
+            <span class="bg-surface border border-border-dark text-muted-2 px-2 py-0.5 rounded text-xs">3</span>
+          </h3>
+          <button class="text-muted-2 hover:text-white p-1 rounded hover:bg-surface"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg></button>
+        </div>
+        
+        <div class="flex flex-col gap-4 overflow-y-auto pr-2 pb-4 scroll-smooth">
+          <!-- Ticket 1 -->
+          <div class="kanban-card urgent group">
+            <div class="flex items-start justify-between mb-3">
+              <span class="inline-flex items-center px-2 py-0.5 rounded border border-crimson/20 bg-crimson/5 text-crimson text-[10px] font-semibold tracking-wide uppercase">Urgent</span>
+              <span class="text-[11px] font-mono text-muted-2 group-hover:text-muted transition-colors">T-1045</span>
+            </div>
+            <h4 class="text-sm font-medium text-white mb-1.5 leading-snug">Major plumbing leak in kitchen</h4>
+            <p class="text-xs text-muted leading-relaxed mb-4 line-clamp-2">Pipe burst under the sink, water is leaking into the hallway. Need immediate assistance.</p>
+            <div class="flex items-center justify-between mt-auto">
+              <div class="flex items-center gap-2">
+                <div class="w-6 h-6 rounded-full bg-surface-2 border border-border-dark flex items-center justify-center text-[10px] text-white font-medium">RM</div>
+                <span class="text-[11px] text-muted font-medium">A-204</span>
+              </div>
+              <span class="text-[10px] text-muted-2 flex items-center gap-1"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> 2h ago</span>
+            </div>
+          </div>
+
+          <!-- Ticket 2 -->
+          <div class="kanban-card medium group">
+            <div class="flex items-start justify-between mb-3">
+              <span class="inline-flex items-center px-2 py-0.5 rounded border border-amber/20 bg-amber/5 text-amber text-[10px] font-semibold tracking-wide uppercase">Electrical</span>
+              <span class="text-[11px] font-mono text-muted-2 group-hover:text-muted transition-colors">T-1044</span>
+            </div>
+            <h4 class="text-sm font-medium text-white mb-1.5 leading-snug">Corridor light flickering</h4>
+            <p class="text-xs text-muted leading-relaxed mb-4 line-clamp-2">The tube light on the 3rd floor corridor of Tower B is constantly flickering.</p>
+            <div class="flex items-center justify-between mt-auto">
+              <div class="flex items-center gap-2">
+                <div class="w-6 h-6 rounded-full bg-surface-2 border border-border-dark flex items-center justify-center text-[10px] text-white font-medium">VP</div>
+                <span class="text-[11px] text-muted font-medium">B-305</span>
+              </div>
+              <span class="text-[10px] text-muted-2 flex items-center gap-1"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> 5h ago</span>
+            </div>
+          </div>
+          
+          <!-- Ticket 3 -->
+          <div class="kanban-card low group">
+            <div class="flex items-start justify-between mb-3">
+              <span class="inline-flex items-center px-2 py-0.5 rounded border border-border-dark bg-surface-2 text-muted text-[10px] font-semibold tracking-wide uppercase">Carpentry</span>
+              <span class="text-[11px] font-mono text-muted-2 group-hover:text-muted transition-colors">T-1043</span>
+            </div>
+            <h4 class="text-sm font-medium text-white mb-1.5 leading-snug">Main door jammed</h4>
+            <p class="text-xs text-muted leading-relaxed mb-4 line-clamp-2">Door lock gets stuck if turned twice. Requesting a carpenter check whenever free.</p>
+            <div class="flex items-center justify-between mt-auto">
+              <div class="flex items-center gap-2">
+                <div class="w-6 h-6 rounded-full bg-surface-2 border border-border-dark flex items-center justify-center text-[10px] text-white font-medium">AD</div>
+                <span class="text-[11px] text-muted font-medium">B-102</span>
+              </div>
+              <span class="text-[10px] text-muted-2 flex items-center gap-1"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> 1d ago</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- In Progress Column -->
+      <div class="flex flex-col w-[320px] flex-shrink-0 h-full">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="font-heading font-semibold text-sm text-gold uppercase tracking-wider flex items-center gap-2">
+            In Progress 
+            <span class="bg-gold/10 border border-gold/20 text-gold px-2 py-0.5 rounded text-xs">1</span>
+          </h3>
+          <button class="text-muted-2 hover:text-white p-1 rounded hover:bg-surface"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg></button>
+        </div>
+        
+        <div class="flex flex-col gap-4 overflow-y-auto pr-2 pb-4">
+          <!-- Ticket 4 -->
+          <div class="kanban-card medium group border-gold/30">
+            <div class="flex items-start justify-between mb-3">
+              <span class="inline-flex items-center px-2 py-0.5 rounded border border-amber/20 bg-amber/5 text-amber text-[10px] font-semibold tracking-wide uppercase">Elevator</span>
+              <span class="text-[11px] font-mono text-muted-2 group-hover:text-muted transition-colors">T-1040</span>
+            </div>
+            <h4 class="text-sm font-medium text-white mb-1.5 leading-snug">Tower A Lift loud noise</h4>
+            <p class="text-xs text-muted leading-relaxed mb-4 line-clamp-2">AMC vendor notified. Expected resolution by 4 PM today.</p>
+            <div class="flex items-center justify-between pt-3 border-t border-border-dark mt-auto">
+              <div class="flex items-center gap-2 text-[11px]">
+                <div class="w-2 h-2 rounded-full border-[1.5px] border-gold border-t-transparent animate-spin"></div>
+                <span class="text-gold font-medium">Vendor Working</span>
+              </div>
+              <span class="text-[10px] text-muted flex items-center gap-1 font-medium bg-surface-2 px-1.5 py-0.5 rounded">2 updates</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Resolved Column -->
+      <div class="flex flex-col w-[320px] flex-shrink-0 h-full opacity-60 hover:opacity-100 transition-opacity duration-300">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="font-heading font-semibold text-sm text-emerald uppercase tracking-wider flex items-center gap-2">
+            Resolved
+            <span class="bg-emerald/10 border border-emerald/20 text-emerald px-2 py-0.5 rounded text-xs">24</span>
+          </h3>
+          <button class="text-muted-2 hover:text-white p-1 rounded hover:bg-surface"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg></button>
+        </div>
+        
+        <div class="flex flex-col gap-4 overflow-y-auto pr-2 pb-4">
+          <!-- Ticket 5 -->
+          <div class="kanban-card low group opacity-75">
+            <div class="flex items-start justify-between mb-3">
+              <span class="inline-flex items-center gap-1.5 text-emerald text-[10px] font-semibold tracking-wide uppercase">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> Resolved
+              </span>
+              <span class="text-[11px] font-mono text-muted-2">T-1031</span>
+            </div>
+            <h4 class="text-sm font-medium text-muted line-through decoration-muted-2 mb-1.5 leading-snug">Water quality issue</h4>
+            <div class="flex items-center justify-between mt-4">
+              <span class="text-[10px] text-muted-2 font-medium">By Facility Mgr</span>
+              <span class="text-[10px] text-muted-2">2d ago</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</main>
+</body>
+</html>

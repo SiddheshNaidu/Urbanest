@@ -1,0 +1,184 @@
+# Urbanest Admin Dashboard
+
+## Product Overview
+
+**The Pitch:** A high-density command center for society administrators to manage hundreds of residents, track maintenance finances, and resolve complaints instantly. It condenses complex operational data into actionable, scanner-friendly interfaces.
+
+**For:** Society administrators, facility managers, and HOA board members who need rapid access to operational metrics without digging through nested menus.
+
+**Device:** desktop
+
+**Design Direction:** Command Center (Dense & Professional). A high-density, data-rich layout focused on maximum efficiency with deep navy blues, slate grays, and highly legible, technical typography.
+
+**Inspired by:** Linear, Retool, Bloomberg Terminal
+
+---
+
+## Screens
+
+- **Dashboard:** High-level financial summary, active alerts, and quick actions.
+- **Resident Directory:** Dense, filterable data grid of all units, owners, and tenants.
+- **Financials & Invoices:** Ledger view of monthly maintenance generation and payment status.
+- **Complaints & Tickets:** Kanban/List hybrid for tracking maintenance requests and resident issues.
+- **Visitor Logs:** Real-time stream of gate check-ins and check-outs.
+- **Notice Board:** Interface to draft, publish, and track read-receipts of society-wide announcements.
+
+---
+
+## Key Flows
+
+**Generate Monthly Invoices:** Admin bills all residents for the month.
+1. User is on [Financials] -> sees current ledger and "Generate Invoices" CTA
+2. User clicks "Generate Invoices" -> Modal opens with base maintenance fee, penalty settings, and billing month
+3. User confirms -> System batches invoices, statuses update to "Unpaid", notification dispatched to Notice Board.
+
+**Resolve Maintenance Ticket:** Admin actions a resident complaint.
+1. User is on [Complaints] -> sees "Open" tickets queue
+2. User clicks a ticket -> Right-side slide-over reveals ticket details, photo evidence, and status dropdown
+3. User changes status to "Resolved" and adds a note -> Ticket moves out of queue, resident notified.
+
+---
+
+<details>
+<summary>Design System</summary>
+
+## Color Palette
+
+- **Primary:** `#0EA5E9` - Sky blue for primary CTAs, active states
+- **Background:** `#0B1120` - Deep navy for the main app background
+- **Surface:** `#1E293B` - Slate navy for panels, cards, and data tables
+- **Text:** `#F8FAFC` - Bright white/slate for primary data
+- **Muted:** `#94A3B8` - Slate gray for table headers, secondary text
+- **Accent (Success):** `#10B981` - Emerald for paid invoices, resolved tickets
+- **Accent (Warning):** `#F59E0B` - Amber for pending payments, open tickets
+- **Accent (Danger):** `#EF4444` - Red for overdue payments, emergency alerts
+
+## Typography
+
+Using **IBM Plex Sans** for its exceptional legibility at small sizes and technical, data-focused aesthetic.
+
+- **Headings:** IBM Plex Sans, 600, 20-24px, `-0.5px` tracking
+- **Body:** IBM Plex Sans, 400, 14px
+- **Small text/Data:** IBM Plex Sans, 400, 12px (used heavily in data tables)
+- **Buttons:** IBM Plex Sans, 600, 13px, uppercase, `0.5px` tracking
+
+**Style notes:** Extremely sharp corners (2px radius). 1px solid borders (`#334155`). High contrast. Focus on horizontal alignment and strict 4px grid. No soft shadows; use solid 1px borders to separate surfaces.
+
+## Design Tokens
+
+```css
+:root {
+  --color-primary: #0EA5E9;
+  --color-background: #0B1120;
+  --color-surface: #1E293B;
+  --color-border: #334155;
+  --color-text: #F8FAFC;
+  --color-muted: #94A3B8;
+  --color-success: #10B981;
+  --color-warning: #F59E0B;
+  --color-danger: #EF4444;
+  --font-primary: 'IBM Plex Sans', sans-serif;
+  --radius: 2px;
+  --spacing-base: 4px;
+}
+```
+
+</details>
+
+---
+
+<details>
+<summary>Screen Specifications</summary>
+
+### Dashboard
+
+**Purpose:** Provide an at-a-glance operational and financial snapshot.
+
+**Layout:** 240px fixed left sidebar, 64px top bar, CSS grid main content area (3-column layout).
+
+**Key Elements:**
+- **Financial Widgets:** 3 cards (Total Collection, Pending Dues, Monthly Expenses). 24px bold values, 12px muted labels, mini sparklines.
+- **Active Alerts List:** Compact list of emergency tickets or overdue invoices. 32px row height.
+- **Recent Visitors Stream:** Live-updating feed of gate activity.
+
+**States:**
+- **Loading:** Skeleton pulses (`#1E293B` to `#334155`) for widgets.
+- **Empty:** "No active alerts" in muted text, centered in the panel.
+
+**Components:**
+- **Metric Card:** 100% width, `#1E293B` bg, 1px `#334155` border, 16px padding.
+
+### Resident Directory
+
+**Purpose:** Manage unit allocations, owners, and tenants.
+
+**Layout:** Full-width data table filling the viewport beneath the top bar. Search and filter bar pinned to top.
+
+**Key Elements:**
+- **Filter Bar:** 40px height. Search input (240px wide), Dropdowns for "Building/Block", "Occupancy Status".
+- **Data Table:** 32px row height. Columns: Unit, Resident Name, Type (Owner/Tenant), Contact, Move-in Date, Actions.
+- **Status Badges:** 20px height, 6px padding. Green for "Occupied", Muted for "Vacant".
+
+**States:**
+- **Empty:** "No residents found matching criteria" message with "Clear Filters" button.
+
+### Financials & Invoices
+
+**Purpose:** Track monthly collections and generate bills.
+
+**Layout:** Split view. Top 20% shows collection progress bar. Bottom 80% is the invoice ledger.
+
+**Key Elements:**
+- **Generate CTA:** `#0EA5E9` background, top right, 32px height, 16px padding.
+- **Ledger Table:** Sticky header. Columns: Invoice #, Unit, Amount, Due Date, Status.
+- **Status Indicator:** Dot + text (`#10B981` Paid, `#F59E0B` Pending, `#EF4444` Overdue).
+
+### Complaints & Tickets
+
+**Purpose:** Triage and resolve resident issues.
+
+**Layout:** 3-column Kanban board (Open, In Progress, Resolved).
+
+**Key Elements:**
+- **Ticket Card:** `#1E293B` bg, 1px border. 14px bold title, 12px muted unit number, 12px timestamp.
+- **Priority Tag:** 4px left-border color-coded by priority (Red=High, Yellow=Med, Blue=Low).
+- **Slide-over Panel:** 400px wide, slides from right. Contains full chat history and photo evidence.
+
+### Visitor Logs
+
+**Purpose:** Audit trail of gate entries.
+
+**Layout:** Single dense list view, sorted by timestamp descending.
+
+**Key Elements:**
+- **Time Column:** Fixed 80px width, monospace 12px font.
+- **Visitor Details:** Name, Purpose (Delivery, Guest, Service), Unit visited.
+- **Entry/Exit Badges:** Arrow icons (In = Green pointing right, Out = Slate pointing left).
+
+### Notice Board
+
+**Purpose:** Broadcast announcements to the resident app.
+
+**Layout:** 1/3 left list of past notices, 2/3 right composer area.
+
+**Key Elements:**
+- **Composer:** Title input (20px font, no border), rich text area, "Publish" CTA.
+- **Read Receipts:** Progress bar showing % of residents who have viewed the selected notice.
+
+</details>
+
+---
+
+<details>
+<summary>Build Guide</summary>
+
+**Stack:** HTML + Tailwind CSS v3
+
+**Build Order:**
+1. **Layout Shell & Sidebar:** Establishes the core navigation structure and color tokens.
+2. **Resident Directory:** Builds the core data table component, pagination, and filter bar used everywhere.
+3. **Dashboard:** Reuses table rows and implements the metric cards and layout grid.
+4. **Complaints (Kanban):** Introduces drag-and-drop UI concepts and the slide-over panel.
+5. **Financials & Notice Board:** Completes the forms, inputs, and standard interaction patterns.
+
+</details>

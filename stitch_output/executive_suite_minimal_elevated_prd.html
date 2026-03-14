@@ -1,0 +1,214 @@
+# Executive Suite (Minimal & Elevated)
+
+## Product Overview
+
+**The Pitch:** Urbanest is a premium, distraction-free command center for modern housing society administrators. It transforms chaotic residential management—billing, maintenance, and visitor tracking—into a seamless, unified dashboard that prioritizes financial health and immediate action items.
+
+**For:** Society managers, HOA board members, and estate administrators who value efficiency, clarity, and uncompromising data organization.
+
+**Device:** desktop
+
+**Design Direction:** A highly refined, minimalist layout focusing on critical KPIs with a monochromatic base and sharp, intentional accent colors for immediate cognitive mapping.
+
+**Inspired by:** Ramp, Linear, Mercury
+
+---
+
+## Screens
+
+- **Overview Dashboard:** Financial health, active alerts, and immediate action items.
+- **Resident Directory:** Categorized list of homeowners and tenants with quick-contact actions.
+- **Financials & Invoicing:** Monthly maintenance ledger, payment tracking, and automated invoice generation.
+- **Helpdesk & Complaints:** Centralized ticketing system for maintenance and resident grievances.
+- **Visitor Log:** Real-time gatekeeper feed showing active and historical campus visitors.
+- **Notice Board:** Rich-text announcement publisher with delivery tracking.
+
+---
+
+## Key Flows
+
+**Generate Monthly Maintenance Invoices:** Admin initiates bulk billing.
+
+1. User is on **Financials & Invoicing** -> sees current month deficit and unpaid dues.
+2. User clicks **"Generate Invoices"** -> system previews the draft ledger for all registered flats.
+3. User confirms -> invoices are dispatched to residents, updating the pending receivables KPI.
+
+**Resolve Maintenance Ticket:** Admin tracks and closes an open issue.
+
+1. User is on **Helpdesk** -> sees list of open tickets sorted by priority (e.g., "Plumbing Leak - Flat 402").
+2. User clicks **ticket row** -> side panel opens with context, photos, and vendor assignment dropdown.
+3. User marks status as **"Resolved"** -> ticket fades from active view, resident receives notification.
+
+---
+
+<details>
+<summary>Design System</summary>
+
+## Color Palette
+
+- **Primary:** `#0F172A` - Primary buttons, active nav states, crucial data points
+- **Background:** `#FAFAFA` - Main application background
+- **Surface:** `#FFFFFF` - Cards, tables, side modals
+- **Text:** `#1E293B` - Body text, primary data labels
+- **Muted:** `#94A3B8` - Table headers, secondary text, subtle borders
+- **Accent/Alert:** `#E11D48` - Unpaid invoices, critical complaints
+- **Accent/Success:** `#059669` - Paid invoices, resolved tickets, active visitors
+
+## Typography
+
+- **Headings:** `Cabinet Grotesk`, 700, 24-32px
+- **Subheadings:** `Cabinet Grotesk`, 500, 14px (All caps, 1px letter-spacing)
+- **Body:** `Satoshi`, 400, 15px
+- **Small text:** `Satoshi`, 500, 13px
+- **Buttons:** `Satoshi`, 600, 14px
+- **Numbers/Data:** `JetBrains Mono`, 400, 15px (Tabular lining for financials)
+
+**Style notes:** Sharp 4px border radii, no drop shadows (1px `#E2E8F0` borders instead), austere white space, high-contrast monochrome with deliberate splashes of crimson and emerald.
+
+## Design Tokens
+
+```css
+:root {
+  --color-primary: #0F172A;
+  --color-background: #FAFAFA;
+  --color-surface: #FFFFFF;
+  --color-text: #1E293B;
+  --color-muted: #94A3B8;
+  --color-alert: #E11D48;
+  --color-success: #059669;
+  --font-headings: 'Cabinet Grotesk', sans-serif;
+  --font-body: 'Satoshi', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  --radius: 4px;
+  --spacing-base: 8px;
+  --border-subtle: 1px solid #E2E8F0;
+}
+```
+
+</details>
+
+---
+
+<details>
+<summary>Screen Specifications</summary>
+
+### Overview Dashboard
+
+**Purpose:** Macro-level view of society operations, focusing on financials and immediate bottlenecks.
+
+**Layout:** Left sidebar navigation. Main content area: Top row KPI cards, bottom split into "Action Required" list and "Recent Activity" feed.
+
+**Key Elements:**
+- **KPI Row:** 3 cards (`Collection Rate`, `Open Tickets`, `Active Visitors`). Large `JetBrains Mono` figures.
+- **Action Required Panel:** List of overdue invoices and critical maintenance requests. Red `#E11D48` left-border for severe items.
+- **Financial Sparkline:** Minimalist SVG line chart showing 6-month collection trend.
+
+**States:**
+- **Empty:** "No pending actions. Everything is running smoothly."
+- **Loading:** Skeleton pulses (`#E2E8F0` to `#F1F5F9`).
+- **Error:** Subtle toast notification at bottom right, red border.
+
+**Components:**
+- **KPI Card:** 300x120px, `#FFFFFF` background, 1px `#E2E8F0` border, `Cabinet Grotesk` title, `JetBrains Mono` value.
+
+**Interactions:**
+- **Hover Action Item:** Row background shifts to `#F8FAFC`, cursor changes to pointer.
+- **Click Alert:** Opens corresponding module (Helpdesk or Financials).
+
+**Responsive:**
+- **Desktop:** Sidebar left, 3-column KPI, 2-column bottom layout.
+- **Tablet:** Collapse sidebar to icons, stack KPI cards 2x2.
+- **Mobile:** Not supported (Desktop only requirement).
+
+### Resident Directory
+
+**Purpose:** Comprehensive lookup for homeowners, tenants, and their registered vehicles/pets.
+
+**Layout:** Top action bar (Search, Filter, Export). Full-width data table.
+
+**Key Elements:**
+- **Search Bar:** Large 48px input, magnifying glass icon, `Satoshi` 15px placeholder "Search by name, flat, or phone..."
+- **Data Table:** Columns: Flat #, Resident Name, Type (Owner/Tenant), Contact, Status.
+- **Status Badge:** Solid dots. Green (`#059669`) for verified, Yellow (`#D97706`) for pending KYC.
+
+**States:**
+- **Empty:** "No residents found matching '[Query]'"
+- **Loading:** Table rows replaced with skeleton bars.
+
+**Components:**
+- **Resident Row:** 56px height, bottom border `#E2E8F0`. Flat number in `JetBrains Mono`.
+
+**Interactions:**
+- **Click Row:** Slide-over panel from right (400px wide) detailing family members, vehicles, and active complaints.
+
+### Financials & Invoicing
+
+**Purpose:** Manage monthly maintenance billing and track payment statuses.
+
+**Layout:** Top summary (Total Outstanding, Collected this Month). Tabs for "Invoices", "Transactions", "Defaulters". Main table view.
+
+**Key Elements:**
+- **"Generate Bills" Button:** Primary button, top right. Black (`#0F172A`), white text.
+- **Invoice Table:** Columns: Invoice ID, Flat, Amount, Due Date, Status.
+- **Status Pills:** Sharp corners. Red background/white text for "Overdue", Gray/Black text for "Pending", Green/White text for "Paid".
+
+**Components:**
+- **Defaulter Row:** Highlights overdue amounts in `JetBrains Mono` bold, red color.
+
+**Interactions:**
+- **Click "Generate Bills":** Opens modal to confirm billing cycle and bulk dispatch.
+- **Click Invoice:** Opens PDF preview modal.
+
+### Helpdesk & Complaints
+
+**Purpose:** Track and resolve facility issues raised by residents.
+
+**Layout:** Kanban board (Open, In Progress, Resolved) or dense list view (toggle top right).
+
+**Key Elements:**
+- **Ticket Card:** White card, 1px border. Shows Ticket ID, Title, Flat #, and Priority tag.
+- **Priority Tags:** Minimalist text only. "Urgent" in `#E11D48`.
+- **Assignee Avatar:** 24x24px circle with vendor/staff initials.
+
+**Interactions:**
+- **Drag & Drop:** Move cards between columns (Kanban view).
+- **Click Card:** Opens detail view to add comments, attach photos of fixed issues.
+
+### Visitor Log
+
+**Purpose:** Real-time tracking of gate entries/exits (delivery, guests, staff).
+
+**Layout:** Split view. Left: Live feed of entries. Right: Analytics/Summary of daily footfall.
+
+**Key Elements:**
+- **Live Feed List:** Time (mono), Visitor Name, Category (Swiggy, Amazon, Guest), Destination Flat, Entry/Exit toggle.
+- **Category Icons:** Small 16x16px monochrome SVGs representing delivery, guest, or maintenance staff.
+
+### Notice Board
+
+**Purpose:** Broadcast announcements to the society app.
+
+**Layout:** Two columns. Left: List of past notices. Right: WYSIWYG Editor for new notice.
+
+**Key Elements:**
+- **Editor:** Plain `#FFFFFF` box, 1px border. Minimal toolbar (Bold, Italic, Link, List).
+- **"Publish Now" Button:** Black button, right-aligned below editor.
+- **Read Receipts Metric:** Small progress bar showing % of residents who viewed the notice.
+
+</details>
+
+---
+
+<details>
+<summary>Build Guide</summary>
+
+**Stack:** HTML + Tailwind CSS v3
+
+**Build Order:**
+1. **Overview Dashboard** - Establishes the sidebar layout, KPI cards, base typography, and monochromatic aesthetic.
+2. **Resident Directory** - Defines the standard data table structure and slide-over panels used throughout the app.
+3. **Financials & Invoicing** - Implements the complex tabular data (`JetBrains Mono`), tabs, and status pills.
+4. **Helpdesk & Complaints** - Adds the Kanban card layouts and drag-and-drop structural elements.
+5. **Visitor Log & Notice Board** - Completes the remaining specialized views (live feeds, WYSIWYG forms) utilizing established components.
+
+</details>

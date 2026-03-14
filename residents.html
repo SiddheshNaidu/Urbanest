@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Residents — Urbanest</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: { extend: {
+        colors: { 
+          base: '#0B0B0B',
+          sidebar: '#070707',
+          surface: '#121212',
+          'surface-hover': '#18181B',
+          'surface-2': '#1E1E24',
+          gold: '#EAB308',
+          'gold-light': '#FBBF24',
+          'gold-dim': 'rgba(234,179,8,0.1)',
+          muted: '#A1A1AA',
+          'muted-2': '#71717A',
+          'border-dark': '#27272A',
+          emerald: '#10B981',
+          crimson: '#EF4444',
+          amber: '#F59E0B'
+        },
+        fontFamily: { heading: ['"Space Grotesk"', 'sans-serif'], body: ['"Inter"', 'sans-serif'], mono: ['"JetBrains Mono"', 'monospace'] }
+      }}
+    }
+  </script>
+  <style>
+    body { font-family: 'Inter', sans-serif; background-color: #0B0B0B; color: #EDEDED; -webkit-font-smoothing: antialiased; }
+    
+    /* Scrollbar styling */
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #27272A; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #3F3F46; }
+
+    /* Utilities */
+    .glass-panel { background: rgba(18, 18, 18, 0.6); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+    .interactive-element { transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
+    .interactive-row:hover { background-color: rgba(255, 255, 255, 0.02); }
+    
+    @media (max-width: 768px) {
+      .desktop-sidebar { display: none !important; }
+      .main-content { margin-left: 0 !important; }
+      .mobile-nav { display: flex !important; }
+    }
+    .mobile-nav { display: none; }
+  </style>
+</head>
+<body class="flex min-h-screen">
+
+<!-- Sidebar -->
+<aside class="desktop-sidebar fixed left-0 top-0 bottom-0 w-[260px] bg-sidebar border-r border-border-dark flex flex-col z-40">
+  <div class="px-6 py-6 flex items-center gap-3">
+    <div class="w-8 h-8 bg-gold rounded flex items-center justify-center flex-shrink-0 shadow-[0_0_15px_rgba(234,179,8,0.3)]">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0B0B0B" stroke-width="2.5"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    </div>
+    <span class="font-heading font-bold text-lg text-white tracking-tight">Urbanest</span>
+  </div>
+  
+  <nav class="flex-1 px-4 py-4 space-y-1 overflow-y-auto">
+    <p class="text-[11px] font-semibold text-muted-2 uppercase tracking-[0.15em] px-3 mb-3 mt-2">Workspace</p>
+    
+    <a href="index.html" class="flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium text-muted hover:text-white hover:bg-white/5 interactive-element">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      Dashboard
+    </a>
+    
+    <a href="residents.html" class="flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium text-gold bg-gold/10 border border-gold/10 interactive-element">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4-4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+      Residents
+    </a>
+    
+    <a href="financials.html" class="flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium text-muted hover:text-white hover:bg-white/5 interactive-element">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+      Financials
+    </a>
+    
+    <a href="helpdesk.html" class="flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium text-muted hover:text-white hover:bg-white/5 interactive-element">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg>
+      Helpdesk
+    </a>
+    
+    <a href="visitors.html" class="flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium text-muted hover:text-white hover:bg-white/5 interactive-element">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+      Visitors
+    </a>
+    
+    <a href="notices.html" class="flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium text-muted hover:text-white hover:bg-white/5 interactive-element">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
+      Notice Board
+    </a>
+  </nav>
+</aside>
+
+<!-- Mobile Navigation -->
+<nav class="mobile-nav fixed bottom-0 left-0 right-0 z-50 bg-[#070707] border-t border-border-dark justify-around px-2 py-2">
+  <!-- (Mobile nav unchanged for brevity, but matches standard) -->
+  <a href="index.html" class="flex flex-col items-center gap-1 text-muted text-[10px] font-medium p-2"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></a>
+  <a href="residents.html" class="flex flex-col items-center gap-1 text-gold text-[10px] font-medium p-2"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4-4v2"/><circle cx="9" cy="7" r="4"/></svg></a>
+  <a href="financials.html" class="flex flex-col items-center gap-1 text-muted text-[10px] font-medium p-2"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></a>
+  <a href="helpdesk.html" class="flex flex-col items-center gap-1 text-muted text-[10px] font-medium p-2"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg></a>
+</nav>
+
+<!-- Main Content -->
+<main class="main-content ml-[260px] flex-1 flex flex-col min-h-screen">
+  
+  <!-- Header Section -->
+  <header class="px-8 py-8 flex flex-col gap-6 lg:flex-row lg:items-end justify-between border-b border-border-dark bg-base/80 backdrop-blur-md sticky top-0 z-30">
+    <div class="flex-1">
+      <h1 class="font-heading font-semibold text-3xl text-white tracking-tight">Resident Directory</h1>
+      <p class="text-sm text-muted mt-2">Manage all 148 flats, contact details, and current account standing.</p>
+    </div>
+    
+    <div class="flex flex-wrap items-center gap-3 w-full lg:w-auto">
+      <!-- Search Bar -->
+      <div class="relative w-full lg:w-64 group">
+        <svg class="absolute left-3 top-1/2 -translate-y-1/2 text-muted-2 group-focus-within:text-gold transition-colors" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" placeholder="Search name or flat..." class="w-full bg-surface border border-border-dark text-sm text-white rounded-md pl-9 pr-3 py-2 focus:outline-none focus:border-gold/50 focus:ring-1 focus:ring-gold/50 transition-all placeholder:text-muted-2">
+        <div class="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1">
+          <kbd class="hidden sm:inline-flex items-center justify-center px-1.5 h-5 text-[10px] font-mono font-medium text-muted-2 bg-surface-2 border border-border-dark rounded">⌘</kbd>
+          <kbd class="hidden sm:inline-flex items-center justify-center px-1.5 h-5 text-[10px] font-mono font-medium text-muted-2 bg-surface-2 border border-border-dark rounded">K</kbd>
+        </div>
+      </div>
+      
+      <!-- Action Buttons -->
+      <button class="flex items-center gap-2 px-4 py-2 bg-surface border border-border-dark hover:bg-surface-hover text-sm font-medium text-white rounded-md interactive-element">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
+        Filter
+      </button>
+      <button class="flex items-center gap-2 px-4 py-2 bg-gold hover:bg-gold-light text-black text-sm font-semibold rounded-md interactive-element shadow-[0_4px_14px_rgba(234,179,8,0.2)]">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Register New
+      </button>
+    </div>
+  </header>
+
+  <!-- Table Container w/ Horizontal Scroll -->
+  <div class="flex-1 w-full overflow-x-auto">
+    <!-- Inner wrapper dictates minimum width to block squishing -->
+    <div class="min-w-[900px] flex flex-col w-full align-middle pb-20">
+      
+      <!-- Table Header -->
+      <div class="grid grid-cols-[3fr_1.5fr_2fr_1.5fr_1fr] px-8 py-3 bg-[#0D0D0D] border-b border-border-dark text-[11px] font-semibold text-muted-2 uppercase tracking-[0.05em] sticky top-[105px] z-20">
+        <div>Resident / Unit</div>
+        <div>Account Type</div>
+        <div>Contact Number</div>
+        <div>Current Balance</div>
+        <div class="text-right">Status</div>
+      </div>
+
+      <!-- Table Body -->
+      <div class="divide-y divide-border-dark/60">
+        
+        <!-- Row 1 -->
+        <div class="grid grid-cols-[3fr_1.5fr_2fr_1.5fr_1fr] px-8 py-4 items-center interactive-row cursor-pointer" onclick="document.getElementById('slideover').classList.remove('translate-x-full', 'opacity-0')">
+          <div class="flex items-center gap-4">
+            <div class="w-9 h-9 rounded-full bg-surface-2 border border-border-dark flex items-center justify-center text-white font-medium text-sm">
+              PS
+            </div>
+            <div>
+              <p class="text-sm font-medium text-white mb-0.5">Priya Sharma</p>
+              <p class="text-xs text-muted flex items-center gap-1.5">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+                Flat A-101 <span class="text-border-dark">|</span> Tower A
+              </p>
+            </div>
+          </div>
+          <div class="text-[13px] text-muted font-medium">Owner</div>
+          <div class="text-[13px] font-mono text-muted-2">99XX-XXX-001</div>
+          <div class="text-[13px] font-mono text-emerald">₹0</div>
+          <div class="flex justify-end">
+            <span class="inline-flex items-center gap-1.5 px-2 py-1 rounded border border-emerald/20 bg-emerald/10 text-emerald text-[11px] font-medium tracking-wide">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald"></span> Active
+            </span>
+          </div>
+        </div>
+
+        <!-- Row 2 -->
+        <div class="grid grid-cols-[3fr_1.5fr_2fr_1.5fr_1fr] px-8 py-4 items-center interactive-row cursor-pointer">
+          <div class="flex items-center gap-4">
+            <div class="w-9 h-9 rounded-full bg-surface-2 border border-border-dark flex items-center justify-center text-white font-medium text-sm">
+              RM
+            </div>
+            <div>
+              <p class="text-sm font-medium text-white mb-0.5">Rahul Mehta</p>
+              <p class="text-xs text-muted flex items-center gap-1.5">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+                Flat A-204 <span class="text-border-dark">|</span> Tower A
+              </p>
+            </div>
+          </div>
+          <div class="text-[13px] text-muted font-medium">Tenant</div>
+          <div class="text-[13px] font-mono text-muted-2">99XX-XXX-002</div>
+          <div class="text-[13px] font-mono text-crimson">₹9,000</div>
+          <div class="flex justify-end">
+            <span class="inline-flex items-center gap-1.5 px-2 py-1 rounded border border-crimson/20 bg-crimson/10 text-crimson text-[11px] font-medium tracking-wide">
+              <span class="w-1.5 h-1.5 rounded-full bg-crimson"></span> Defaulter
+            </span>
+          </div>
+        </div>
+
+        <!-- Row 3 -->
+        <div class="grid grid-cols-[3fr_1.5fr_2fr_1.5fr_1fr] px-8 py-4 items-center interactive-row cursor-pointer">
+          <div class="flex items-center gap-4">
+            <div class="w-9 h-9 rounded-full bg-surface-2 border border-border-dark flex items-center justify-center text-white font-medium text-sm">
+              AD
+            </div>
+            <div>
+              <p class="text-sm font-medium text-white mb-0.5">Anita Desai</p>
+              <p class="text-xs text-muted flex items-center gap-1.5">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+                Flat B-102 <span class="text-border-dark">|</span> Tower B
+              </p>
+            </div>
+          </div>
+          <div class="text-[13px] text-muted font-medium">Owner</div>
+          <div class="text-[13px] font-mono text-muted-2">99XX-XXX-003</div>
+          <div class="text-[13px] font-mono text-emerald">₹0</div>
+          <div class="flex justify-end">
+            <span class="inline-flex items-center gap-1.5 px-2 py-1 rounded border border-emerald/20 bg-emerald/10 text-emerald text-[11px] font-medium tracking-wide">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald"></span> Active
+            </span>
+          </div>
+        </div>
+
+        <!-- Row 4 -->
+        <div class="grid grid-cols-[3fr_1.5fr_2fr_1.5fr_1fr] px-8 py-4 items-center interactive-row cursor-pointer bg-amber/5">
+          <div class="flex items-center gap-4">
+            <div class="w-9 h-9 rounded-full bg-amber/20 border border-amber/20 flex items-center justify-center text-amber font-semibold text-sm">
+              VP
+            </div>
+            <div>
+              <p class="text-sm font-medium text-amber mb-0.5">Vikram Patel</p>
+              <p class="text-xs text-amber/70 flex items-center gap-1.5">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+                Flat B-305 <span class="text-amber/20">|</span> Tower B
+              </p>
+            </div>
+          </div>
+          <div class="text-[13px] text-amber font-medium">Owner</div>
+          <div class="text-[13px] font-mono text-amber">99XX-XXX-004</div>
+          <div class="text-[13px] font-mono text-amber">₹4,500</div>
+          <div class="flex justify-end">
+            <span class="inline-flex items-center gap-1.5 px-2 py-1 rounded border border-amber/20 bg-amber/10 text-amber text-[11px] font-medium tracking-wide">
+              <span class="w-1.5 h-1.5 rounded-full bg-amber animate-pulse"></span> Pending
+            </span>
+          </div>
+        </div>
+
+        <!-- Row 5 -->
+        <div class="grid grid-cols-[3fr_1.5fr_2fr_1.5fr_1fr] px-8 py-4 items-center interactive-row cursor-pointer">
+          <div class="flex items-center gap-4">
+            <div class="w-9 h-9 rounded-full bg-surface-2 border border-border-dark flex items-center justify-center text-white font-medium text-sm">
+              MJ
+            </div>
+            <div>
+              <p class="text-sm font-medium text-white mb-0.5">Meera Joshi</p>
+              <p class="text-xs text-muted flex items-center gap-1.5">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+                Flat B-402 <span class="text-border-dark">|</span> Tower B
+              </p>
+            </div>
+          </div>
+          <div class="text-[13px] text-muted font-medium">Tenant</div>
+          <div class="text-[13px] font-mono text-muted-2">99XX-XXX-005</div>
+          <div class="text-[13px] font-mono text-crimson">₹13,500</div>
+          <div class="flex justify-end">
+            <span class="inline-flex items-center gap-1.5 px-2 py-1 rounded border border-crimson/20 bg-crimson/10 text-crimson text-[11px] font-medium tracking-wide">
+              <span class="w-1.5 h-1.5 rounded-full bg-crimson"></span> Defaulter
+            </span>
+          </div>
+        </div>
+        
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- Slide-over Panel (Hidden by default, triggered by JS) -->
+<div id="slideover" class="fixed inset-0 z-[100] transform transition-all duration-300 opacity-0 pointer-events-none translate-x-full">
+  <!-- Backdrop -->
+  <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" onclick="document.getElementById('slideover').classList.add('translate-x-full', 'opacity-0'); setTimeout(() => document.getElementById('slideover').classList.add('pointer-events-none'), 300)"></div>
+  
+  <!-- Panel -->
+  <div class="absolute right-0 top-0 bottom-0 w-full sm:w-[440px] bg-surface border-l border-border-dark shadow-2xl flex flex-col h-full right-panel-transition pointer-events-auto overflow-y-auto">
+    
+    <!-- Panel Header -->
+    <div class="px-6 py-6 border-b border-border-dark flex items-start justify-between bg-base/50 sticky top-0 backdrop-blur-md">
+      <div class="flex gap-4">
+        <div class="w-14 h-14 rounded-full bg-surface-2 border border-border-dark flex items-center justify-center text-white font-medium pl-1 text-xl">
+          PS
+        </div>
+        <div>
+          <h2 class="text-xl font-heading font-semibold text-white">Priya Sharma</h2>
+          <div class="flex items-center gap-2 mt-1">
+            <span class="text-sm font-medium text-muted">Owner · A-101</span>
+            <span class="w-1 h-1 rounded-full bg-border-dark"></span>
+            <span class="text-[11px] font-medium text-emerald flex items-center gap-1"><span class="w-1.5 h-1.5 bg-emerald rounded-full"></span>Active Account</span>
+          </div>
+        </div>
+      </div>
+      <button onclick="document.getElementById('slideover').classList.add('translate-x-full', 'opacity-0'); setTimeout(() => document.getElementById('slideover').classList.add('pointer-events-none'), 300)" class="text-muted hover:text-white p-2 rounded-md hover:bg-surface-2">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+
+    <!-- Panel Content -->
+    <div class="p-6 space-y-8 flex-1">
+      
+      <!-- Primary Info Grid -->
+      <div class="grid grid-cols-2 gap-4">
+        <div class="bg-base border border-border-dark rounded-lg p-4">
+          <span class="text-xs font-semibold text-muted uppercase tracking-wider block mb-1">Contact</span>
+          <p class="text-sm font-mono text-white mb-1">99XX-XXX-001</p>
+          <p class="text-sm text-white truncate">priya.s@example.com</p>
+        </div>
+        <div class="bg-base border border-border-dark rounded-lg p-4">
+          <span class="text-xs font-semibold text-muted uppercase tracking-wider block mb-1">Move. In Date</span>
+          <p class="text-sm text-white">12 Oct 2021</p>
+          <p class="text-sm text-muted">2 yrs, 4 mos</p>
+        </div>
+        <div class="bg-base border border-emerald/20 rounded-lg p-4 col-span-2 flex justify-between items-center bg-emerald/5">
+          <div>
+            <span class="text-xs font-semibold text-emerald uppercase tracking-wider block mb-1">Current Balance</span>
+            <p class="text-xl font-mono font-medium text-emerald">₹0.00</p>
+          </div>
+          <button class="px-3 py-1.5 bg-emerald text-base font-semibold text-[13px] rounded tracking-wide">Issue Receipt</button>
+        </div>
+      </div>
+
+      <!-- Assets / Tags -->
+      <div>
+        <h3 class="text-sm font-semibold text-white uppercase tracking-wider mb-3">Registered Assets</h3>
+        <div class="flex flex-col gap-2">
+          <div class="flex items-center justify-between p-3 rounded bg-base border border-border-dark">
+            <div class="flex items-center gap-3">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#A1A1AA" stroke-width="2"><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/><path d="M5 17H3v-6l2-5h9l4 5h3v6h-2"/><path d="M5 11h11"/></svg>
+              <span class="text-sm text-white font-medium">Honda City</span>
+            </div>
+            <span class="text-xs font-mono text-muted bg-surface py-1 px-2 rounded border border-border-dark">KA 01 AB 1234</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Support -->
+      <div>
+        <h3 class="text-sm font-semibold text-white uppercase tracking-wider mb-3 flex justify-between items-center">
+          Active Tickets
+          <a href="#" class="text-xs text-gold hover:underline normal-case tracking-normal">View All</a>
+        </h3>
+        <div class="bg-base border border-border-dark rounded-lg p-4">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="px-2 py-0.5 rounded border border-gold/20 bg-gold/10 text-gold text-[10px] uppercase font-bold tracking-wide">Plumbing</span>
+            <span class="text-[11px] font-mono text-muted ml-auto">T-1042</span>
+          </div>
+          <p class="text-sm text-white font-medium">Kitchen sink pipe leaking</p>
+          <p class="text-xs text-muted mt-1">Reported 2 days ago. Assigned to Facility Team.</p>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Panel Footer -->
+    <div class="p-6 border-t border-border-dark bg-base/50 sticky bottom-0 flex gap-3">
+      <button class="flex-1 px-4 py-2.5 bg-surface border border-border-dark hover:bg-surface-hover text-sm font-medium text-white rounded-md transition-colors text-center">
+        Message
+      </button>
+      <button class="flex-1 px-4 py-2.5 bg-white text-black hover:bg-gray-200 text-sm font-semibold rounded-md transition-colors text-center shadow">
+        Edit Profile
+      </button>
+    </div>
+    
+  </div>
+</div>
+
+<script>
+  // Simple listener to fix initial panel state issues
+  document.getElementById('slideover').classList.remove('opacity-0', 'pointer-events-none', 'translate-x-full');
+  document.getElementById('slideover').classList.add('opacity-0', 'pointer-events-none', 'translate-x-full');
+</script>
+
+</body>
+</html>

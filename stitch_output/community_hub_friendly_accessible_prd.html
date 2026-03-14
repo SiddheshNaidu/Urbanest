@@ -1,0 +1,200 @@
+# Urbanest (Smart Society Management)
+
+## Product Overview
+
+**The Pitch:** A welcoming, stress-free admin dashboard that transforms chaotic housing society management into a smooth, transparent community experience. 
+
+**For:** Society secretaries, property managers, and admin staff who need to manage finances, resolve complaints, and communicate with residents without feeling overwhelmed by complex software.
+
+**Device:** desktop
+
+**Design Direction:** Soft, approachable, and highly readable. Relies on generous whitespace, highly rounded corners, and a calming palette of soft greens and off-whites to reduce cognitive load.
+
+**Inspired by:** Airbnb (approachable UI), Notion (clean structural elements)
+
+---
+
+## Screens
+
+- **Dashboard:** At-a-glance financial health, pending tickets, and active visitors.
+- **Residents Directory:** Filterable list of all flats, owners, and tenants.
+- **Finance & Invoices:** Invoice generation, payment tracking, and monthly maintenance ledger.
+- **Helpdesk:** Complaint ticket pipeline (Open, In Progress, Resolved).
+- **Visitor Logs:** Real-time gate security updates and pre-approved guest lists.
+- **Notice Board:** Rich-text editor for society-wide announcements and event flyers.
+
+---
+
+## Key Flows
+
+**Generate Monthly Maintenance Invoices:** Admin bills all flats for the new month.
+
+1. User is on Finance & Invoices -> sees **Generate Batch** button
+2. User clicks **Generate Batch** -> modal opens to confirm month, base amount, and due date
+3. User clicks **Send Invoices** -> system generates 150 invoices, changes status to "Unpaid", and updates total expected revenue on the Dashboard.
+
+**Resolve a Resident Complaint:** Admin updates a plumbing ticket.
+
+1. User is on Helpdesk -> sees Kanban board of tickets
+2. User clicks **Plumbing leak in A-402** -> opens ticket details drawer
+3. User changes status dropdown to **Resolved**, adds note -> ticket moves to "Resolved" column, resident gets notified.
+
+---
+
+<details>
+<summary>Design System</summary>
+
+## Color Palette
+
+- **Primary:** `#14B8A6` - Teal, used for primary buttons, active states, key links
+- **Background:** `#F8FAFC` - Soft slate off-white, reduces eye strain
+- **Surface:** `#FFFFFF` - Crisp white for cards and modals to pop against the background
+- **Text:** `#334155` - Deep slate, softer than pure black for high readability
+- **Muted:** `#94A3B8` - Light slate for secondary text, disabled states, borders
+- **Accent/Success:** `#10B981` - Emerald green for paid invoices, resolved tickets
+- **Warning:** `#F59E0B` - Amber for pending payments, open tickets
+- **Danger:** `#EF4444` - Soft red for overdue invoices, critical complaints
+
+## Typography
+
+Approachable, rounded geometric sans-serifs that feel friendly and modern.
+
+- **Headings:** `Poppins`, 600, 24-32px
+- **Body:** `Nunito`, 400, 15px
+- **Small text:** `Nunito`, 500, 13px
+- **Buttons:** `Poppins`, 500, 14px
+
+**Style notes:** 16px border radii on all cards. 8px border radii on buttons and inputs. Large 32px padding inside surface cards. Soft, diffuse shadows (`0 10px 25px -5px rgba(0, 0, 0, 0.03)`). No harsh black borders; use `#E2E8F0` for structural lines.
+
+## Design Tokens
+
+```css
+:root {
+  --color-primary: #14B8A6;
+  --color-background: #F8FAFC;
+  --color-surface: #FFFFFF;
+  --color-text: #334155;
+  --color-muted: #94A3B8;
+  --color-accent: #10B981;
+  
+  --font-headings: 'Poppins', sans-serif;
+  --font-body: 'Nunito', sans-serif;
+  
+  --radius-card: 16px;
+  --radius-button: 8px;
+  --shadow-soft: 0 10px 25px -5px rgba(0,0,0,0.03);
+}
+```
+
+</details>
+
+---
+
+<details>
+<summary>Screen Specifications</summary>
+
+### Dashboard
+
+**Purpose:** High-level overview of society health and daily operations.
+
+**Layout:** Left sidebar navigation. Main content area: Top row KPI cards, middle row charts & pending actions.
+
+**Key Elements:**
+- **Sidebar:** Fixed left, 260px wide, `#FFFFFF` surface. Active state uses `#CCFBF1` background with `#14B8A6` text and left border accent.
+- **Financial KPI Cards:** 3 horizontal cards (Collection this Month, Pending Dues, Total Expenses).
+- **Recent Activity Feed:** Vertical list showing latest visitor entries and notice board posts.
+
+**States:**
+- **Empty:** "No activity recorded today."
+- **Loading:** Pulsing skeletal frames for KPI numbers.
+- **Error:** Red toast notification: "Failed to sync latest gate data."
+
+**Components:**
+- **KPI Card:** 300x120px, `#FFFFFF`, 16px radius, soft shadow. Title `14px` muted, Value `32px` Poppins semi-bold `#334155`.
+
+**Interactions:**
+- **Hover KPI Card:** Translate Y `-2px`, shadow intensifies to `0 15px 30px -5px rgba(0,0,0,0.05)`.
+
+### Residents Directory
+
+**Purpose:** Manage unit allocations, owners, and tenants.
+
+**Layout:** Top utility bar (Search, Filter, Add Resident). Grid of resident profile cards.
+
+**Key Elements:**
+- **Utility Bar:** Search input with left-aligned magnifying glass icon. Filter dropdown (Owner vs Tenant).
+- **Resident Card:** Avatar, Name, Unit Number (e.g., A-101), Contact, Tag (Owner/Tenant).
+
+**States:**
+- **Empty:** Illustration of an empty house with a primary CTA "Add First Resident".
+
+**Components:**
+- **Resident Card:** 280x200px, `#FFFFFF`. Avatar 48x48px circular. `Tag` pill: 24px height, `#D1FAE5` bg, `#065F46` text for Owners.
+
+### Finance & Invoices
+
+**Purpose:** Track monthly maintenance billing and payments.
+
+**Layout:** Top summary (Total Outstanding). Table view of all invoices grouped by month.
+
+**Key Elements:**
+- **Batch Generate CTA:** Primary button `#14B8A6` at top right.
+- **Invoice Table:** Columns: Unit, Resident, Amount, Month, Status, Action.
+- **Status Badges:** `Paid` (Green), `Pending` (Amber), `Overdue` (Red).
+
+**Components:**
+- **Table Row:** 64px height. Bottom border `#E2E8F0`. Hover state `#F8FAFC`.
+
+**Interactions:**
+- **Click "Remind":** Toast pop-up "Reminder sent to A-101 via WhatsApp/Email."
+
+### Helpdesk
+
+**Purpose:** Track and resolve resident complaints.
+
+**Layout:** Kanban board (To Do, In Progress, Resolved).
+
+**Key Elements:**
+- **Kanban Column:** 320px wide, `#F1F5F9` background.
+- **Ticket Card:** Title, Unit No, Date, Category tag (e.g., Plumbing, Electrical).
+
+**Interactions:**
+- **Drag & Drop:** Move ticket between columns. Cursor becomes `grabbing`.
+
+### Visitor Logs
+
+**Purpose:** Live feed of gate security entries.
+
+**Layout:** Two-pane. Left: Live list. Right: Details of selected visitor.
+
+**Key Elements:**
+- **Live Feed Item:** Visitor Photo, Name, Entering Unit, Timestamp, Status (In/Out).
+
+### Notice Board
+
+**Purpose:** Publish society announcements.
+
+**Layout:** Masonry grid of active notices.
+
+**Key Elements:**
+- **Notice Card:** Image cover (optional), Title, Date, Snippet.
+- **New Notice FAB:** Floating Action Button bottom right for quick compose.
+
+</details>
+
+---
+
+<details>
+<summary>Build Guide</summary>
+
+**Stack:** HTML + Tailwind CSS v3
+
+**Build Order:**
+1. **Dashboard** - Establishes the layout shell (sidebar + header), typography scale, and KPI card styling.
+2. **Finance & Invoices** - Implements complex data tables and status badge token system.
+3. **Helpdesk** - Introduces drag-and-drop Kanban layout and specialized card components.
+4. **Residents Directory** - Reuses cards and grid layouts established in the Dashboard.
+5. **Notice Board** - Introduces masonry grid and form inputs.
+6. **Visitor Logs** - Two-pane layout and real-time feed styling.
+
+</details>
