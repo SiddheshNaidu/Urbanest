@@ -14,6 +14,7 @@ import { Financials } from './pages/Financials';
 import { Helpdesk } from './pages/Helpdesk';
 import { Notices } from './pages/Notices';
 import { Visitors } from './pages/Visitors';
+import { Amenities } from './pages/Amenities';
 
 const App = () => {
   return (
@@ -50,6 +51,7 @@ const App = () => {
               <Route path="/financials" element={<Financials />} />
               <Route path="/helpdesk" element={<Helpdesk />} />
               <Route path="/notices" element={<Notices />} />
+              <Route path="/amenities" element={<Amenities />} />
             </Route>
           </Route>
 

@@ -37,13 +37,13 @@ export function DataTable<T extends { id: string }>({ data, columns, onRowClick,
         <tbody className="divide-y divide-border-dark">
           {data.map((row) => (
             <tr 
-              key={(row as any).id} 
+              key={row.id} 
               onClick={() => onRowClick && onRowClick(row)}
               className={`interactive-row ${onRowClick ? 'cursor-pointer' : ''}`}
             >
               {columns.map((col) => (
                 <td key={col.key} className="px-6 py-4 text-sm text-white font-medium">
-                  {col.render ? col.render(row) : (row as any)[col.key]}
+                  {col.render ? col.render(row) : (row as Record<string, unknown>)[col.key] as React.ReactNode}
                 </td>
               ))}
             </tr>

@@ -59,6 +59,7 @@ export function ShaderPlane({
   color2?: string
 }) {
   const mesh = useRef<THREE.Mesh>(null)
+  const materialRef = useRef<THREE.ShaderMaterial>(null)
 
   const uniforms = useMemo(
     () => ({
@@ -71,9 +72,9 @@ export function ShaderPlane({
   )
 
   useFrame((state) => {
-    if (mesh.current) {
-      uniforms.time.value = state.clock.elapsedTime
-      uniforms.intensity.value = 1.0 + Math.sin(state.clock.elapsedTime * 2) * 0.3
+    if (materialRef.current) {
+      materialRef.current.uniforms.time.value = state.clock.elapsedTime
+      materialRef.current.uniforms.intensity.value = 1.0 + Math.sin(state.clock.elapsedTime * 2) * 0.3
     }
   })
 
@@ -81,6 +82,7 @@ export function ShaderPlane({
     <mesh ref={mesh} position={position}>
       <planeGeometry args={[10, 10, 64, 64]} />
       <shaderMaterial
+        ref={materialRef}
         uniforms={uniforms}
         vertexShader={vertexShader}
         fragmentShader={fragmentShader}

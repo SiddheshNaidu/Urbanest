@@ -1,10 +1,13 @@
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { ShieldCheck, Zap, Building2, ChevronRight, Lock, HeadphonesIcon, CreditCard, Users, QrCode, FileText } from 'lucide-react';
+import { ShieldCheck, Zap, Building2, ChevronRight, Lock, HeadphonesIcon, CreditCard, Users, QrCode, FileText, type LucideIcon } from 'lucide-react';
 import HeroShaders from '../components/ui/hero-demo';
 import { BeamsBackground } from '../components/ui/beams-background';
+import { BackgroundPaths } from '../components/ui/background-paths';
+import { ShaderAnimation } from '../components/ui/shader-animation';
 
-const FeatureCard = ({ icon: Icon, title, description, delay = 0 }: { icon: any, title: string, description: string, delay?: number }) => (
+const FeatureCard = ({ icon: Icon, title, description, delay = 0 }: { icon: LucideIcon, title: string, description: string, delay?: number }) => (
   <motion.div 
     initial={{ opacity: 0, y: 30 }}
     whileInView={{ opacity: 1, y: 0 }}
@@ -44,11 +47,25 @@ const FlowStep = ({ number, title, description }: { number: string, title: strin
 );
 
 export const Landing = () => {
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   return (
     <div className="bg-base min-h-screen selection:bg-gold selection:text-base overflow-x-hidden relative">
       
       {/* Navbar */}
-      <nav className="fixed top-0 left-0 right-0 z-50 px-6 py-4 flex items-center justify-between bg-base/60 backdrop-blur-xl border-b border-white/5 transition-all">
+      <nav className={`fixed top-0 left-0 right-0 z-50 px-6 py-4 flex items-center justify-between transition-all duration-300 ${
+        isScrolled 
+          ? 'bg-base/60 backdrop-blur-xl border-b border-white/5' 
+          : 'bg-transparent border-b border-transparent'
+      }`}>
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 bg-gradient-to-br from-gold to-amber rounded-xl flex items-center justify-center shadow-[0_0_20px_rgba(234,179,8,0.3)]">
             <Building2 size={20} className="text-base" strokeWidth={2.5} />
@@ -66,8 +83,11 @@ export const Landing = () => {
       </nav>
 
       {/* Hero Section with WebGL Shaders */}
-      <section className="relative min-h-screen flex items-center justify-center pt-20 px-4 overflow-hidden bg-black/50">
-        <HeroShaders />
+      <section className="relative min-h-screen flex items-center justify-center pt-20 px-4 overflow-hidden bg-base">
+        <div className="absolute inset-0 z-0">
+          <HeroShaders />
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-base/80" />
+        </div>
         
         <motion.div 
           className="max-w-5xl mx-auto text-center relative z-20"
@@ -96,7 +116,7 @@ export const Landing = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-            className="text-lg md:text-2xl text-muted max-w-3xl mx-auto mb-12 leading-relaxed font-light"
+            className="text-lg md:text-xl text-muted max-w-2xl mx-auto mb-10 leading-relaxed font-medium"
           >
             Urbanest replaces chaos with clarity. Experience friction-less visitor routing, automated ledgers, and a premium portal designed exclusively for modern residential living.
           </motion.p>
@@ -105,12 +125,12 @@ export const Landing = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
-            className="flex flex-col sm:flex-row items-center justify-center gap-5"
+            className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6"
           >
-            <Link to="/signup" className="w-full sm:w-auto flex items-center justify-center gap-2 bg-gradient-to-r from-gold to-amber hover:from-amber hover:to-gold text-base font-bold px-10 py-5 rounded-2xl transition-all duration-300 hover:scale-105 active:scale-95 shadow-[0_0_40px_rgba(234,179,8,0.3)]">
-              Create Workspace <ChevronRight size={20} />
+            <Link to="/signup" className="w-full sm:w-auto h-14 flex items-center justify-center gap-2 bg-gradient-to-r from-gold to-amber hover:from-amber hover:to-gold text-base font-extrabold px-10 rounded-2xl transition-all duration-300 hover:scale-[1.03] active:scale-95 shadow-[0_0_40px_rgba(234,179,8,0.2)]">
+              Create Workspace <ChevronRight size={18} />
             </Link>
-            <a href="#overview" className="w-full sm:w-auto flex items-center justify-center gap-2 bg-surface/80 backdrop-blur-sm text-white hover:bg-white/10 border border-white/10 hover:border-gold/50 font-semibold px-10 py-5 rounded-2xl transition-all duration-300">
+            <a href="#overview" className="w-full sm:w-auto h-14 flex items-center justify-center gap-2 bg-white/5 backdrop-blur-md text-white hover:bg-white/10 border border-white/10 hover:border-gold/30 font-bold px-10 rounded-2xl transition-all duration-300 hover:scale-[1.03] active:scale-95">
               Discover Features
             </a>
           </motion.div>
@@ -118,8 +138,8 @@ export const Landing = () => {
         
       </section>
 
-      {/* Problem / Solution Overview */}
-      <section id="overview" className="py-32 px-6 relative z-20 bg-surface-2">
+      {/* Problem / Solution Overview - BackgroundPaths section */}
+      <BackgroundPaths className="py-32 px-6 relative z-20" id="overview">
         <div className="max-w-6xl mx-auto">
           <motion.div 
             initial={{ opacity: 0, y: 40 }}
@@ -136,7 +156,7 @@ export const Landing = () => {
                 Paper visitor logs, scattered WhatsApp groups for complaints, and untracked maintenance dues create endless friction for management committees and residents alike.
               </p>
               <h2 className="text-3xl md:text-5xl font-heading font-bold text-white mb-6 leading-tight">
-                We engineered <span className="text-emerald">flow.</span>
+                We engineered <span className="text-gold">flow.</span>
               </h2>
               <p className="text-lg text-muted leading-relaxed">
                 Urbanest centralizes every operational pillar into a single, cohesive ecosystem. Real-time data syncs across roles instantly. No redundant data entry. Absolute transparency.
@@ -144,8 +164,8 @@ export const Landing = () => {
             </div>
             <div className="relative">
               <div className="absolute inset-0 bg-gold/10 blur-[100px] rounded-full pointer-events-none" />
-              <div className="bg-base border border-border-dark rounded-3xl p-8 shadow-2xl relative z-10 glass-panel">
-                <div className="flex items-center gap-4 mb-6 pb-6 border-b border-border-dark">
+              <div className="bg-black/60 backdrop-blur-sm border border-gold/20 rounded-3xl p-8 shadow-2xl shadow-gold/10 relative z-10">
+                <div className="flex items-center gap-4 mb-6 pb-6 border-b border-white/5">
                   <div className="w-12 h-12 rounded-full bg-emerald/20 flex items-center justify-center text-emerald">
                     <CheckIcon />
                   </div>
@@ -154,7 +174,7 @@ export const Landing = () => {
                     <p className="text-sm text-muted">Across all executive dashboards</p>
                   </div>
                 </div>
-                <div className="flex items-center gap-4 mb-6 pb-6 border-b border-border-dark">
+                <div className="flex items-center gap-4 mb-6 pb-6 border-b border-white/5">
                   <div className="w-12 h-12 rounded-full bg-gold/20 flex items-center justify-center text-gold">
                     <CheckIcon />
                   </div>
@@ -176,7 +196,7 @@ export const Landing = () => {
             </div>
           </motion.div>
         </div>
-      </section>
+      </BackgroundPaths>
 
       {/* How It Works - The Workflows */}
       <section className="py-32 px-6 relative z-20 bg-base overflow-hidden">
@@ -220,9 +240,15 @@ export const Landing = () => {
         </div>
       </section>
 
-      {/* Features Grid */}
-      <section className="py-32 px-6 relative z-20 bg-surface-2 border-t border-white/5">
-        <div className="max-w-6xl mx-auto">
+      {/* Features Grid - Enterprise Infrastructure */}
+      <section className="relative min-h-screen py-32 px-6 z-20 overflow-hidden">
+        <div className="absolute inset-0 z-0 text-gold-dim">
+            <ShaderAnimation />
+            <div className="absolute inset-0 bg-base/85" />
+            <div className="absolute inset-0 bg-gradient-to-b from-base via-transparent to-base" />
+        </div>
+
+        <div className="max-w-6xl mx-auto relative z-10">
           <div className="text-left mb-20">
             <h2 className="text-4xl md:text-6xl font-heading font-bold text-white mb-6 tracking-tight">Enterprise Infrastructure.</h2>
             <p className="text-xl text-muted max-w-2xl">Everything required to run a massive residential complex, embedded into one meticulously crafted application.</p>

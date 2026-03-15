@@ -81,7 +81,7 @@ export const SecurityDashboard = () => {
       } else {
         setScanResult({ success: false, message: 'Unrecognized QR format.' });
       }
-    } catch (e) {
+    } catch {
       setScanResult({ success: false, message: 'Failed to parse QR Code data.' });
     }
   };

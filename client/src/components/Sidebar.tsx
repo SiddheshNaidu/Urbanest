@@ -1,8 +1,15 @@
 
 import { NavLink } from 'react-router-dom';
 import { useStore } from '../store/useStore';
-import { LayoutDashboard, Users, CreditCard, HeadphonesIcon, LogIn, Bell, ShieldCheck, Home } from 'lucide-react';
+import { LayoutDashboard, Users, CreditCard, HeadphonesIcon, LogIn, Bell, ShieldCheck, Home, Dumbbell } from 'lucide-react';
 import { motion } from 'framer-motion';
+import type { LucideIcon } from 'lucide-react';
+
+interface SidebarLink {
+  to: string;
+  icon: LucideIcon;
+  label: string;
+}
 
 export const Sidebar = () => {
   const { currentUser, logout } = useStore();
@@ -14,6 +21,7 @@ export const Sidebar = () => {
     { to: '/helpdesk', icon: HeadphonesIcon, label: 'Helpdesk' },
     { to: '/visitors', icon: LogIn, label: 'Visitors' },
     { to: '/notices', icon: Bell, label: 'Notice Board' },
+    { to: '/amenities', icon: Dumbbell, label: 'Amenities' },
   ];
 
   const securityLinks = [
@@ -23,9 +31,10 @@ export const Sidebar = () => {
 
   const residentLinks = [
     { to: '/resident', icon: Home, label: 'My Dashboard' },
+    { to: '/amenities', icon: Dumbbell, label: 'Amenities' },
   ];
 
-  let links: any[] = [];
+  let links: SidebarLink[] = [];
   if (currentUser?.role === 'ADMIN') links = adminLinks;
   if (currentUser?.role === 'SECURITY') links = securityLinks;
   if (currentUser?.role === 'RESIDENT') links = residentLinks;
