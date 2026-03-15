@@ -49,18 +49,49 @@ export const ResidentDashboard = () => {
   };
 
   const downloadQR = () => {
-    if (!qrRef.current) return;
-    const canvas = qrRef.current.querySelector('canvas');
-    if (canvas) {
-      const url = canvas.toDataURL('image/png');
-      const link = document.createElement('a');
-      link.download = `visitor-pass-${generatedVisitor?.id}.png`;
-      link.href = url;
-      link.click();
-      toast.success('Visitor Pass downloaded!');
-      setVisitorModalOpen(false);
-      setGeneratedVisitor(null);
+    if (!qrRef.current || !generatedVisitor) return;
+    const qrCanvas = qrRef.current.querySelector('canvas') as HTMLCanvasElement | null;
+    if (!qrCanvas) {
+      toast.error('Could not capture QR code. Please try again.');
+      return;
     }
+
+    // Create a composite canvas to add text below QR
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    const margin = 40;
+    canvas.width = qrCanvas.width + margin * 2;
+    canvas.height = qrCanvas.height + margin * 2 + 80;
+
+    // Background
+    ctx.fillStyle = '#FFFFFF';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Draw QR
+    ctx.drawImage(qrCanvas, margin, margin);
+
+    // Draw Token Text
+    ctx.fillStyle = '#000000';
+    ctx.font = 'bold 24px monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText(`TOKEN: ${generatedVisitor.qrToken}`, canvas.width / 2, canvas.height - 50);
+    
+    // Draw Name
+    ctx.font = '16px sans-serif';
+    ctx.fillStyle = '#666666';
+    ctx.fillText(generatedVisitor.name, canvas.width / 2, canvas.height - 25);
+
+    const url = canvas.toDataURL('image/png');
+    const link = document.createElement('a');
+    link.download = `visitor-pass-${generatedVisitor.name}.png`;
+    link.href = url;
+    link.click();
+    
+    toast.success('Visitor Pass saved with Token!');
+    setVisitorModalOpen(false);
+    setGeneratedVisitor(null);
   };
 
   return (
@@ -299,20 +330,35 @@ export const ResidentDashboard = () => {
                   
                   <div ref={qrRef} className="p-4 bg-white rounded-2xl shadow-[0_0_30px_rgba(234,179,8,0.2)] inline-block mb-6 mx-auto">
                     <QRCodeCanvas 
-                      value={JSON.stringify({ 
-                        visitorId: generatedVisitor.id, 
-                        flatId: generatedVisitor.flatId, 
-                        token: generatedVisitor.qrToken 
+                      value={JSON.stringify({
+                        token: generatedVisitor.qrToken,
+                        name: generatedVisitor.name,
+                        flatId: generatedVisitor.flatId,
+                        purpose: generatedVisitor.purpose
                       })} 
                       size={240} 
                       level="H" 
-                      fgColor="#0B0B0B" 
+                      includeMargin={true}
+                      bgColor="#FFFFFF"
+                      fgColor="#000000"
                     />
                   </div>
                   
                   <div className="bg-base rounded-xl p-4 mb-6">
                     <p className="text-lg font-bold text-white">{generatedVisitor.name}</p>
-                    <p className="text-sm text-gold font-medium uppercase tracking-widest">{generatedVisitor.purpose}</p>
+                    <p className="text-sm text-gold font-medium uppercase tracking-widest mb-3">{generatedVisitor.purpose}</p>
+                    <div className="flex items-center gap-2 bg-surface-2 rounded-lg px-3 py-2 border border-white/5">
+                      <p className="text-xs text-muted font-mono flex-1 select-all">{generatedVisitor.qrToken}</p>
+                      <button 
+                        onClick={() => { 
+                          navigator.clipboard.writeText(generatedVisitor.qrToken || '');
+                          toast.success('Token copied!');
+                        }}
+                        className="text-[10px] text-gold hover:text-amber font-bold uppercase tracking-wider whitespace-nowrap cursor-pointer"
+                      >
+                        Copy
+                      </button>
+                    </div>
                   </div>
 
                   <div className="flex gap-3">
