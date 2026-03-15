@@ -1,11 +1,23 @@
 import { useState, type MouseEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
+import { useStore, type Role } from '../store/useStore';
+import toast from 'react-hot-toast';
 import brandingImage from '../assets/login-urbanest.png';
 
 export const Signup = () => {
   const navigate = useNavigate();
+  const { register, registeredUsers } = useStore();
   const [isLoading, setIsLoading] = useState(false);
+
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [society, setSociety] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [role, setRole] = useState<Role>('RESIDENT');
+  const [flatId, setFlatId] = useState('');
+  const [error, setError] = useState('');
 
   // 3D Tilt Effect
   const x = useMotionValue(0);
@@ -36,8 +48,39 @@ export const Signup = () => {
 
   const handleSignup = (e: React.FormEvent) => {
     e.preventDefault();
+    setError('');
+
+    if (!firstName || !lastName || !email || !password || !society) {
+      setError('Please fill in all required fields.');
+      return;
+    }
+
+    if (password.length < 6) {
+      setError('Password must be at least 6 characters.');
+      return;
+    }
+
+    // Check if email already exists
+    const existing = registeredUsers.find(u => u.email.toLowerCase() === email.toLowerCase());
+    if (existing) {
+      setError('An account with this email already exists. Please sign in instead.');
+      return;
+    }
+
     setIsLoading(true);
     setTimeout(() => {
+      const newUser = {
+        id: `user-${Date.now()}`,
+        name: `${firstName} ${lastName}`,
+        email: email.toLowerCase(),
+        password,
+        role,
+        flatId: role === 'RESIDENT' ? flatId || undefined : undefined,
+        society,
+      };
+
+      register(newUser);
+      toast.success('Account created successfully! Please sign in.');
       setIsLoading(false);
       navigate('/login');
     }, 800);
@@ -90,7 +133,9 @@ export const Signup = () => {
                   <label className="block text-[10px] font-bold text-muted-2 uppercase tracking-widest mb-2 ml-1">First Name</label>
                   <input 
                     type="text" 
-                    placeholder="John" 
+                    placeholder="John"
+                    value={firstName}
+                    onChange={(e) => { setFirstName(e.target.value); setError(''); }}
                     required
                     className="w-full bg-black/40 border border-white/5 rounded-2xl px-4 py-3 text-white placeholder-muted-2 focus:outline-none focus:border-gold transition-colors"
                   />
@@ -99,7 +144,9 @@ export const Signup = () => {
                   <label className="block text-[10px] font-bold text-muted-2 uppercase tracking-widest mb-2 ml-1">Last Name</label>
                   <input 
                     type="text" 
-                    placeholder="Doe" 
+                    placeholder="Doe"
+                    value={lastName}
+                    onChange={(e) => { setLastName(e.target.value); setError(''); }}
                     required
                     className="w-full bg-black/40 border border-white/5 rounded-2xl px-4 py-3 text-white placeholder-muted-2 focus:outline-none focus:border-gold transition-colors"
                   />
@@ -110,7 +157,9 @@ export const Signup = () => {
                 <label className="block text-[10px] font-bold text-muted-2 uppercase tracking-widest mb-2 ml-1">Society Name</label>
                 <input 
                   type="text" 
-                  placeholder="e.g. Prestige Valley" 
+                  placeholder="e.g. Prestige Valley"
+                  value={society}
+                  onChange={(e) => { setSociety(e.target.value); setError(''); }}
                   required
                   className="w-full bg-black/40 border border-white/5 rounded-2xl px-4 py-3 text-white placeholder-muted-2 focus:outline-none focus:border-gold transition-colors"
                 />
@@ -120,7 +169,9 @@ export const Signup = () => {
                 <label className="block text-[10px] font-bold text-muted-2 uppercase tracking-widest mb-2 ml-1">Email Address</label>
                 <input 
                   type="email" 
-                  placeholder="admin@urbanest.com" 
+                  placeholder="you@example.com"
+                  value={email}
+                  onChange={(e) => { setEmail(e.target.value); setError(''); }}
                   required
                   className="w-full bg-black/40 border border-white/5 rounded-2xl px-4 py-3 text-white placeholder-muted-2 focus:outline-none focus:border-gold transition-colors"
                 />
@@ -130,18 +181,61 @@ export const Signup = () => {
                 <label className="block text-[10px] font-bold text-muted-2 uppercase tracking-widest mb-2 ml-1">Password</label>
                 <input 
                   type="password" 
-                  placeholder="••••••••" 
+                  placeholder="Minimum 6 characters"
+                  value={password}
+                  onChange={(e) => { setPassword(e.target.value); setError(''); }}
                   required
                   className="w-full bg-black/40 border border-white/5 rounded-2xl px-4 py-3 text-white placeholder-muted-2 focus:outline-none focus:border-gold transition-colors"
                 />
               </div>
+
+              {/* Role Selection */}
+              <div>
+                <label className="block text-[10px] font-bold text-muted-2 uppercase tracking-widest mb-2 ml-1">Your Role</label>
+                <div className="grid grid-cols-3 gap-3">
+                  {(['ADMIN', 'SECURITY', 'RESIDENT'] as Role[]).map((r) => (
+                    <button
+                      key={r}
+                      type="button"
+                      onClick={() => { setRole(r); setError(''); }}
+                      className={`py-3 rounded-xl font-bold text-xs transition-all border ${
+                        role === r
+                          ? 'bg-gold/10 border-gold/30 text-gold'
+                          : 'bg-white/5 border-white/5 text-muted hover:text-white hover:bg-white/10'
+                      }`}
+                    >
+                      {r === 'ADMIN' ? 'Admin' : r === 'SECURITY' ? 'Security' : 'Resident'}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Flat ID — only shown for Resident */}
+              {role === 'RESIDENT' && (
+                <div>
+                  <label className="block text-[10px] font-bold text-muted-2 uppercase tracking-widest mb-2 ml-1">Flat Number</label>
+                  <input 
+                    type="text" 
+                    placeholder="e.g. A-101"
+                    value={flatId}
+                    onChange={(e) => setFlatId(e.target.value)}
+                    className="w-full bg-black/40 border border-white/5 rounded-2xl px-4 py-3 text-white placeholder-muted-2 focus:outline-none focus:border-gold transition-colors"
+                  />
+                </div>
+              )}
+
+              {error && (
+                <div className="bg-crimson/10 border border-crimson/20 rounded-xl px-4 py-3 text-crimson text-sm font-medium">
+                  {error}
+                </div>
+              )}
 
               <button 
                 type="submit"
                 disabled={isLoading}
                 className="w-full bg-gold hover:bg-gold-light text-[#0B0B0B] font-bold py-4 px-4 rounded-2xl transition-all flex items-center justify-center cursor-pointer mt-6 shadow-lg shadow-gold/10 active:scale-[0.98]"
               >
-                {isLoading ? 'Creating Account...' : 'Initialize Workspace'}
+                {isLoading ? 'Creating Account...' : 'Create Account'}
               </button>
             </form>
             

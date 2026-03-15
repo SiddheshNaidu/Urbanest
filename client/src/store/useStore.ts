@@ -10,6 +10,16 @@ export interface User {
   flatId?: string; // e.g. "A-101" for residents
 }
 
+export interface RegisteredUser {
+  id: string;
+  name: string;
+  email: string;
+  password: string;
+  role: Role;
+  flatId?: string;
+  society?: string;
+}
+
 export interface Visitor {
   id: string;
   name: string;
@@ -41,9 +51,12 @@ export interface Booking {
 
 interface AppState {
   currentUser: User | null;
+  registeredUsers: RegisteredUser[];
   visitors: Visitor[];
   login: (user: User) => void;
   logout: () => void;
+  register: (user: RegisteredUser) => void;
+  findUser: (email: string, password: string) => RegisteredUser | null;
   addVisitor: (visitor: Omit<Visitor, 'id'>) => Visitor;
   updateVisitor: (id: string, updates: Partial<Visitor>) => void;
   amenities: Amenity[];
@@ -72,16 +85,33 @@ const MOCK_BOOKINGS: Booking[] = [
   { id: 'b2', amenityId: 'a1', residentName: 'Julian Vane', flatId: 'NORTH-402', date: '2024-11-21', timeSlot: '06:00 AM - 07:00 AM', status: 'CONFIRMED' },
 ];
 
+// Pre-seeded demo accounts so users can sign in immediately
+const SEED_USERS: RegisteredUser[] = [
+  { id: 'seed-admin', name: 'Alka Sharma', email: 'admin@urbanest.com', password: 'admin123', role: 'ADMIN', society: 'Urbanest Residences' },
+  { id: 'seed-security', name: 'Ramesh Patil', email: 'security@urbanest.com', password: 'security123', role: 'SECURITY', society: 'Urbanest Residences' },
+  { id: 'seed-resident', name: 'Suresh Mehra', email: 'resident@urbanest.com', password: 'resident123', role: 'RESIDENT', flatId: 'A-101', society: 'Urbanest Residences' },
+];
+
 export const useStore = create<AppState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       currentUser: null,
+      registeredUsers: SEED_USERS,
       visitors: MOCK_VISITORS,
       amenities: MOCK_AMENITIES,
       bookings: MOCK_BOOKINGS,
       
       login: (user) => set({ currentUser: user }),
       logout: () => set({ currentUser: null }),
+      
+      register: (user) => set((state) => ({
+        registeredUsers: [...state.registeredUsers, user]
+      })),
+
+      findUser: (email, password) => {
+        const users = get().registeredUsers;
+        return users.find(u => u.email.toLowerCase() === email.toLowerCase() && u.password === password) || null;
+      },
       
       addVisitor: (visitorData) => {
         const newVisitor = { ...visitorData, id: `v${Date.now()}` };
