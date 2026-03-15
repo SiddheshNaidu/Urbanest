@@ -1,6 +1,7 @@
+import { useState } from 'react';
 import { useStore } from '../store/useStore';
 import { 
-  ArrowUpRight, Download, Receipt, Wallet, Activity, CheckCircle2, AlertCircle, RefreshCw 
+  ArrowUpRight, Download, Receipt, Wallet, Activity, CheckCircle2, AlertCircle, RefreshCw, X, QrCode, CreditCard, Smartphone 
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -18,12 +19,335 @@ const MOCK_ADMIN_INVOICES = [
   { id: 'INV-1004', flat: 'D-404', type: 'Maintenance Q1', amount: '4,500', status: 'Paid', date: '05 Mar 2024' },
 ];
 
+// ── Helper: Generate and download a bill as a text file ──────────────────────
+function downloadBill(transaction: { id: string; title: string; amount: string; date: string; status: string; flat?: string; type?: string }) {
+  const flatId = transaction.flat || 'A-101';
+  const billContent = [
+    '═══════════════════════════════════════════',
+    '              URBANEST SOCIETY              ',
+    '           OFFICIAL INVOICE / RECEIPT       ',
+    '═══════════════════════════════════════════',
+    '',
+    `  Invoice No    : ${transaction.id}`,
+    `  Date          : ${transaction.date}`,
+    `  Flat No       : ${flatId}`,
+    '',
+    '───────────────────────────────────────────',
+    '  DESCRIPTION                     AMOUNT   ',
+    '───────────────────────────────────────────',
+    `  ${transaction.title.padEnd(32)} ₹${transaction.amount}`,
+    '───────────────────────────────────────────',
+    `  TOTAL                           ₹${transaction.amount}`,
+    '───────────────────────────────────────────',
+    '',
+    `  Status        : ${transaction.status}`,
+    `  Payment Mode  : UPI / Online`,
+    '',
+    '───────────────────────────────────────────',
+    '  Urbanest Society Management Committee',
+    '  Tower A, Urbanest Residences',
+    '  Mumbai, Maharashtra 400001',
+    '  Email: accounts@urbanest.in',
+    '───────────────────────────────────────────',
+    '',
+    '  This is a computer-generated document.',
+    '  No signature required.',
+    '═══════════════════════════════════════════',
+  ].join('\n');
+
+  const blob = new Blob([billContent], { type: 'text/plain;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = `Urbanest_${transaction.id}_${transaction.date.replace(/ /g, '_')}.txt`;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+  toast.success(`Bill ${transaction.id} downloaded`);
+}
+
+// ── Payment Modal Component ──────────────────────────────────────────────────
+function PaymentModal({ 
+  isOpen, 
+  onClose, 
+  amount, 
+  title 
+}: { 
+  isOpen: boolean; 
+  onClose: () => void; 
+  amount: string; 
+  title: string; 
+}) {
+  const [paymentMethod, setPaymentMethod] = useState<'upi' | 'card'>('upi');
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [isPaid, setIsPaid] = useState(false);
+
+  if (!isOpen) return null;
+
+  const handlePay = () => {
+    setIsProcessing(true);
+    setTimeout(() => {
+      setIsProcessing(false);
+      setIsPaid(true);
+      toast.success('Payment successful! Receipt sent to your email.');
+    }, 2500);
+  };
+
+  const handleClose = () => {
+    setIsPaid(false);
+    setIsProcessing(false);
+    setPaymentMethod('upi');
+    onClose();
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      {/* Backdrop */}
+      <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={handleClose} />
+
+      {/* Modal */}
+      <div className="relative bg-surface border border-border-dark rounded-[2rem] w-full max-w-md overflow-hidden shadow-2xl shadow-gold/10">
+        {/* Header */}
+        <div className="flex items-center justify-between p-6 border-b border-border-dark">
+          <div>
+            <h3 className="text-xl font-heading font-bold text-white">Make Payment</h3>
+            <p className="text-sm text-muted mt-1">{title}</p>
+          </div>
+          <button onClick={handleClose} className="p-2 hover:bg-white/10 rounded-xl transition-colors text-muted hover:text-white">
+            <X size={20} />
+          </button>
+        </div>
+
+        {/* Amount */}
+        <div className="p-6 text-center border-b border-border-dark bg-surface-hover/30">
+          <p className="text-sm text-muted uppercase tracking-wider font-bold mb-2">Amount Due</p>
+          <div className="flex items-baseline justify-center gap-1">
+            <span className="text-2xl text-muted font-mono">₹</span>
+            <span className="text-5xl font-heading font-black text-white tracking-tighter">{amount}</span>
+          </div>
+        </div>
+
+        {isPaid ? (
+          // Success State
+          <div className="p-8 text-center">
+            <div className="w-20 h-20 rounded-full bg-emerald/10 border-2 border-emerald flex items-center justify-center mx-auto mb-4">
+              <CheckCircle2 size={40} className="text-emerald" />
+            </div>
+            <h4 className="text-xl font-bold text-white mb-2">Payment Successful!</h4>
+            <p className="text-muted text-sm mb-6">Transaction ID: TXN-{Date.now().toString().slice(-8)}</p>
+            <button onClick={handleClose} className="w-full bg-white text-black font-bold py-3 rounded-xl hover:bg-gray-200 transition-colors">
+              Done
+            </button>
+          </div>
+        ) : (
+          <div className="p-6">
+            {/* Payment Method Tabs */}
+            <div className="flex gap-3 mb-6">
+              <button
+                onClick={() => setPaymentMethod('upi')}
+                className={`flex-1 py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-all border ${
+                  paymentMethod === 'upi'
+                    ? 'bg-gold/10 border-gold/30 text-gold'
+                    : 'bg-surface-2 border-white/5 text-muted hover:text-white'
+                }`}
+              >
+                <QrCode size={18} /> UPI / QR Code
+              </button>
+              <button
+                onClick={() => setPaymentMethod('card')}
+                className={`flex-1 py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-all border ${
+                  paymentMethod === 'card'
+                    ? 'bg-gold/10 border-gold/30 text-gold'
+                    : 'bg-surface-2 border-white/5 text-muted hover:text-white'
+                }`}
+              >
+                <CreditCard size={18} /> Card / Netbanking
+              </button>
+            </div>
+
+            {paymentMethod === 'upi' ? (
+              // UPI QR Code View
+              <div className="text-center space-y-4">
+                {/* Dummy QR Code using SVG */}
+                <div className="bg-white rounded-2xl p-6 inline-block mx-auto">
+                  <svg viewBox="0 0 200 200" width="180" height="180" className="mx-auto">
+                    {/* QR Code pattern – stylized dummy */}
+                    <rect x="0" y="0" width="200" height="200" fill="white"/>
+                    {/* Position detection patterns (corners) */}
+                    <rect x="10" y="10" width="50" height="50" fill="black"/>
+                    <rect x="15" y="15" width="40" height="40" fill="white"/>
+                    <rect x="20" y="20" width="30" height="30" fill="black"/>
+                    
+                    <rect x="140" y="10" width="50" height="50" fill="black"/>
+                    <rect x="145" y="15" width="40" height="40" fill="white"/>
+                    <rect x="150" y="20" width="30" height="30" fill="black"/>
+                    
+                    <rect x="10" y="140" width="50" height="50" fill="black"/>
+                    <rect x="15" y="145" width="40" height="40" fill="white"/>
+                    <rect x="20" y="150" width="30" height="30" fill="black"/>
+
+                    {/* Data modules (random pattern to simulate QR) */}
+                    {[70,80,90,100,110,120].map(x => 
+                      [10,20,30,40,50,70,80,90,100,110,120,140,150,160,170,180].map(y => (
+                        <rect key={`${x}-${y}`} x={x} y={y} width="8" height="8" fill={(x+y) % 20 === 0 || (x*y) % 17 < 8 ? "black" : "white"} />
+                      ))
+                    )}
+                    {[10,20,30,40,50,140,150,160,170,180].map(x => 
+                      [70,80,90,100,110,120].map(y => (
+                        <rect key={`b${x}-${y}`} x={x} y={y} width="8" height="8" fill={(x+y) % 14 === 0 || (x*y) % 13 < 6 ? "black" : "white"} />
+                      ))
+                    )}
+                    {[140,150,160,170,180].map(x => 
+                      [140,150,160,170,180].map(y => (
+                        <rect key={`c${x}-${y}`} x={x} y={y} width="8" height="8" fill={(x+y) % 18 < 9 ? "black" : "white"} />
+                      ))
+                    )}
+                    {/* Timing patterns */}
+                    <rect x="66" y="10" width="4" height="4" fill="black"/>
+                    <rect x="66" y="18" width="4" height="4" fill="black"/>
+                    <rect x="66" y="26" width="4" height="4" fill="black"/>
+                    <rect x="66" y="34" width="4" height="4" fill="black"/>
+                    <rect x="66" y="42" width="4" height="4" fill="black"/>
+                    <rect x="66" y="50" width="4" height="4" fill="black"/>
+                  </svg>
+                </div>
+
+                <div className="space-y-1">
+                  <p className="text-white font-bold text-sm">Scan with any UPI app</p>
+                  <div className="flex items-center justify-center gap-4 text-muted text-xs">
+                    <span>GPay</span>
+                    <span className="w-1 h-1 rounded-full bg-white/20" />
+                    <span>PhonePe</span>
+                    <span className="w-1 h-1 rounded-full bg-white/20" />
+                    <span>Paytm</span>
+                    <span className="w-1 h-1 rounded-full bg-white/20" />
+                    <span>BHIM</span>
+                  </div>
+                </div>
+
+                <div className="bg-surface-2 rounded-xl p-3 flex items-center gap-3 text-left border border-white/5">
+                  <Smartphone size={20} className="text-gold flex-shrink-0" />
+                  <div>
+                    <p className="text-white text-sm font-bold">UPI ID</p>
+                    <p className="text-muted text-xs font-mono">urbanest.society@razorpay</p>
+                  </div>
+                </div>
+
+                <button
+                  onClick={handlePay}
+                  disabled={isProcessing}
+                  className="w-full bg-gradient-to-r from-gold to-amber hover:from-amber hover:to-gold text-black font-bold py-4 rounded-xl transition-all transform hover:scale-[1.02] disabled:opacity-50 disabled:hover:scale-100 flex items-center justify-center gap-2"
+                >
+                  {isProcessing ? (
+                    <>
+                      <RefreshCw size={18} className="animate-spin" />
+                      Verifying Payment...
+                    </>
+                  ) : (
+                    <>
+                      <CheckCircle2 size={18} />
+                      I have paid ₹{amount}
+                    </>
+                  )}
+                </button>
+              </div>
+            ) : (
+              // Card / Netbanking View
+              <div className="space-y-4">
+                <div className="space-y-3">
+                  <div>
+                    <label className="text-xs font-bold text-muted uppercase tracking-wider mb-1.5 block">Card Number</label>
+                    <input 
+                      type="text" 
+                      placeholder="4242 4242 4242 4242"
+                      className="w-full bg-surface-2 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-muted-2 focus:outline-none focus:border-gold/50 font-mono transition-colors"
+                    />
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="text-xs font-bold text-muted uppercase tracking-wider mb-1.5 block">Expiry</label>
+                      <input 
+                        type="text" 
+                        placeholder="MM / YY"
+                        className="w-full bg-surface-2 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-muted-2 focus:outline-none focus:border-gold/50 font-mono transition-colors"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-xs font-bold text-muted uppercase tracking-wider mb-1.5 block">CVV</label>
+                      <input 
+                        type="text" 
+                        placeholder="123"
+                        className="w-full bg-surface-2 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-muted-2 focus:outline-none focus:border-gold/50 font-mono transition-colors"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <button
+                  onClick={handlePay}
+                  disabled={isProcessing}
+                  className="w-full bg-white text-black font-bold py-4 rounded-xl hover:bg-gray-200 transition-all transform hover:scale-[1.02] disabled:opacity-50 disabled:hover:scale-100 flex items-center justify-center gap-2"
+                >
+                  {isProcessing ? (
+                    <>
+                      <RefreshCw size={18} className="animate-spin" />
+                      Processing...
+                    </>
+                  ) : (
+                    <>
+                      Pay ₹{amount}
+                    </>
+                  )}
+                </button>
+
+                <p className="text-center text-[10px] text-muted-2">
+                  Secured by Razorpay. Your card details are encrypted end-to-end.
+                </p>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Footer Branding */}
+        {!isPaid && (
+          <div className="px-6 py-4 border-t border-border-dark flex items-center justify-center gap-2 text-xs text-muted-2">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+              <path d="M7 11V7a5 5 0 0110 0v4" />
+            </svg>
+            Powered by Razorpay • 256-bit SSL Encrypted
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ── Main Financials Component ────────────────────────────────────────────────
 export const Financials = () => {
   const { currentUser } = useStore();
   const isAdmin = currentUser?.role === 'ADMIN';
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [paymentAmount, setPaymentAmount] = useState('4,500.00');
+  const [paymentTitle, setPaymentTitle] = useState('Outstanding Dues');
+
+  const openPayment = (amount: string, title: string) => {
+    setPaymentAmount(amount);
+    setPaymentTitle(title);
+    setShowPaymentModal(true);
+  };
 
   return (
     <div className="max-w-[1200px] mx-auto space-y-12">
+      {/* Payment Modal */}
+      <PaymentModal 
+        isOpen={showPaymentModal} 
+        onClose={() => setShowPaymentModal(false)} 
+        amount={paymentAmount} 
+        title={paymentTitle}
+      />
+
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-border-dark">
         <div>
@@ -44,7 +368,7 @@ export const Financials = () => {
           </button>
         ) : (
           <button 
-            onClick={() => toast.success('Processing payment securely...')}
+            onClick={() => openPayment('4,500.00', 'Outstanding Dues')}
             className="bg-gradient-to-r from-gold to-amber hover:from-amber hover:to-gold text-black font-bold py-3 px-8 rounded-xl shadow-[0_0_20px_rgba(234,179,8,0.2)] flex items-center justify-center gap-2 transition-all transform hover:scale-[1.02]"
           >
             <Wallet size={18} /> Pay Outstanding
@@ -114,7 +438,11 @@ export const Financials = () => {
                           {inv.status}
                         </span>
                       </div>
-                      <button className="p-3 bg-surface-2 hover:bg-white/10 rounded-xl text-white transition-colors border border-white/5">
+                      <button 
+                        onClick={() => downloadBill({ id: inv.id, title: inv.type, amount: inv.amount, date: inv.date, status: inv.status, flat: inv.flat })}
+                        className="p-3 bg-surface-2 hover:bg-white/10 rounded-xl text-white transition-colors border border-white/5"
+                        title="Download Invoice"
+                      >
                         <Download size={18} />
                       </button>
                     </div>
@@ -148,7 +476,7 @@ export const Financials = () => {
               </p>
 
               <button 
-                onClick={() => toast.success('Processing payment securely...')}
+                onClick={() => openPayment('4,500.00', 'Maintenance Q1 – Full Amount')}
                 className="w-full bg-white text-black hover:bg-gray-200 font-bold py-4 rounded-2xl shadow-[0_0_20px_rgba(255,255,255,0.1)] transition-all transform hover:scale-[1.02] text-lg"
               >
                 Pay Full Amount
@@ -205,9 +533,22 @@ export const Financials = () => {
                         {txn.status}
                       </span>
                     </div>
-                    <button className="p-3 bg-surface-2 hover:bg-white/10 rounded-xl text-white transition-colors border border-white/5">
-                      <Download size={18} />
-                    </button>
+                    {txn.status === 'OVERDUE' ? (
+                      <button 
+                        onClick={() => openPayment(txn.amount, txn.title)}
+                        className="px-4 py-3 bg-gradient-to-r from-gold to-amber hover:from-amber hover:to-gold rounded-xl text-black font-bold transition-all transform hover:scale-[1.02] text-sm flex items-center gap-2"
+                      >
+                        <Wallet size={16} /> Pay
+                      </button>
+                    ) : (
+                      <button 
+                        onClick={() => downloadBill({ id: txn.id, title: txn.title, amount: txn.amount, date: txn.date, status: txn.status })}
+                        className="p-3 bg-surface-2 hover:bg-white/10 rounded-xl text-white transition-colors border border-white/5"
+                        title="Download Receipt"
+                      >
+                        <Download size={18} />
+                      </button>
+                    )}
                   </div>
                 </div>
               ))}
