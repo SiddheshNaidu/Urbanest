@@ -7,12 +7,12 @@ import { BeamsBackground } from '../components/ui/beams-background';
 import { BackgroundPaths } from '../components/ui/background-paths';
 import { ShaderAnimation } from '../components/ui/shader-animation';
 
-const FeatureCard = ({ icon: Icon, title, description, delay = 0 }: { icon: LucideIcon, title: string, description: string, delay?: number }) => (
+const FeatureCard = ({ icon: Icon, title, description }: { icon: LucideIcon, title: string, description: string }) => (
   <motion.div 
-    initial={{ opacity: 0, y: 30 }}
+    initial={{ opacity: 0, y: 20 }}
     whileInView={{ opacity: 1, y: 0 }}
     viewport={{ once: true, margin: "-50px" }}
-    transition={{ duration: 0.6, delay, type: "spring", bounce: 0.4 }}
+    transition={{ duration: 0.4, ease: "easeOut" }}
     className="bg-surface/50 backdrop-blur-sm border border-border-dark hover:border-gold/50 p-8 rounded-[2rem] transition-all group relative overflow-hidden h-full"
   >
     <div className="absolute inset-0 bg-gradient-to-br from-gold/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
@@ -28,9 +28,10 @@ const FeatureCard = ({ icon: Icon, title, description, delay = 0 }: { icon: Luci
 
 const FlowStep = ({ number, title, description }: { number: string, title: string, description: string }) => (
   <motion.div 
-    initial={{ opacity: 0, x: -20 }}
+    initial={{ opacity: 0, x: -10 }}
     whileInView={{ opacity: 1, x: 0 }}
     viewport={{ once: true, margin: "-50px" }}
+    transition={{ duration: 0.4, ease: "easeOut" }}
     className="flex gap-6 relative"
   >
     <div className="flex flex-col items-center">
@@ -259,37 +260,31 @@ export const Landing = () => {
               icon={QrCode} 
               title="HTML5 QR Scanning" 
               description="Zero-friction visitor entry. Launch the native camera directly from the web app to validate encrypted guest passes in milliseconds."
-              delay={0.1}
             />
             <FeatureCard 
               icon={CreditCard} 
               title="Automated Financials" 
               description="Generate block-wise invoices, track arrears, and maintain a crystal-clear digital ledger accessible by both management and flat owners."
-              delay={0.2}
             />
             <FeatureCard 
               icon={HeadphonesIcon} 
               title="Centralized Helpdesk" 
               description="SLA-driven complaint tracking. Route structural or electrical issues instantly to maintenance teams with rich priority tagging."
-              delay={0.3}
             />
             <FeatureCard 
               icon={Lock} 
               title="Strict RBAC Matrix" 
               description="Granular permission matrices mathematically isolate Admin, Security, and Resident views to guarantee data privacy."
-              delay={0.4}
             />
             <FeatureCard 
               icon={FileText} 
               title="Notice Board Broadcast" 
               description="Publish rich-text notices. Eliminate scattered circulars and ensure critical information reaches the centralized resident feed."
-              delay={0.5}
             />
             <FeatureCard 
               icon={Zap} 
               title="Zustand State Engine" 
               description="Experience zero-latency updates. An action taken at the security gate immediately paints onto the admin's live overview."
-              delay={0.6}
             />
           </div>
         </div>

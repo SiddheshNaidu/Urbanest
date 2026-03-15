@@ -1,5 +1,4 @@
 import { useEffect, useRef } from "react";
-import { motion } from "framer-motion";
 
 interface AnimatedGradientBackgroundProps {
     className?: string;
@@ -44,7 +43,7 @@ export function BeamsBackground({
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const beamsRef = useRef<Beam[]>([]);
     const animationFrameRef = useRef<number>(0);
-    const MINIMUM_BEAMS = 20;
+    const BEAM_COUNT = 12; // Reduced from 30 for performance
 
 
     useEffect(() => {
@@ -60,16 +59,26 @@ export function BeamsBackground({
         const ctx = canvas.getContext("2d");
         if (!ctx) return;
 
+        // IntersectionObserver to pause when off-screen
+        let isVisible = true;
+        const observer = new IntersectionObserver(
+            (entries) => {
+                isVisible = entries[0]?.isIntersecting ?? true;
+            },
+            { threshold: 0 }
+        );
+        observer.observe(canvas);
+
         const updateCanvasSize = () => {
-            const dpr = window.devicePixelRatio || 1;
+            // Cap DPR at 1.5 for performance
+            const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
             canvas.width = window.innerWidth * dpr;
             canvas.height = window.innerHeight * dpr;
             canvas.style.width = `${window.innerWidth}px`;
             canvas.style.height = `${window.innerHeight}px`;
             ctx.scale(dpr, dpr);
 
-            const totalBeams = MINIMUM_BEAMS * 1.5;
-            beamsRef.current = Array.from({ length: totalBeams }, () =>
+            beamsRef.current = Array.from({ length: BEAM_COUNT }, () =>
                 createBeam(canvas.width, canvas.height)
             );
         };
@@ -136,8 +145,13 @@ export function BeamsBackground({
         function animate() {
             if (!canvas || !ctx) return;
 
+            animationFrameRef.current = requestAnimationFrame(animate);
+
+            // Skip rendering when off-screen
+            if (!isVisible) return;
+
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.filter = "blur(35px)";
+            // Removed ctx.filter = "blur(35px)" — moved to static CSS filter on canvas element
 
             const totalBeams = beamsRef.current.length;
             beamsRef.current.forEach((beam, index) => {
@@ -151,14 +165,13 @@ export function BeamsBackground({
 
                 drawBeam(ctx, beam);
             });
-
-            animationFrameRef.current = requestAnimationFrame(animate);
         }
 
         animate();
 
         return () => {
             window.removeEventListener("resize", updateCanvasSize);
+            observer.disconnect();
             if (animationFrameRef.current) {
                 cancelAnimationFrame(animationFrameRef.current);
             }
@@ -172,19 +185,12 @@ export function BeamsBackground({
             <canvas
                 ref={canvasRef}
                 className="absolute inset-0"
-                style={{ filter: "blur(15px)" }}
+                style={{ filter: "blur(50px)" }}
             />
 
-            <motion.div
-                className="absolute inset-0 bg-base/10"
-                animate={{
-                    opacity: [0.05, 0.15, 0.05],
-                }}
-                transition={{
-                    duration: 10,
-                    ease: "easeInOut",
-                    repeat: Infinity,
-                }}
+            {/* Replaced framer-motion with CSS animation for GPU compositing */}
+            <div
+                className="absolute inset-0 bg-base/10 animate-beams-overlay"
                 style={{
                     backdropFilter: "blur(50px)",
                 }}
@@ -196,4 +202,3 @@ export function BeamsBackground({
         </div>
     );
 }
-

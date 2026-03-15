@@ -8,17 +8,18 @@ interface FloatingPathsProps {
 }
 
 function FloatingPaths({ position, color = "rgba(234,179,8" }: FloatingPathsProps) {
-    const paths = Array.from({ length: 36 }, (_, i) => ({
+    // Reduced from 36 to 18 paths, with adjusted spacing to maintain density
+    const paths = Array.from({ length: 18 }, (_, i) => ({
         id: i,
-        d: `M-${380 - i * 5 * position} -${189 + i * 6}C-${
-            380 - i * 5 * position
-        } -${189 + i * 6} -${312 - i * 5 * position} ${216 - i * 6} ${
-            152 - i * 5 * position
-        } ${343 - i * 6}C${616 - i * 5 * position} ${470 - i * 6} ${
-            684 - i * 5 * position
-        } ${875 - i * 6} ${684 - i * 5 * position} ${875 - i * 6}`,
-        opacity: 0.03 + i * 0.018,
-        width: 0.5 + i * 0.04,
+        d: `M-${380 - i * 10 * position} -${189 + i * 12}C-${
+            380 - i * 10 * position
+        } -${189 + i * 12} -${312 - i * 10 * position} ${216 - i * 12} ${
+            152 - i * 10 * position
+        } ${343 - i * 12}C${616 - i * 10 * position} ${470 - i * 12} ${
+            684 - i * 10 * position
+        } ${875 - i * 12} ${684 - i * 10 * position} ${875 - i * 12}`,
+        opacity: 0.03 + i * 0.036,
+        width: 0.5 + i * 0.08,
     }));
 
     return (
@@ -36,17 +37,14 @@ function FloatingPaths({ position, color = "rgba(234,179,8" }: FloatingPathsProp
                         d={path.d}
                         stroke={`${color},${path.opacity})`}
                         strokeWidth={path.width}
-                        initial={{ pathLength: 0, opacity: 0 }}
+                        initial={{ pathLength: 0.8, opacity: path.opacity * 0.5 }}
                         animate={{
-                            pathLength: 1,
                             opacity: [path.opacity * 0.5, path.opacity, path.opacity * 0.5],
-                            pathOffset: [0, 1, 0],
                         }}
                         transition={{
-                            duration: 5 + (path.id % 5) * 1.5,
+                            duration: 6 + (path.id % 4) * 2,
                             repeat: Number.POSITIVE_INFINITY,
                             ease: "linear",
-                            delay: path.id * 0.1,
                         }}
                     />
                 ))}

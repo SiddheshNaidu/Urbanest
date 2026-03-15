@@ -28,30 +28,29 @@ export function ShaderAnimation() {
       }
     `
 
-    // Fragment shader - Custom Urbanest Gold/Dark Theme
+    // Fragment shader - Optimized: reduced loop iterations from 3x5 to 2x4
     const fragmentShader = `
       #define TWO_PI 6.2831853072
       #define PI 3.14159265359
 
-      precision highp float;
+      precision mediump float;
       uniform vec2 resolution;
       uniform float time;
 
       void main(void) {
         vec2 uv = (gl_FragCoord.xy * 2.0 - resolution.xy) / min(resolution.x, resolution.y);
-        float t = time * 0.1; // Increased speed
+        float t = time * 0.1;
         float lineWidth = 0.0025;
 
         vec3 gold = vec3(0.918, 0.702, 0.031);
         vec3 amber = vec3(0.961, 0.620, 0.043);
 
         vec3 color = vec3(0.0);
-        for(int j = 0; j < 3; j++){
-          for(int i=0; i < 5; i++){
+        for(int j = 0; j < 2; j++){
+          for(int i=0; i < 4; i++){
             float intensity = lineWidth*float(i*i) / abs(fract(t - 0.01*float(j)+float(i)*0.01)*5.0 - length(uv) + mod(uv.x+uv.y, 0.2));
             if (j == 0) color += gold * intensity;
-            else if (j == 1) color += amber * intensity;
-            else color += (gold + amber) * 0.3 * intensity;
+            else color += amber * intensity;
           }
         }
         
@@ -83,12 +82,23 @@ export function ShaderAnimation() {
     scene.add(mesh)
 
     const renderer = new THREE.WebGLRenderer({ 
-        antialias: true,
+        antialias: false, // Disabled: fullscreen shader quads don't benefit from AA
         alpha: true 
     })
-    renderer.setPixelRatio(window.devicePixelRatio)
+    // Cap pixel ratio to 1.5 for performance on high-DPR screens
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5))
 
     container.appendChild(renderer.domElement)
+
+    // IntersectionObserver to pause when off-screen
+    let isVisible = true
+    const observer = new IntersectionObserver(
+      (entries) => {
+        isVisible = entries[0]?.isIntersecting ?? true
+      },
+      { threshold: 0 }
+    )
+    observer.observe(container)
 
     // Handle window resize
     const onWindowResize = () => {
@@ -103,11 +113,13 @@ export function ShaderAnimation() {
     onWindowResize()
     window.addEventListener("resize", onWindowResize, false)
 
-    // Animation loop
+    // Animation loop - only renders when visible
     const animate = () => {
       const animationId = requestAnimationFrame(animate)
-      uniforms.time.value += 0.05
-      renderer.render(scene, camera)
+      if (isVisible) {
+        uniforms.time.value += 0.05
+        renderer.render(scene, camera)
+      }
 
       if (sceneRef.current) {
         sceneRef.current.animationId = animationId
@@ -129,6 +141,7 @@ export function ShaderAnimation() {
     // Cleanup function
     return () => {
       window.removeEventListener("resize", onWindowResize)
+      observer.disconnect()
 
       if (sceneRef.current) {
         cancelAnimationFrame(sceneRef.current.animationId)

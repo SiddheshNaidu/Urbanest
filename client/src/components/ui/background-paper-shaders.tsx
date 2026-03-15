@@ -80,7 +80,7 @@ export function ShaderPlane({
 
   return (
     <mesh ref={mesh} position={position}>
-      <planeGeometry args={[10, 10, 64, 64]} />
+      <planeGeometry args={[10, 10, 32, 32]} />
       <shaderMaterial
         ref={materialRef}
         uniforms={uniforms}
