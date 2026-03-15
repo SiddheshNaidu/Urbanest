@@ -40,7 +40,7 @@ export const Sidebar = () => {
   if (currentUser?.role === 'RESIDENT') links = residentLinks;
 
   return (
-    <aside className="fixed left-0 top-0 bottom-0 w-[260px] bg-sidebar border-r border-border-dark flex flex-col z-40 hidden md:flex">
+    <aside className="fixed left-0 top-0 bottom-0 w-[260px] bg-sidebar border-r border-border-dark hidden md:flex flex-col z-40">
       <div className="px-6 py-6 flex items-center gap-3">
         <div className="w-8 h-8 bg-gold rounded flex items-center justify-center flex-shrink-0 shadow-[0_0_15px_rgba(234,179,8,0.3)]">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0B0B0B" strokeWidth="2.5">
