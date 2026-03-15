@@ -85,3 +85,25 @@
   --input: oklch(0.25 0 0);
   --ring: oklch(0.77 0.17 89);
 }
+
+@keyframes scan {
+
+  0%,
+  100% {
+    transform: translateY(0);
+    opacity: 0;
+  }
+
+  10% {
+    opacity: 1;
+  }
+
+  90% {
+    opacity: 1;
+  }
+
+  100% {
+    transform: translateY(400px);
+    opacity: 0;
+  }
+}

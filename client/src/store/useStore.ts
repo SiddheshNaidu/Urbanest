@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 
 export type Role = 'ADMIN' | 'SECURITY' | 'RESIDENT';
 
@@ -71,32 +72,39 @@ const MOCK_BOOKINGS: Booking[] = [
   { id: 'b2', amenityId: 'a1', residentName: 'Julian Vane', flatId: 'NORTH-402', date: '2024-11-21', timeSlot: '06:00 AM - 07:00 AM', status: 'CONFIRMED' },
 ];
 
-export const useStore = create<AppState>((set) => ({
-  currentUser: null,
-  visitors: MOCK_VISITORS,
-  amenities: MOCK_AMENITIES,
-  bookings: MOCK_BOOKINGS,
-  
-  login: (user) => set({ currentUser: user }),
-  logout: () => set({ currentUser: null }),
-  
-  addVisitor: (visitorData) => {
-    const newVisitor = { ...visitorData, id: `v${Date.now()}` };
-    set((state) => ({ visitors: [newVisitor, ...state.visitors] }));
-    return newVisitor;
-  },
-  
-  updateVisitor: (id, updates) => set((state) => ({
-    visitors: state.visitors.map(v => v.id === id ? { ...v, ...updates } : v)
-  })),
-  
-  addBooking: (bookingData) => {
-    const newBooking = { ...bookingData, id: `b${Date.now()}` };
-    set((state) => ({ bookings: [newBooking, ...state.bookings] }));
-    return newBooking;
-  },
-  
-  updateAmenityStatus: (id, status) => set((state) => ({
-    amenities: state.amenities.map(a => a.id === id ? { ...a, status } : a)
-  })),
-}));
+export const useStore = create<AppState>()(
+  persist(
+    (set) => ({
+      currentUser: null,
+      visitors: MOCK_VISITORS,
+      amenities: MOCK_AMENITIES,
+      bookings: MOCK_BOOKINGS,
+      
+      login: (user) => set({ currentUser: user }),
+      logout: () => set({ currentUser: null }),
+      
+      addVisitor: (visitorData) => {
+        const newVisitor = { ...visitorData, id: `v${Date.now()}` };
+        set((state) => ({ visitors: [newVisitor, ...state.visitors] }));
+        return newVisitor;
+      },
+      
+      updateVisitor: (id, updates) => set((state) => ({
+        visitors: state.visitors.map(v => v.id === id ? { ...v, ...updates } : v)
+      })),
+      
+      addBooking: (bookingData) => {
+        const newBooking = { ...bookingData, id: `b${Date.now()}` };
+        set((state) => ({ bookings: [newBooking, ...state.bookings] }));
+        return newBooking;
+      },
+      
+      updateAmenityStatus: (id, status) => set((state) => ({
+        amenities: state.amenities.map(a => a.id === id ? { ...a, status } : a)
+      })),
+    }),
+    {
+      name: 'urbanest-storage',
+    }
+  )
+);
