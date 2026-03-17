@@ -1,14 +1,20 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { useStore } from '../store/useStore';
+import { useStore, type Visitor } from '../store/useStore';
 import { 
-  Users, ShieldCheck, Clock, Download, Plus, Video, Radio, Package, Wrench, User
+  Users, ShieldCheck, Clock, Download, Plus, Video, Radio, Package, Wrench, User, X
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 export const Visitors = () => {
-  const { visitors } = useStore();
+  const { visitors, addVisitor, currentUser } = useStore();
   const [currentDate, setCurrentDate] = useState(new Date());
+
+  // Pre-Approve modal state
+  const [showPreApprove, setShowPreApprove] = useState(false);
+  const [paName, setPaName]       = useState('');
+  const [paFlat, setPaFlat]       = useState('');
+  const [paPurpose, setPaPurpose] = useState<Visitor['purpose']>('GUEST');
 
   useEffect(() => {
     const timer = setInterval(() => setCurrentDate(new Date()), 60000);
@@ -30,6 +36,65 @@ export const Visitors = () => {
 
   return (
     <div className="max-w-[1400px] mx-auto space-y-8">
+      {/* Pre-Approve Modal */}
+      {showPreApprove && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-base/80 backdrop-blur-sm">
+          <div className="bg-surface border border-border-dark rounded-[2rem] p-8 w-full max-w-md shadow-2xl relative overflow-hidden">
+            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-gold to-amber" />
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-xl font-bold text-white">Pre-Approve Visitor</h3>
+              <button onClick={() => setShowPreApprove(false)} className="p-2 hover:bg-white/10 rounded-xl text-muted hover:text-white transition-colors">
+                <X size={18} />
+              </button>
+            </div>
+            <form onSubmit={(e) => {
+              e.preventDefault();
+              if (!paName || !paFlat) return;
+              addVisitor({
+                name: paName,
+                flatId: paFlat,
+                purpose: paPurpose,
+                status: 'EXPECTED',
+                qrToken: `QR-${Math.random().toString(36).substr(2, 9)}`,
+                addedBy: currentUser?.name || 'Admin',
+              });
+              toast.success(`${paName} pre-approved for ${paFlat}`);
+              setPaName(''); setPaFlat(''); setPaPurpose('GUEST');
+              setShowPreApprove(false);
+            }} className="space-y-4">
+              <div>
+                <label className="block text-xs font-bold text-muted-2 uppercase tracking-wider mb-2">Visitor Name</label>
+                <input type="text" required value={paName} onChange={e => setPaName(e.target.value)}
+                  placeholder="e.g. Amazon Delivery" 
+                  className="w-full bg-base border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-muted-2 focus:outline-none focus:border-gold transition-colors" />
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-muted-2 uppercase tracking-wider mb-2">Flat Number</label>
+                <input type="text" required value={paFlat} onChange={e => setPaFlat(e.target.value)}
+                  placeholder="e.g. A-101"
+                  className="w-full bg-base border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-muted-2 focus:outline-none focus:border-gold transition-colors" />
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-muted-2 uppercase tracking-wider mb-2">Purpose</label>
+                <select value={paPurpose} onChange={e => setPaPurpose(e.target.value as Visitor['purpose'])}
+                  className="w-full bg-base border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-gold transition-colors appearance-none">
+                  <option value="GUEST">Personal Guest</option>
+                  <option value="DELIVERY">Delivery</option>
+                  <option value="SERVICE">Service & Repair</option>
+                  <option value="DOMESTIC_STAFF">Domestic Staff</option>
+                </select>
+              </div>
+              <div className="flex gap-3 pt-2">
+                <button type="button" onClick={() => setShowPreApprove(false)}
+                  className="flex-1 py-3 bg-white/5 border border-white/10 text-white font-bold rounded-xl transition-all hover:bg-white/10">Cancel</button>
+                <button type="submit"
+                  className="flex-1 py-3 bg-gradient-to-r from-gold to-amber text-black font-bold rounded-xl">Pre-Approve</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-border-dark">
         <div>
@@ -42,7 +107,7 @@ export const Visitors = () => {
         </div>
         <div className="flex gap-4">
           <button 
-            onClick={() => toast.success('Add pre-approved guest form opened.')}
+            onClick={() => setShowPreApprove(true)}
             className="bg-surface-2 hover:bg-white/10 text-white font-bold py-3 px-6 rounded-xl flex items-center justify-center gap-2 border border-border-dark transition-all transform hover:scale-[1.02]"
           >
             <Plus size={18} /> Pre-Approve
@@ -183,6 +248,11 @@ export const Visitors = () => {
                             <Clock size={12} /> {visitor.entryTime || 'Expected'} {visitor.exitTime && `- ${visitor.exitTime}`}
                           </span>
                         </div>
+                        {visitor.addedBy && (
+                          <span className="text-xs text-muted-2 flex items-center gap-1 mt-1">
+                            Pre-approved by {visitor.addedBy}
+                          </span>
+                        )}
                       </div>
                     </div>
 

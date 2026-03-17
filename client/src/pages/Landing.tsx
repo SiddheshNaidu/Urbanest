@@ -5,14 +5,13 @@ import { ShieldCheck, Zap, Building2, ChevronRight, Lock, HeadphonesIcon, Credit
 import HeroShaders from '../components/ui/hero-demo';
 import { BeamsBackground } from '../components/ui/beams-background';
 import { BackgroundPaths } from '../components/ui/background-paths';
-import { ShaderAnimation } from '../components/ui/shader-animation';
 
 const FeatureCard = ({ icon: Icon, title, description }: { icon: LucideIcon, title: string, description: string }) => (
-  <motion.div 
-    initial={{ opacity: 0, y: 20 }}
-    whileInView={{ opacity: 1, y: 0 }}
-    viewport={{ once: true, margin: "-50px" }}
-    transition={{ duration: 0.4, ease: "easeOut" }}
+  <motion.div
+    variants={{
+      hidden: { opacity: 0, y: 20 },
+      visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] } }
+    }}
     className="bg-surface/50 backdrop-blur-sm border border-border-dark hover:border-gold/50 p-8 rounded-[2rem] transition-all group relative overflow-hidden h-full"
   >
     <div className="absolute inset-0 bg-gradient-to-br from-gold/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
@@ -30,8 +29,8 @@ const FlowStep = ({ number, title, description }: { number: string, title: strin
   <motion.div 
     initial={{ opacity: 0, x: -10 }}
     whileInView={{ opacity: 1, x: 0 }}
-    viewport={{ once: true, margin: "-50px" }}
-    transition={{ duration: 0.4, ease: "easeOut" }}
+    viewport={{ once: true, margin: "-10px" }}
+    transition={{ duration: 0.5, ease: "easeOut", delay: 0.05 }}
     className="flex gap-6 relative"
   >
     <div className="flex flex-col items-center">
@@ -141,11 +140,11 @@ export const Landing = () => {
 
       {/* Problem / Solution Overview - BackgroundPaths section */}
       <BackgroundPaths className="py-32 px-6 relative z-20" id="overview">
-        <div className="max-w-6xl mx-auto">
+        <div className="max-w-6xl mx-auto relative z-10">
           <motion.div 
             initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
+            viewport={{ once: true, margin: "-10px" }}
             transition={{ duration: 0.8 }}
             className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center"
           >
@@ -241,12 +240,13 @@ export const Landing = () => {
         </div>
       </section>
 
-      {/* Features Grid - Enterprise Infrastructure */}
+      {/* Features Grid - Enterprise Infrastructure — CSS-only background (no ShaderAnimation) */}
       <section className="relative min-h-screen py-32 px-6 z-20 overflow-hidden">
-        <div className="absolute inset-0 z-0 text-gold-dim">
-            <ShaderAnimation />
-            <div className="absolute inset-0 bg-base/85" />
-            <div className="absolute inset-0 bg-gradient-to-b from-base via-transparent to-base" />
+        <div className="absolute inset-0 z-0">
+          <div className="absolute inset-0 bg-base" />
+          <div className="absolute inset-0 bg-gradient-to-br from-gold/8 via-transparent to-amber/5" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gold/5 rounded-full blur-[120px]" />
+          <div className="absolute inset-0 bg-gradient-to-b from-base via-transparent to-base" />
         </div>
 
         <div className="max-w-6xl mx-auto relative z-10">
@@ -255,7 +255,16 @@ export const Landing = () => {
             <p className="text-xl text-muted max-w-2xl">Everything required to run a massive residential complex, embedded into one meticulously crafted application.</p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <motion.div
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-10px" }}
+            variants={{
+              hidden: {},
+              visible: { transition: { staggerChildren: 0.08 } }
+            }}
+          >
             <FeatureCard 
               icon={QrCode} 
               title="HTML5 QR Scanning" 
@@ -286,7 +295,7 @@ export const Landing = () => {
               title="Zustand State Engine" 
               description="Experience zero-latency updates. An action taken at the security gate immediately paints onto the admin's live overview."
             />
-          </div>
+          </motion.div>
         </div>
       </section>
 

@@ -1,6 +1,7 @@
 
+import { useState } from 'react';
 import { DataTable } from '../components/DataTable';
-import toast from 'react-hot-toast';
+import { AddResidentModal } from '../components/AddResidentModal';
 
 const MOCK_RESIDENTS = [
   { id: '1', name: 'Ramesh Sharma', flat: 'A-101', status: 'Active', moveInDate: '12 Jan 2023', type: 'Owner' },
@@ -11,11 +12,14 @@ const MOCK_RESIDENTS = [
 ];
 
 export const ResidentsDirectory = () => {
+  const [showModal, setShowModal] = useState(false);
+
   return (
     <div className="space-y-6">
+      <AddResidentModal isOpen={showModal} onClose={() => setShowModal(false)} />
       <div className="flex justify-between items-center mb-6">
         <h2 className="font-heading font-semibold text-xl text-white">Residents Directory</h2>
-        <button onClick={() => toast.success('Add resident form opened')} className="bg-gold hover:bg-gold-light text-[#0B0B0B] font-semibold py-2 px-4 rounded-lg transition-colors text-sm">
+        <button onClick={() => setShowModal(true)} className="bg-gold hover:bg-gold-light text-[#0B0B0B] font-semibold py-2 px-4 rounded-lg transition-colors text-sm">
           Add Resident
         </button>
       </div>
@@ -48,3 +52,4 @@ export const ResidentsDirectory = () => {
     </div>
   );
 };
+

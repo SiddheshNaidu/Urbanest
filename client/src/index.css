@@ -140,3 +140,8 @@
     opacity: 0;
   }
 }
+
+/* iPhone safe area support for bottom nav */
+.h-safe-area-inset-bottom {
+  height: env(safe-area-inset-bottom, 0px);
+}

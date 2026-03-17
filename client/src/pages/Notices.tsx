@@ -7,38 +7,8 @@ import {
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
-const MOCK_NOTICES = [
-  { 
-    id: 1, 
-    title: 'Annual General Body Meeting', 
-    isUrgent: true, 
-    date: '15 Mar 2024', 
-    author: 'Secretary', 
-    content: 'The AGM for the current financial year will be held in the clubhouse. All owners are requested to attend. The agenda includes budget approvals and new committee elections.',
-    readRatio: 85
-  },
-  { 
-    id: 2, 
-    title: 'Swimming Pool Maintenance', 
-    isUrgent: false, 
-    date: '12 Mar 2024', 
-    author: 'Facility Manager', 
-    content: 'The swimming pool will be closed for routine maintenance and deep cleaning this weekend from 8 AM to 6 PM. We apologize for the inconvenience.',
-    readRatio: 62
-  },
-  { 
-    id: 3, 
-    title: 'Lift B Out of Service', 
-    isUrgent: true, 
-    date: '10 Mar 2024', 
-    author: 'Maintenance Dept', 
-    content: 'Lift B in Tower 2 is currently undergoing mandatory compliance testing and repairs. It will be out of service until tomorrow morning 09:00 AM.',
-    readRatio: 94
-  },
-];
-
 export const Notices = () => {
-  const { currentUser } = useStore();
+  const { currentUser, notices, addNotice } = useStore();
   const isAdmin = currentUser?.role === 'ADMIN';
 
   const [title, setTitle] = useState('');
@@ -48,6 +18,16 @@ export const Notices = () => {
   const handlePublish = (e: React.FormEvent) => {
     e.preventDefault();
     if (!title.trim() || !content.trim()) return;
+
+    const today = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+    addNotice({
+      title: title.trim(),
+      content: content.trim(),
+      isUrgent,
+      date: today,
+      author: currentUser?.name || 'Admin',
+    });
+
     toast.success('Notice published and broadcasted successfully!');
     setTitle('');
     setContent('');
@@ -79,11 +59,11 @@ export const Notices = () => {
           </div>
 
           <div className="space-y-4">
-            {MOCK_NOTICES.map((notice, i) => (
+            {notices.map((notice, i) => (
               <motion.div 
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.1 }}
+                transition={{ delay: Math.min(i * 0.1, 0.4) }}
                 key={notice.id} 
                 className="bg-surface border border-border-dark rounded-3xl p-6 sm:p-8 hover:bg-white/[0.02] transition-colors group relative overflow-hidden"
               >

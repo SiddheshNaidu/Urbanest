@@ -41,7 +41,8 @@ export const ResidentDashboard = () => {
       flatId: currentUser.flatId,
       purpose,
       status: 'EXPECTED',
-      qrToken: `QR-${Math.random().toString(36).substr(2, 9)}`
+      qrToken: `QR-${Math.random().toString(36).substr(2, 9)}`,
+      addedBy: `${currentUser.name} (${currentUser.flatId})`
     });
 
     setGeneratedVisitor(newVisitor);

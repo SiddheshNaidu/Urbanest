@@ -1,14 +1,18 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useStore } from '../store/useStore';
 import { ArrowUpRight, Settings, Users, AlertCircle } from 'lucide-react';
+import { AddResidentModal } from '../components/AddResidentModal';
 import toast from 'react-hot-toast';
 
 export const AdminDashboard = () => {
   const { visitors } = useStore();
   const activeVisitors = visitors.filter(v => v.status === 'ON_CAMPUS').length;
+  const [showAddResident, setShowAddResident] = useState(false);
 
   return (
     <div className="max-w-[1400px] mx-auto space-y-8">
+      <AddResidentModal isOpen={showAddResident} onClose={() => setShowAddResident(false)} />
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-border-dark">
         <div>
@@ -20,7 +24,7 @@ export const AdminDashboard = () => {
           </p>
         </div>
         <button 
-          onClick={() => toast.success('Settings opened')}
+          onClick={() => toast('Settings panel coming soon', { icon: '⚙️' })}
           className="p-3 bg-surface-2 hover:bg-white/10 text-white rounded-xl border border-border-dark transition-all"
         >
           <Settings size={20} />
@@ -201,10 +205,10 @@ export const AdminDashboard = () => {
                <h3 className="font-bold text-white">Quick Add Resident</h3>
              </div>
              <p className="text-sm text-muted mb-6">Onboard a new homeowner or tenant into the system.</p>
-             <button 
-                onClick={() => toast.success('Add resident form opened')}
-                className="w-full py-3 bg-white text-black font-bold rounded-xl shadow-lg hover:bg-gray-200 transition-colors text-sm"
-              >
+              <button 
+                 onClick={() => setShowAddResident(true)}
+                 className="w-full py-3 bg-white text-black font-bold rounded-xl shadow-lg hover:bg-gray-200 transition-colors text-sm"
+               >
                Start Onboarding
              </button>
           </div>

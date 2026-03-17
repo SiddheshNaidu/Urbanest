@@ -1,15 +1,13 @@
 "use client";
 
-import { motion } from "framer-motion";
-
 interface FloatingPathsProps {
     position: number;
     color?: string;
 }
 
 function FloatingPaths({ position, color = "rgba(234,179,8" }: FloatingPathsProps) {
-    // Reduced from 36 to 18 paths, with adjusted spacing to maintain density
-    const paths = Array.from({ length: 18 }, (_, i) => ({
+    // Reduced from 18 to 8 static paths for performance
+    const paths = Array.from({ length: 8 }, (_, i) => ({
         id: i,
         d: `M-${380 - i * 10 * position} -${189 + i * 12}C-${
             380 - i * 10 * position
@@ -29,23 +27,16 @@ function FloatingPaths({ position, color = "rgba(234,179,8" }: FloatingPathsProp
                 viewBox="0 0 696 316"
                 fill="none"
                 preserveAspectRatio="xMidYMid slice"
+                style={{ willChange: 'opacity' }}
             >
                 <title>Background Paths</title>
                 {paths.map((path) => (
-                    <motion.path
+                    <path
                         key={path.id}
                         d={path.d}
                         stroke={`${color},${path.opacity})`}
                         strokeWidth={path.width}
-                        initial={{ pathLength: 0.8, opacity: path.opacity * 0.5 }}
-                        animate={{
-                            opacity: [path.opacity * 0.5, path.opacity, path.opacity * 0.5],
-                        }}
-                        transition={{
-                            duration: 6 + (path.id % 4) * 2,
-                            repeat: Number.POSITIVE_INFINITY,
-                            ease: "linear",
-                        }}
+                        opacity={path.opacity}
                     />
                 ))}
             </svg>

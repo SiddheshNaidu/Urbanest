@@ -1,23 +1,10 @@
 import { useState } from 'react';
 import { useStore } from '../store/useStore';
+import type { Transaction } from '../store/useStore';
 import { 
   ArrowUpRight, Download, Receipt, Wallet, Activity, CheckCircle2, AlertCircle, RefreshCw, X, QrCode, CreditCard, Smartphone 
 } from 'lucide-react';
 import toast from 'react-hot-toast';
-
-const MOCK_TRANSACTIONS = [
-  { id: 'TXN-9091', title: 'Maintenance Q1', amount: '4,500.00', status: 'OVERDUE', date: '01 Mar 2024', type: 'debit' },
-  { id: 'TXN-9092', title: 'Clubhouse Booking', amount: '1,200.00', status: 'PAID', date: '12 Feb 2024', type: 'credit' },
-  { id: 'TXN-9093', title: 'Maintenance Q4', amount: '4,500.00', status: 'PAID', date: '01 Dec 2023', type: 'credit' },
-  { id: 'TXN-9094', title: 'Plumbing Service', amount: '350.00', status: 'PAID', date: '15 Nov 2023', type: 'credit' },
-];
-
-const MOCK_ADMIN_INVOICES = [
-  { id: 'INV-1001', flat: 'A-101', type: 'Maintenance Q1', amount: '4,500', status: 'Paid', date: '01 Mar 2024' },
-  { id: 'INV-1002', flat: 'B-302', type: 'Maintenance Q1', amount: '4,500', status: 'Overdue', date: '01 Mar 2024' },
-  { id: 'INV-1003', flat: 'C-205', type: 'Clubhouse Booking', amount: '1,200', status: 'Pending', date: '12 Mar 2024' },
-  { id: 'INV-1004', flat: 'D-404', type: 'Maintenance Q1', amount: '4,500', status: 'Paid', date: '05 Mar 2024' },
-];
 
 // ── Helper: Generate and download a bill as a text file ──────────────────────
 function downloadBill(transaction: { id: string; title: string; amount: string; date: string; status: string; flat?: string; type?: string }) {
@@ -70,12 +57,14 @@ function downloadBill(transaction: { id: string; title: string; amount: string; 
 // ── Payment Modal Component ──────────────────────────────────────────────────
 function PaymentModal({ 
   isOpen, 
-  onClose, 
+  onClose,
+  onSuccess,
   amount, 
   title 
 }: { 
   isOpen: boolean; 
-  onClose: () => void; 
+  onClose: () => void;
+  onSuccess: () => void;
   amount: string; 
   title: string; 
 }) {
@@ -90,6 +79,7 @@ function PaymentModal({
     setTimeout(() => {
       setIsProcessing(false);
       setIsPaid(true);
+      onSuccess(); // ← update store immediately
       toast.success('Payment successful! Receipt sent to your email.');
     }, 2500);
   };
@@ -172,22 +162,16 @@ function PaymentModal({
                 {/* Dummy QR Code using SVG */}
                 <div className="bg-white rounded-2xl p-6 inline-block mx-auto">
                   <svg viewBox="0 0 200 200" width="180" height="180" className="mx-auto">
-                    {/* QR Code pattern – stylized dummy */}
                     <rect x="0" y="0" width="200" height="200" fill="white"/>
-                    {/* Position detection patterns (corners) */}
                     <rect x="10" y="10" width="50" height="50" fill="black"/>
                     <rect x="15" y="15" width="40" height="40" fill="white"/>
                     <rect x="20" y="20" width="30" height="30" fill="black"/>
-                    
                     <rect x="140" y="10" width="50" height="50" fill="black"/>
                     <rect x="145" y="15" width="40" height="40" fill="white"/>
                     <rect x="150" y="20" width="30" height="30" fill="black"/>
-                    
                     <rect x="10" y="140" width="50" height="50" fill="black"/>
                     <rect x="15" y="145" width="40" height="40" fill="white"/>
                     <rect x="20" y="150" width="30" height="30" fill="black"/>
-
-                    {/* Data modules (random pattern to simulate QR) */}
                     {[70,80,90,100,110,120].map(x => 
                       [10,20,30,40,50,70,80,90,100,110,120,140,150,160,170,180].map(y => (
                         <rect key={`${x}-${y}`} x={x} y={y} width="8" height="8" fill={(x+y) % 20 === 0 || (x*y) % 17 < 8 ? "black" : "white"} />
@@ -203,7 +187,6 @@ function PaymentModal({
                         <rect key={`c${x}-${y}`} x={x} y={y} width="8" height="8" fill={(x+y) % 18 < 9 ? "black" : "white"} />
                       ))
                     )}
-                    {/* Timing patterns */}
                     <rect x="66" y="10" width="4" height="4" fill="black"/>
                     <rect x="66" y="18" width="4" height="4" fill="black"/>
                     <rect x="66" y="26" width="4" height="4" fill="black"/>
@@ -326,27 +309,75 @@ function PaymentModal({
 
 // ── Main Financials Component ────────────────────────────────────────────────
 export const Financials = () => {
-  const { currentUser } = useStore();
+  const { currentUser, transactions, adminInvoices, markTransactionPaid } = useStore();
   const isAdmin = currentUser?.role === 'ADMIN';
-  const [showPaymentModal, setShowPaymentModal] = useState(false);
-  const [paymentAmount, setPaymentAmount] = useState('4,500.00');
-  const [paymentTitle, setPaymentTitle] = useState('Outstanding Dues');
 
-  const openPayment = (amount: string, title: string) => {
-    setPaymentAmount(amount);
-    setPaymentTitle(title);
-    setShowPaymentModal(true);
+  // Modal state: tracks which transaction is being paid
+  const [activePayment, setActivePayment] = useState<{ txnId: string; amount: string; title: string } | null>(null);
+
+  const openPayment = (txnId: string, amount: string, title: string) => {
+    setActivePayment({ txnId, amount, title });
   };
+
+  const handlePaymentSuccess = () => {
+    if (activePayment) {
+      markTransactionPaid(activePayment.txnId);
+    }
+  };
+
+  // Derived: is there any overdue transaction?
+  const hasOverdue = transactions.some(t => t.status === 'OVERDUE');
+
+  // Generate Bills modal (Admin only)
+  const [showGenerate, setShowGenerate] = useState(false);
+  const [genMonth, setGenMonth] = useState('');
+  const [genAmount, setGenAmount] = useState('4500');
 
   return (
     <div className="max-w-[1200px] mx-auto space-y-12">
       {/* Payment Modal */}
       <PaymentModal 
-        isOpen={showPaymentModal} 
-        onClose={() => setShowPaymentModal(false)} 
-        amount={paymentAmount} 
-        title={paymentTitle}
+        isOpen={!!activePayment}
+        onClose={() => setActivePayment(null)}
+        onSuccess={handlePaymentSuccess}
+        amount={activePayment?.amount ?? ''}
+        title={activePayment?.title ?? ''}
       />
+
+      {/* Generate Bills Modal */}
+      {showGenerate && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-base/80 backdrop-blur-sm">
+          <div className="bg-surface border border-border-dark rounded-[2rem] p-8 w-full max-w-sm shadow-2xl relative overflow-hidden">
+            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-gold to-amber" />
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-xl font-bold text-white">Generate Invoices</h3>
+              <button onClick={() => setShowGenerate(false)} className="p-2 hover:bg-white/10 rounded-xl text-muted hover:text-white transition-colors"><X size={18} /></button>
+            </div>
+            <form onSubmit={(e) => { e.preventDefault(); toast.success(`Bulk invoices generated for ${genMonth} — ₹${genAmount} per flat`); setShowGenerate(false); setGenMonth(''); }} className="space-y-4">
+              <div>
+                <label className="block text-xs font-bold text-muted-2 uppercase tracking-wider mb-2">Billing Month</label>
+                <input type="month" required value={genMonth} onChange={e => setGenMonth(e.target.value)}
+                  className="w-full bg-base border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-gold transition-colors" />
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-muted-2 uppercase tracking-wider mb-2">Amount per Flat (₹)</label>
+                <input type="number" required value={genAmount} onChange={e => setGenAmount(e.target.value)}
+                  className="w-full bg-base border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-gold transition-colors" />
+              </div>
+              <div className="bg-surface-2 rounded-xl p-4 border border-white/5">
+                <p className="text-xs text-muted">This will generate invoices for all <span className="text-white font-bold">450 active flats</span>.</p>
+                <p className="text-xs text-muted mt-1">Total amount: <span className="text-emerald font-bold">₹{(parseInt(genAmount || '0') * 450).toLocaleString('en-IN')}</span></p>
+              </div>
+              <div className="flex gap-3 pt-2">
+                <button type="button" onClick={() => setShowGenerate(false)}
+                  className="flex-1 py-3 bg-white/5 border border-white/10 text-white font-bold rounded-xl hover:bg-white/10 transition-all">Cancel</button>
+                <button type="submit"
+                  className="flex-1 py-3 bg-white text-black font-bold rounded-xl hover:bg-gray-200 transition-all">Generate</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-border-dark">
@@ -361,19 +392,22 @@ export const Financials = () => {
         
         {isAdmin ? (
           <button 
-            onClick={() => toast.success('Bulk Invoice Generation Started')}
+            onClick={() => setShowGenerate(true)}
             className="bg-white text-black hover:bg-gray-200 font-bold py-3 px-6 rounded-xl flex items-center justify-center gap-2 transition-all transform hover:scale-[1.02]"
           >
             <Receipt size={18} /> Generate Bills
           </button>
-        ) : (
+        ) : hasOverdue ? (
           <button 
-            onClick={() => openPayment('4,500.00', 'Outstanding Dues')}
+            onClick={() => {
+              const overdue = transactions.find(t => t.status === 'OVERDUE');
+              if (overdue) openPayment(overdue.id, overdue.amount, 'Outstanding Dues');
+            }}
             className="bg-gradient-to-r from-gold to-amber hover:from-amber hover:to-gold text-black font-bold py-3 px-8 rounded-xl shadow-[0_0_20px_rgba(234,179,8,0.2)] flex items-center justify-center gap-2 transition-all transform hover:scale-[1.02]"
           >
             <Wallet size={18} /> Pay Outstanding
           </button>
-        )}
+        ) : null}
       </div>
 
       {isAdmin ? (
@@ -412,7 +446,7 @@ export const Financials = () => {
             <h2 className="text-2xl font-bold text-white mb-6">Recent Transactions</h2>
             <div className="bg-surface border border-border-dark rounded-[2rem] overflow-hidden">
               <div className="divide-y divide-border-dark/50">
-                {MOCK_ADMIN_INVOICES.map((inv) => (
+                {adminInvoices.map((inv) => (
                   <div key={inv.id} className="p-6 flex flex-col sm:flex-row sm:items-center justify-between hover:bg-white/[0.02] transition-colors gap-4">
                     <div className="flex items-center gap-6">
                       <div className="hidden sm:flex w-12 h-12 rounded-2xl bg-surface-2 border border-white/5 items-center justify-center text-muted">
@@ -457,31 +491,48 @@ export const Financials = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
           
           <div className="lg:col-span-1 space-y-6">
-            {/* Huge Total Balance Card */}
-            <div className="bg-gradient-to-br from-surface to-surface-hover border border-border-dark rounded-[2.5rem] p-8 shadow-2xl relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-64 h-64 bg-crimson/10 rounded-full blur-3xl pointer-events-none -mr-32 -mt-32" />
-              
-              <h3 className="text-sm font-bold text-muted uppercase tracking-widest mb-6 flex items-center gap-2">
-                <Activity size={16} /> Total Outstanding
-              </h3>
-              
-              <div className="flex items-baseline gap-2 mb-2">
-                <span className="text-3xl text-muted font-mono font-medium">₹</span>
-                <span className="text-6xl font-heading font-black text-white tracking-tighter">4,500</span>
-                <span className="text-xl text-muted font-mono font-medium">.00</span>
-              </div>
-              
-              <p className="text-sm font-medium text-crimson mb-8">
-                Due immmediately. Late fee applies after 15 April.
-              </p>
+            {/* Huge Total Balance Card — only shown when overdue */}
+            {hasOverdue ? (
+              <div className="bg-gradient-to-br from-surface to-surface-hover border border-border-dark rounded-[2.5rem] p-8 shadow-2xl relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-64 h-64 bg-crimson/10 rounded-full blur-3xl pointer-events-none -mr-32 -mt-32" />
+                
+                <h3 className="text-sm font-bold text-muted uppercase tracking-widest mb-6 flex items-center gap-2">
+                  <Activity size={16} /> Total Outstanding
+                </h3>
+                
+                <div className="flex items-baseline gap-2 mb-2">
+                  <span className="text-3xl text-muted font-mono font-medium">₹</span>
+                  <span className="text-6xl font-heading font-black text-white tracking-tighter">4,500</span>
+                  <span className="text-xl text-muted font-mono font-medium">.00</span>
+                </div>
+                
+                <p className="text-sm font-medium text-crimson mb-8">
+                  Due immediately. Late fee applies after 15 April.
+                </p>
 
-              <button 
-                onClick={() => openPayment('4,500.00', 'Maintenance Q1 – Full Amount')}
-                className="w-full bg-white text-black hover:bg-gray-200 font-bold py-4 rounded-2xl shadow-[0_0_20px_rgba(255,255,255,0.1)] transition-all transform hover:scale-[1.02] text-lg"
-              >
-                Pay Full Amount
-              </button>
-            </div>
+                <button 
+                  onClick={() => {
+                    const overdue = transactions.find(t => t.status === 'OVERDUE');
+                    if (overdue) openPayment(overdue.id, overdue.amount, 'Maintenance Q1 – Full Amount');
+                  }}
+                  className="w-full bg-white text-black hover:bg-gray-200 font-bold py-4 rounded-2xl shadow-[0_0_20px_rgba(255,255,255,0.1)] transition-all transform hover:scale-[1.02] text-lg"
+                >
+                  Pay Full Amount
+                </button>
+              </div>
+            ) : (
+              <div className="bg-gradient-to-br from-surface to-surface-hover border border-border-dark rounded-[2.5rem] p-8 shadow-2xl relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-64 h-64 bg-emerald/10 rounded-full blur-3xl pointer-events-none -mr-32 -mt-32" />
+                <h3 className="text-sm font-bold text-muted uppercase tracking-widest mb-6 flex items-center gap-2">
+                  <Activity size={16} /> Account Status
+                </h3>
+                <div className="w-20 h-20 rounded-full bg-emerald/10 border-2 border-emerald flex items-center justify-center mx-auto mb-4">
+                  <CheckCircle2 size={40} className="text-emerald" />
+                </div>
+                <p className="text-center text-white font-bold text-lg mb-1">All Clear!</p>
+                <p className="text-center text-muted text-sm">No outstanding dues. You're up to date.</p>
+              </div>
+            )}
 
             {/* Auto-Pay Card */}
             <div className="bg-surface border border-border-dark rounded-3xl p-6 relative overflow-hidden group hover:border-gold/30 transition-all">
@@ -504,7 +555,7 @@ export const Financials = () => {
             <h2 className="text-2xl font-bold text-white mb-6">Payment History</h2>
             
             <div className="space-y-4">
-              {MOCK_TRANSACTIONS.map((txn) => (
+              {transactions.map((txn: Transaction) => (
                 <div key={txn.id} className="bg-surface border border-border-dark rounded-3xl p-5 flex flex-col sm:flex-row sm:items-center justify-between hover:bg-white/[0.02] transition-colors gap-4">
                   <div className="flex items-center gap-5">
                     <div className={`w-14 h-14 rounded-2xl flex items-center justify-center border shadow-inner ${
@@ -535,7 +586,7 @@ export const Financials = () => {
                     </div>
                     {txn.status === 'OVERDUE' ? (
                       <button 
-                        onClick={() => openPayment(txn.amount, txn.title)}
+                        onClick={() => openPayment(txn.id, txn.amount, txn.title)}
                         className="px-4 py-3 bg-gradient-to-r from-gold to-amber hover:from-amber hover:to-gold rounded-xl text-black font-bold transition-all transform hover:scale-[1.02] text-sm flex items-center gap-2"
                       >
                         <Wallet size={16} /> Pay

@@ -3,7 +3,9 @@ import { BrowserQRCodeReader } from '@zxing/browser';
 import { DecodeHintType } from '@zxing/library';
 import { useStore, type Visitor } from '../store/useStore';
 import { KpiCard } from '../components/KpiCard';
-import { CheckCircle2, XCircle, KeyboardIcon, Loader2, QrCode } from 'lucide-react';
+import { ExpectedArrivalsPanel } from '../components/ExpectedArrivalsPanel';
+import { CheckCircle2, XCircle, KeyboardIcon, Loader2, QrCode, Package } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 export const SecurityDashboard = () => {
   const { visitors, updateVisitor } = useStore();
@@ -11,18 +13,20 @@ export const SecurityDashboard = () => {
 
   const [isScanning, setIsScanning] = useState(false);
   const [isInitializing, setIsInitializing] = useState(false);
+  const [isDetecting, setIsDetecting] = useState(false);
   const [scanResult, setScanResult] = useState<{ success: boolean; message: string; visitor?: Visitor } | null>(null);
   const [manualToken, setManualToken] = useState('');
   const [showManualInput, setShowManualInput] = useState(false);
   
   // To prevent multiple scans of same visitor in quick succession
   const isProcessing = useRef(false);
+  // Mirrors isScanning state for use inside async closures
+  const isScanningRef = useRef(false);
 
   const activeVisitors = visitors.filter(v => v.status === 'ON_CAMPUS').length;
   const expectedVisitors = visitors.filter(v => v.status === 'EXPECTED').length;
 
-  // New low-level engine refs
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+  // Scanner engine refs
   const loopId = useRef<number | null>(null);
   const reader = useRef(new BrowserQRCodeReader(new Map([[DecodeHintType.TRY_HARDER, true]])));
 
@@ -33,9 +37,10 @@ export const SecurityDashboard = () => {
     }
     
     setScanResult(null);
+    isScanningRef.current = true;
     setIsScanning(true);
     setIsInitializing(true);
-    console.log('[Scanner] Launching Manual Preprocessing Engine (v10)');
+    console.log('[Scanner] Starting clean capture loop');
 
     const timeoutId = setTimeout(() => {
       if (isInitializing) {
@@ -62,7 +67,7 @@ export const SecurityDashboard = () => {
       setIsInitializing(false);
       clearTimeout(timeoutId);
 
-      // Start the manual processing loop
+      // Start the clean capture loop
       runCaptureLoop();
 
     } catch (err: any) {
@@ -73,55 +78,53 @@ export const SecurityDashboard = () => {
     }
   };
 
-  const runCaptureLoop = async () => {
-    if (!videoRef.current || !isScanning) return;
+  const runCaptureLoop = () => {
+    if (!videoRef.current) return;
 
     const video = videoRef.current;
-    if (video.readyState === video.HAVE_ENOUGH_DATA) {
-      if (!canvasRef.current) {
-        const canvas = document.createElement('canvas');
-        (canvasRef as any).current = canvas;
-      }
-      
-      const canvas = canvasRef.current!;
-      const context = canvas.getContext('2d', { willReadFrequently: true });
-      
-      if (context) {
-        canvas.width = video.videoWidth;
-        canvas.height = video.videoHeight;
-        
-        // 1. Draw raw frame
-        context.drawImage(video, 0, 0, canvas.width, canvas.height);
-        
-        // 2. Pre-process grainy feed: Grayscale + Contrast Boost
-        // This helps the engine distinguish modules in low light
-        context.globalCompositeOperation = 'difference';
-        context.fillStyle = 'white';
-        // (Simplified contrast boost via filters for performance)
-        context.filter = 'contrast(1.4) grayscale(1)';
-        context.drawImage(canvas, 0, 0);
-        context.filter = 'none';
 
-        try {
-          // 3. Decode from the processed canvas
-          const result = await reader.current.decodeFromCanvas(canvas);
-          if (result && !isProcessing.current) {
-            console.log('[Scanner] Manual Engine Hit Detected');
-            handleScanSuccess(result.getText());
-          }
-        } catch (e) {
-          // No QR in this frame, loop continues
-        }
+    const tick = async () => {
+      // Only process if video has actual pixel data
+      if (video.readyState < video.HAVE_ENOUGH_DATA) {
+        loopId.current = window.requestAnimationFrame(tick);
+        return;
       }
-    }
-    
-    if (isScanning) {
-      loopId.current = window.requestAnimationFrame(runCaptureLoop);
-    }
+
+      // Create a fresh offscreen canvas every frame — never reuse
+      const canvas = document.createElement('canvas');
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      const ctx = canvas.getContext('2d', { willReadFrequently: true });
+
+      if (!ctx) {
+        loopId.current = window.requestAnimationFrame(tick);
+        return;
+      }
+
+      // Draw raw video frame — NO filters, NO composite operations, NO post-processing
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+      try {
+        const result = await reader.current.decodeFromCanvas(canvas);
+        if (result && !isProcessing.current) {
+          handleScanSuccess(result.getText());
+        }
+      } catch {
+        // No QR code in this frame — expected, continue loop
+      }
+
+      // Only schedule next frame if still scanning
+      if (isScanningRef.current) {
+        loopId.current = window.requestAnimationFrame(tick);
+      }
+    };
+
+    loopId.current = window.requestAnimationFrame(tick);
   };
 
   const stopScanner = () => {
-    console.log('[Scanner] Cleaning up manual engine...');
+    console.log('[Scanner] Stopping capture loop...');
+    isScanningRef.current = false;
     if (loopId.current) {
       window.cancelAnimationFrame(loopId.current);
       loopId.current = null;
@@ -165,7 +168,8 @@ export const SecurityDashboard = () => {
         flatId: payload.flatId,
         purpose: payload.purpose || 'GUEST',
         status: 'ON_CAMPUS',
-        qrToken: token
+        qrToken: token,
+        entryTime: now
       });
       return {
         success: true,
@@ -183,6 +187,7 @@ export const SecurityDashboard = () => {
   };
 
   const handleScanSuccess = (text: string) => {
+    setIsDetecting(true);
     isProcessing.current = true;
     let token = text.trim();
     let payload = null;
@@ -198,6 +203,10 @@ export const SecurityDashboard = () => {
     setScanResult(result);
 
     setTimeout(() => {
+      setIsDetecting(false);
+    }, 800);
+
+    setTimeout(() => {
       isProcessing.current = false;
     }, 4000);
   };
@@ -208,6 +217,42 @@ export const SecurityDashboard = () => {
     setScanResult(verifyToken(manualToken.trim()));
     setManualToken('');
   };
+
+  // Arrival notification: fire a toast when a new EXPECTED visitor is added
+  const prevVisitorCount = useRef(visitors.filter(v => v.status === 'EXPECTED').length);
+
+  useEffect(() => {
+    const currentExpected = visitors.filter(v => v.status === 'EXPECTED');
+    if (currentExpected.length > prevVisitorCount.current) {
+      const newest = currentExpected[0];
+      toast(
+        () => (
+          <div className="flex items-start gap-3">
+            <div className="p-2 bg-amber-500/20 rounded-lg text-amber-400 flex-shrink-0">
+              <Package size={18} />
+            </div>
+            <div>
+              <p className="text-sm font-bold text-white">New Pre-Approved Arrival</p>
+              <p className="text-xs text-zinc-400 mt-0.5">
+                <span className="text-yellow-400 font-bold">{newest.name}</span> → Flat {newest.flatId}
+              </p>
+              <p className="text-[10px] text-zinc-500 uppercase tracking-wider mt-1">{newest.purpose}</p>
+            </div>
+          </div>
+        ),
+        {
+          duration: 6000,
+          style: {
+            background: '#18181B',
+            border: '1px solid rgba(245,158,11,0.3)',
+            padding: '12px',
+            borderRadius: '12px',
+          },
+        }
+      );
+    }
+    prevVisitorCount.current = currentExpected.length;
+  }, [visitors]);
 
   useEffect(() => {
     return () => {
@@ -233,7 +278,7 @@ export const SecurityDashboard = () => {
         />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="bg-surface border border-border-dark rounded-xl overflow-hidden flex flex-col">
           <div className="px-6 py-5 border-b border-border-dark flex justify-between items-center">
             <h2 className="font-heading font-semibold text-sm text-white uppercase tracking-wider">Gate Scanner</h2>
@@ -286,7 +331,11 @@ export const SecurityDashboard = () => {
 
                 {!isInitializing && (
                   <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
-                    <div className={`w-48 h-48 border-2 rounded-lg transition-colors duration-500 ${isProcessing.current ? 'border-emerald shadow-[0_0_20px_rgba(16,185,129,0.4)]' : 'border-gold/50'}`}></div>
+                    <div className={`w-48 h-48 border-2 rounded-lg transition-colors duration-300 ${
+                      isDetecting ? 'border-emerald-400 shadow-[0_0_20px_rgba(16,185,129,0.6)]' :
+                      isProcessing.current ? 'border-yellow-400 shadow-[0_0_20px_rgba(234,179,8,0.4)]' :
+                      'border-yellow-400/40'
+                    }`}></div>
                   </div>
                 )}
 
@@ -444,6 +493,10 @@ export const SecurityDashboard = () => {
               </div>
             )}
           </div>
+        </div>
+
+        <div className="bg-surface border border-border-dark rounded-xl overflow-hidden" style={{ minHeight: '400px' }}>
+          <ExpectedArrivalsPanel />
         </div>
 
       </div>

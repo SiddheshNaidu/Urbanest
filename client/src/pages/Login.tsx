@@ -1,4 +1,4 @@
-import { useState, type MouseEvent } from 'react';
+import { useState, useEffect, type MouseEvent } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
 import { useStore, type Role } from '../store/useStore';
@@ -13,6 +13,12 @@ export const Login = () => {
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+
+  // Detect if device supports hover (i.e. NOT a touch-only device)
+  const [canHover, setCanHover] = useState(true);
+  useEffect(() => {
+    setCanHover(window.matchMedia('(hover: hover)').matches);
+  }, []);
 
   // 3D Tilt Effect
   const x = useMotionValue(0);
@@ -102,6 +108,17 @@ export const Login = () => {
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(11,11,11,0.8)_100%)]" />
       </div>
 
+      {/* Back to Home */}
+      <Link
+        to="/"
+        className="absolute top-6 left-6 z-20 flex items-center gap-2 text-sm font-medium text-muted hover:text-white transition-colors group"
+      >
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="group-hover:-translate-x-1 transition-transform">
+          <path d="M19 12H5M12 19l-7-7 7-7" />
+        </svg>
+        Back to Home
+      </Link>
+
       <div className="w-full max-w-md relative z-10 flex flex-col items-center">
         
         <div className="mb-8 text-center">
@@ -116,12 +133,12 @@ export const Login = () => {
         </div>
 
         <motion.div
-          onMouseMove={handleMouseMove}
-          onMouseLeave={handleMouseLeave}
+          onMouseMove={canHover ? handleMouseMove : undefined}
+          onMouseLeave={canHover ? handleMouseLeave : undefined}
           style={{
-            rotateX,
-            rotateY,
-            transformStyle: "preserve-3d",
+            rotateX: canHover ? rotateX : 0,
+            rotateY: canHover ? rotateY : 0,
+            transformStyle: canHover ? "preserve-3d" : undefined,
           }}
           className="w-full"
         >
