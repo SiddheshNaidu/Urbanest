@@ -68,7 +68,7 @@ export const Helpdesk = () => {
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div>
           <h1 className="text-3xl md:text-4xl font-heading font-extrabold text-white tracking-tight">
-            Helpdesk Kanban
+            Helpdesk
           </h1>
           <p className="text-muted mt-2 text-sm md:text-base">
             Drag and drop tickets across columns to update their resolution status in real-time.
