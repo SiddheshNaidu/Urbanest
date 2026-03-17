@@ -28,7 +28,7 @@ export function ShaderAnimation() {
       }
     `
 
-    // Fragment shader - Optimized: reduced loop iterations from 3x5 to 2x4
+    // Fragment shader - Optimized: reduced loop from 2x4 to 1x3
     const fragmentShader = `
       #define TWO_PI 6.2831853072
       #define PI 3.14159265359
@@ -40,21 +40,21 @@ export function ShaderAnimation() {
       void main(void) {
         vec2 uv = (gl_FragCoord.xy * 2.0 - resolution.xy) / min(resolution.x, resolution.y);
         float t = time * 0.1;
-        float lineWidth = 0.0025;
+        float lineWidth = 0.003;
 
         vec3 gold = vec3(0.918, 0.702, 0.031);
         vec3 amber = vec3(0.961, 0.620, 0.043);
 
         vec3 color = vec3(0.0);
-        for(int j = 0; j < 2; j++){
-          for(int i=0; i < 4; i++){
-            float intensity = lineWidth*float(i*i) / abs(fract(t - 0.01*float(j)+float(i)*0.01)*5.0 - length(uv) + mod(uv.x+uv.y, 0.2));
-            if (j == 0) color += gold * intensity;
-            else color += amber * intensity;
-          }
+        // Reduced from 2x4 to 1x3 loops — 62% fewer GPU iterations
+        for(int i = 0; i < 3; i++){
+          float fi = float(i);
+          float intensity = lineWidth * fi * fi / abs(
+            fract(t + fi * 0.015) * 5.0 - length(uv) + mod(uv.x + uv.y, 0.2)
+          );
+          color += mix(gold, amber, fi / 3.0) * intensity;
         }
         
-        // Add subtle vignette
         float vignette = 1.0 - length(uv * 0.5);
         gl_FragColor = vec4(color * vignette, 1.0);
       }
@@ -82,10 +82,9 @@ export function ShaderAnimation() {
     scene.add(mesh)
 
     const renderer = new THREE.WebGLRenderer({ 
-        antialias: false, // Disabled: fullscreen shader quads don't benefit from AA
+        antialias: false,
         alpha: true 
     })
-    // Cap pixel ratio to 1.5 for performance on high-DPR screens
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5))
 
     container.appendChild(renderer.domElement)
@@ -113,9 +112,20 @@ export function ShaderAnimation() {
     onWindowResize()
     window.addEventListener("resize", onWindowResize, false)
 
-    // Animation loop - only renders when visible
+    // Animation loop — throttled to 30fps
+    let lastFrameTime = 0
+
     const animate = () => {
       const animationId = requestAnimationFrame(animate)
+
+      // Throttle to 30fps — skip frames to halve GPU cost
+      const now = performance.now()
+      if (now - lastFrameTime < 33) {
+        if (sceneRef.current) sceneRef.current.animationId = animationId
+        return
+      }
+      lastFrameTime = now
+
       if (isVisible) {
         uniforms.time.value += 0.05
         renderer.render(scene, camera)
@@ -166,5 +176,45 @@ export function ShaderAnimation() {
         overflow: "hidden",
       }}
     />
+  )
+}
+
+// Pure CSS version of the gold ripple shader — for mid/low tier
+export function CSSShaderFallback() {
+  return (
+    <div className="w-full h-full relative overflow-hidden">
+      <div className="absolute inset-0 bg-[#0B0B0B]" />
+      {/* Animated gold rings — mimic the shader's concentric wave pattern */}
+      <div className="absolute inset-0 flex items-center justify-center">
+        {[0, 1, 2, 3].map((i) => (
+          <div
+            key={i}
+            className="absolute rounded-full border border-gold/10"
+            style={{
+              width: `${20 + i * 20}%`,
+              height: `${20 + i * 20}%`,
+              animation: `css-ring-pulse ${3 + i * 0.8}s ease-in-out ${i * 0.4}s infinite`,
+              borderColor: `rgba(234,179,8,${0.12 - i * 0.025})`,
+            }}
+          />
+        ))}
+      </div>
+      {/* Gold radial glow center */}
+      <div
+        className="absolute inset-0"
+        style={{
+          background: 'radial-gradient(ellipse at 50% 50%, rgba(234,179,8,0.12) 0%, rgba(245,158,11,0.05) 40%, transparent 70%)',
+          animation: 'css-hero-pulse 5s ease-in-out infinite',
+        }}
+      />
+      {/* Fine dot grid — adds texture depth without GPU */}
+      <div
+        className="absolute inset-0 opacity-[0.04]"
+        style={{
+          backgroundImage: 'radial-gradient(circle, rgba(234,179,8,0.8) 1px, transparent 1px)',
+          backgroundSize: '32px 32px',
+        }}
+      />
+    </div>
   )
 }

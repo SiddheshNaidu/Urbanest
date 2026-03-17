@@ -31,6 +31,7 @@ export const Sidebar = () => {
 
   const residentLinks = [
     { to: '/resident', icon: Home, label: 'My Dashboard' },
+    { to: '/notices', icon: Bell, label: 'Notice Board' },
     { to: '/amenities', icon: Dumbbell, label: 'Amenities' },
   ];
 

@@ -99,7 +99,7 @@ export const Notices = () => {
                 </div>
                 
                 <div className="prose prose-invert max-w-none">
-                  <p className="text-muted-2 leading-relaxed text-sm md:text-base">
+                  <p className="text-white/70 leading-relaxed text-sm md:text-base">
                     {notice.content}
                   </p>
                 </div>

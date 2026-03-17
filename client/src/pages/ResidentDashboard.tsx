@@ -1,16 +1,16 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { QRCodeCanvas } from 'qrcode.react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useStore, type Visitor } from '../store/useStore';
+import { useStore, type Visitor, type Notice } from '../store/useStore';
 import { 
   CloudSun, Clock as ClockIcon, QrCode, CreditCard, Dumbbell, HeadphonesIcon, 
-  ChevronRight, CalendarClock, ShieldCheck
+  ChevronRight, CalendarClock, ShieldCheck, BellRing
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 
 export const ResidentDashboard = () => {
-  const { currentUser, addVisitor, visitors, bookings } = useStore();
+  const { currentUser, addVisitor, visitors, bookings, notices } = useStore();
   const navigate = useNavigate();
   
   // Real-time clock
@@ -263,6 +263,38 @@ export const ResidentDashboard = () => {
                 <div className="text-sm text-muted">No facility sessions booked.</div>
               )}
             </div>
+          </div>
+
+          {/* Latest Notices Preview */}
+          <div className="bg-surface border border-border-dark rounded-3xl p-6">
+            <h3 className="text-sm font-bold text-muted uppercase tracking-wider mb-4 flex items-center gap-2">
+              <BellRing size={16} className="text-gold" /> Latest Notices
+            </h3>
+            <div className="space-y-4">
+              {notices.slice(0, 2).map((notice: Notice) => (
+                <div key={notice.id} className="pb-4 border-b border-white/5 last:border-0 last:pb-0">
+                  <div className="flex items-start gap-3">
+                    <div className={`p-1.5 rounded-lg flex-shrink-0 ${notice.isUrgent ? 'bg-crimson/10 text-crimson' : 'bg-surface-2 text-white/60'}`}>
+                      <BellRing size={14} />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-sm font-bold text-white truncate">{notice.title}</p>
+                      <p className="text-xs text-white/50 mt-0.5 line-clamp-2">{notice.content}</p>
+                      <p className="text-[10px] text-muted mt-1">{notice.date}</p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+              {notices.length === 0 && (
+                <p className="text-sm text-muted">No notices posted yet.</p>
+              )}
+            </div>
+            <button
+              onClick={() => navigate('/notices')}
+              className="w-full mt-4 py-2.5 text-xs font-bold text-gold uppercase tracking-wider bg-gold/5 hover:bg-gold/10 border border-gold/10 rounded-xl transition-all flex items-center justify-center gap-1.5"
+            >
+              View All Notices <ChevronRight size={14} />
+            </button>
           </div>
           
         </div>

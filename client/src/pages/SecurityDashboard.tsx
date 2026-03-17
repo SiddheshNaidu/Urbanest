@@ -4,7 +4,7 @@ import { DecodeHintType } from '@zxing/library';
 import { useStore, type Visitor } from '../store/useStore';
 import { KpiCard } from '../components/KpiCard';
 import { ExpectedArrivalsPanel } from '../components/ExpectedArrivalsPanel';
-import { CheckCircle2, XCircle, KeyboardIcon, Loader2, QrCode, Package } from 'lucide-react';
+import { CheckCircle2, XCircle, KeyboardIcon, Loader2, QrCode, Package, LogOut } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 export const SecurityDashboard = () => {
@@ -499,6 +499,55 @@ export const SecurityDashboard = () => {
           <ExpectedArrivalsPanel />
         </div>
 
+      </div>
+
+      {/* On-Campus Visitors — Checkout Panel */}
+      <div className="mt-8">
+        <h2 className="font-heading font-semibold text-sm text-white uppercase tracking-wider mb-4 flex items-center gap-2">
+          <LogOut size={16} className="text-gold" /> On-Campus Visitors — Checkout
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {visitors.filter(v => v.status === 'ON_CAMPUS').length === 0 ? (
+            <div className="col-span-full bg-surface border border-border-dark rounded-xl p-8 text-center">
+              <p className="text-muted text-sm">No visitors currently on campus.</p>
+            </div>
+          ) : (
+            visitors.filter(v => v.status === 'ON_CAMPUS').map((visitor) => (
+              <div key={visitor.id} className="bg-surface border border-border-dark rounded-xl p-5 flex flex-col gap-4 hover:bg-white/[0.02] transition-colors">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-full bg-emerald/10 border border-emerald/20 flex items-center justify-center text-emerald text-lg font-bold">
+                    {visitor.name.charAt(0)}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-white font-bold text-sm truncate">{visitor.name}</p>
+                    <div className="flex items-center gap-2 text-xs text-muted mt-0.5">
+                      <span className="text-gold font-mono font-bold">{visitor.flatId}</span>
+                      <span className="w-1 h-1 rounded-full bg-white/20" />
+                      <span className="uppercase">{visitor.purpose}</span>
+                    </div>
+                  </div>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2 text-xs">
+                    <span className="w-2 h-2 rounded-full bg-emerald animate-pulse" />
+                    <span className="text-emerald font-bold">IN</span>
+                    <span className="text-muted">since {visitor.entryTime || '—'}</span>
+                  </div>
+                  <button
+                    onClick={() => {
+                      const now = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+                      updateVisitor(visitor.id, { status: 'CHECKED_OUT', exitTime: now });
+                      toast.success(`${visitor.name} checked out at ${now}`);
+                    }}
+                    className="px-4 py-2 bg-crimson/10 hover:bg-crimson/20 border border-crimson/20 hover:border-crimson/40 text-crimson text-xs font-bold uppercase tracking-wider rounded-lg transition-all flex items-center gap-1.5"
+                  >
+                    <LogOut size={14} /> Check Out
+                  </button>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
       </div>
     </div>
   );

@@ -5,49 +5,91 @@ import { ShieldCheck, Zap, Building2, ChevronRight, Lock, HeadphonesIcon, Credit
 import HeroShaders from '../components/ui/hero-demo';
 import { BeamsBackground } from '../components/ui/beams-background';
 import { BackgroundPaths } from '../components/ui/background-paths';
+import { CSSShaderFallback } from '../components/ui/shader-animation';
+import { useDeviceCapability, type CapabilityTier } from '../hooks/useDeviceCapability';
 
-const FeatureCard = ({ icon: Icon, title, description }: { icon: LucideIcon, title: string, description: string }) => (
-  <motion.div
-    variants={{
-      hidden: { opacity: 0, y: 20 },
-      visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] } }
-    }}
-    className="bg-surface/50 backdrop-blur-sm border border-border-dark hover:border-gold/50 p-8 rounded-[2rem] transition-all group relative overflow-hidden h-full"
-  >
-    <div className="absolute inset-0 bg-gradient-to-br from-gold/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-    <div className="relative z-10">
-      <div className="w-14 h-14 rounded-2xl bg-surface-2 border border-border-dark flex items-center justify-center mb-6 group-hover:bg-gold/10 group-hover:border-gold/30 transition-colors duration-500">
-        <Icon className="text-gold" size={28} />
-      </div>
-      <h3 className="text-xl font-heading font-bold text-white mb-3 tracking-tight">{title}</h3>
-      <p className="text-muted text-base leading-relaxed">{description}</p>
-    </div>
-  </motion.div>
-);
+const FeatureCard = ({
+  icon: Icon,
+  title,
+  description,
+  tier,
+}: {
+  icon: LucideIcon;
+  title: string;
+  description: string;
+  tier: CapabilityTier;
+}) => {
+  const duration = tier === 'high' ? 0.6 : tier === 'mid' ? 0.4 : 0.15;
 
-const FlowStep = ({ number, title, description }: { number: string, title: string, description: string }) => (
-  <motion.div 
-    initial={{ opacity: 0, x: -10 }}
-    whileInView={{ opacity: 1, x: 0 }}
-    viewport={{ once: true, margin: "-10px" }}
-    transition={{ duration: 0.5, ease: "easeOut", delay: 0.05 }}
-    className="flex gap-6 relative"
-  >
-    <div className="flex flex-col items-center">
-      <div className="w-12 h-12 rounded-full border-2 border-gold bg-base flex items-center justify-center text-gold font-bold font-heading z-10">
-        {number}
+  return (
+    <motion.div
+      variants={{
+        hidden: { opacity: 0, y: tier === 'low' ? 0 : 16 },
+        visible: {
+          opacity: 1,
+          y: 0,
+          transition: { duration, ease: [0.16, 1, 0.3, 1] },
+        },
+      }}
+      className="bg-surface/50 backdrop-blur-sm border border-border-dark hover:border-gold/50 p-8 rounded-[2rem] transition-all group relative overflow-hidden h-full"
+    >
+      <div className="absolute inset-0 bg-gradient-to-br from-gold/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+      <div className="relative z-10">
+        <div className="w-14 h-14 rounded-2xl bg-surface-2 border border-border-dark flex items-center justify-center mb-6 group-hover:bg-gold/10 group-hover:border-gold/30 transition-colors duration-500">
+          <Icon className="text-gold" size={28} />
+        </div>
+        <h3 className="text-xl font-heading font-bold text-white mb-3 tracking-tight">{title}</h3>
+        <p className="text-muted text-base leading-relaxed">{description}</p>
       </div>
-      <div className="w-0.5 h-full bg-gradient-to-b from-gold/50 to-transparent mt-2 absolute top-12 bottom-0" />
-    </div>
-    <div className="pb-16 pt-2">
-      <h4 className="text-xl font-bold text-white mb-2">{title}</h4>
-      <p className="text-muted leading-relaxed max-w-md">{description}</p>
-    </div>
-  </motion.div>
-);
+    </motion.div>
+  );
+};
+
+const FlowStep = ({
+  number,
+  title,
+  description,
+  tier,
+}: {
+  number: string;
+  title: string;
+  description: string;
+  tier: CapabilityTier;
+}) => {
+  const duration = tier === 'high' ? 0.5 : tier === 'mid' ? 0.3 : 0.1;
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, x: tier === 'low' ? 0 : -10 }}
+      whileInView={{ opacity: 1, x: 0 }}
+      viewport={{ once: true, margin: "0px" }}
+      transition={{ duration, ease: "easeOut" }}
+      className="flex gap-6 relative"
+    >
+      <div className="flex flex-col items-center">
+        <div className="w-12 h-12 rounded-full border-2 border-gold bg-base flex items-center justify-center text-gold font-bold font-heading z-10">
+          {number}
+        </div>
+        <div className="w-0.5 h-full bg-gradient-to-b from-gold/50 to-transparent mt-2 absolute top-12 bottom-0" />
+      </div>
+      <div className="pb-16 pt-2">
+        <h4 className="text-xl font-bold text-white mb-2">{title}</h4>
+        <p className="text-muted leading-relaxed max-w-md">{description}</p>
+      </div>
+    </motion.div>
+  );
+};
 
 export const Landing = () => {
   const [isScrolled, setIsScrolled] = useState(false);
+  const { tier } = useDeviceCapability();
+
+  // Helper for tier-aware hero transition durations
+  const heroTransition = (baseDelay: number) => ({
+    duration: tier === 'high' ? 0.8 : tier === 'mid' ? 0.5 : 0.2,
+    delay: tier === 'low' ? 0 : baseDelay,
+    ease: [0.16, 1, 0.3, 1] as const,
+  });
 
   useEffect(() => {
     const handleScroll = () => {
@@ -95,7 +137,7 @@ export const Landing = () => {
           <motion.div 
             initial={{ opacity: 0, scale: 0.9, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+            transition={heroTransition(0)}
             className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/10 bg-white/5 backdrop-blur-md mb-8 shadow-2xl"
           >
             <span className="w-2 h-2 rounded-full bg-gold animate-pulse" />
@@ -105,7 +147,7 @@ export const Landing = () => {
           <motion.h1 
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+            transition={heroTransition(0.1)}
             className="text-6xl md:text-8xl lg:text-[7.5rem] font-heading font-extrabold text-white tracking-tighter leading-[1.05] mb-8"
           >
             Manage societies with <br />
@@ -115,7 +157,7 @@ export const Landing = () => {
           <motion.p 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+            transition={heroTransition(0.2)}
             className="text-lg md:text-xl text-muted max-w-2xl mx-auto mb-10 leading-relaxed font-medium"
           >
             Urbanest replaces chaos with clarity. Experience friction-less visitor routing, automated ledgers, and a premium portal designed exclusively for modern residential living.
@@ -124,7 +166,7 @@ export const Landing = () => {
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+            transition={heroTransition(0.3)}
             className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6"
           >
             <Link to="/signup" className="w-full sm:w-auto h-14 flex items-center justify-center gap-2 bg-gradient-to-r from-gold to-amber hover:from-amber hover:to-gold text-base font-extrabold px-10 rounded-2xl transition-all duration-300 hover:scale-[1.03] active:scale-95 shadow-[0_0_40px_rgba(234,179,8,0.2)]">
@@ -145,7 +187,7 @@ export const Landing = () => {
             initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-10px" }}
-            transition={{ duration: 0.8 }}
+            transition={{ duration: tier === 'high' ? 0.8 : tier === 'mid' ? 0.5 : 0.2 }}
             className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center"
           >
             <div>
@@ -214,39 +256,51 @@ export const Landing = () => {
               <h3 className="text-2xl font-bold text-white mb-8 flex items-center gap-3">
                 <Users className="text-gold" /> The Resident
               </h3>
-              <FlowStep number="1" title="Pre-approve Visitors" description="Generate a secure, one-time QR pass directly from the dashboard and share it via WhatsApp." />
-              <FlowStep number="2" title="Track Dues" description="Always know exactly what maintenance or ad-hoc fees are pending with the visual ledger." />
-              <FlowStep number="3" title="Raise Complaints" description="Log helpdesk tickets with categorized severity and track live resolution status." />
+              <FlowStep tier={tier} number="1" title="Pre-approve Visitors" description="Generate a secure, one-time QR pass directly from the dashboard and share it via WhatsApp." />
+              <FlowStep tier={tier} number="2" title="Track Dues" description="Always know exactly what maintenance or ad-hoc fees are pending with the visual ledger." />
+              <FlowStep tier={tier} number="3" title="Raise Complaints" description="Log helpdesk tickets with categorized severity and track live resolution status." />
             </div>
             
             <div className="pt-12 md:pt-0">
               <h3 className="text-2xl font-bold text-white mb-8 flex items-center gap-3">
                 <ShieldCheck className="text-emerald" /> The Security
               </h3>
-              <FlowStep number="1" title="Scan QR Pass" description="Use the built-in HTML5 camera scanner to instantly validate visitor QR codes at the gate." />
-              <FlowStep number="2" title="Instant Logging" description="Entry is recorded automatically. The resident is notified without making a single phone call." />
-              <FlowStep number="3" title="Strict Isolation" description="Security personnel only see the visitor log. Financial and personal data is strictly isolated." />
+              <FlowStep tier={tier} number="1" title="Scan QR Pass" description="Use the built-in HTML5 camera scanner to instantly validate visitor QR codes at the gate." />
+              <FlowStep tier={tier} number="2" title="Instant Logging" description="Entry is recorded automatically. The resident is notified without making a single phone call." />
+              <FlowStep tier={tier} number="3" title="Strict Isolation" description="Security personnel only see the visitor log. Financial and personal data is strictly isolated." />
             </div>
 
             <div className="pt-12 md:pt-0">
               <h3 className="text-2xl font-bold text-white mb-8 flex items-center gap-3">
                 <Building2 className="text-amber" /> The Admin
               </h3>
-              <FlowStep number="1" title="Bird's Eye View" description="Monitor real-time KPIs covering financials, active visitors, and urgent helpdesk tickets." />
-              <FlowStep number="2" title="Manage Ledger" description="Generate invoices, record payments, and track defaulters across all residential blocks." />
-              <FlowStep number="3" title="Broadcast Notices" description="Push urgent updates or AGM meeting links to all resident dashboards simultaneously." />
+              <FlowStep tier={tier} number="1" title="Bird's Eye View" description="Monitor real-time KPIs covering financials, active visitors, and urgent helpdesk tickets." />
+              <FlowStep tier={tier} number="2" title="Manage Ledger" description="Generate invoices, record payments, and track defaulters across all residential blocks." />
+              <FlowStep tier={tier} number="3" title="Broadcast Notices" description="Push urgent updates or AGM meeting links to all resident dashboards simultaneously." />
             </div>
           </div>
         </div>
       </section>
 
-      {/* Features Grid - Enterprise Infrastructure — CSS-only background (no ShaderAnimation) */}
+      {/* Features Grid - Enterprise Infrastructure — Tier-aware background */}
       <section className="relative min-h-screen py-32 px-6 z-20 overflow-hidden">
         <div className="absolute inset-0 z-0">
-          <div className="absolute inset-0 bg-base" />
-          <div className="absolute inset-0 bg-gradient-to-br from-gold/8 via-transparent to-amber/5" />
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gold/5 rounded-full blur-[120px]" />
-          <div className="absolute inset-0 bg-gradient-to-b from-base via-transparent to-base" />
+          {tier === 'mid' ? (
+            // Animated CSS rings — mid-tier
+            <>
+              <CSSShaderFallback />
+              <div className="absolute inset-0 bg-base/70" />
+              <div className="absolute inset-0 bg-gradient-to-b from-base via-transparent to-base" />
+            </>
+          ) : (
+            // Static gradient — low-tier and high-tier both use CSS here (ShaderAnimation removed)
+            <>
+              <div className="absolute inset-0 bg-base" />
+              <div className="absolute inset-0 bg-gradient-to-br from-gold/8 via-transparent to-amber/5" />
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gold/5 rounded-full blur-[120px]" />
+              <div className="absolute inset-0 bg-gradient-to-b from-base via-transparent to-base" />
+            </>
+          )}
         </div>
 
         <div className="max-w-6xl mx-auto relative z-10">
@@ -259,38 +313,48 @@ export const Landing = () => {
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, margin: "-10px" }}
+            viewport={{ once: true, margin: "0px" }}
             variants={{
               hidden: {},
-              visible: { transition: { staggerChildren: 0.08 } }
+              visible: {
+                transition: {
+                  staggerChildren: tier === 'low' ? 0.03 : tier === 'mid' ? 0.06 : 0.09
+                }
+              }
             }}
           >
             <FeatureCard 
+              tier={tier}
               icon={QrCode} 
               title="HTML5 QR Scanning" 
               description="Zero-friction visitor entry. Launch the native camera directly from the web app to validate encrypted guest passes in milliseconds."
             />
             <FeatureCard 
+              tier={tier}
               icon={CreditCard} 
               title="Automated Financials" 
               description="Generate block-wise invoices, track arrears, and maintain a crystal-clear digital ledger accessible by both management and flat owners."
             />
             <FeatureCard 
+              tier={tier}
               icon={HeadphonesIcon} 
               title="Centralized Helpdesk" 
               description="SLA-driven complaint tracking. Route structural or electrical issues instantly to maintenance teams with rich priority tagging."
             />
             <FeatureCard 
+              tier={tier}
               icon={Lock} 
               title="Strict RBAC Matrix" 
               description="Granular permission matrices mathematically isolate Admin, Security, and Resident views to guarantee data privacy."
             />
             <FeatureCard 
+              tier={tier}
               icon={FileText} 
               title="Notice Board Broadcast" 
               description="Publish rich-text notices. Eliminate scattered circulars and ensure critical information reaches the centralized resident feed."
             />
             <FeatureCard 
+              tier={tier}
               icon={Zap} 
               title="Zustand State Engine" 
               description="Experience zero-latency updates. An action taken at the security gate immediately paints onto the admin's live overview."
@@ -299,9 +363,9 @@ export const Landing = () => {
         </div>
       </section>
 
-      {/* CTA Section */}
+      {/* CTA Section — tier-aware beams */}
       <section className="relative z-20 overflow-hidden border-t border-white/5">
-        <BeamsBackground intensity="medium">
+        <BeamsBackground intensity="medium" tier={tier}>
           <div className="max-w-4xl mx-auto text-center relative z-10 py-32 px-6">
             <h2 className="text-5xl md:text-7xl font-heading font-bold text-white mb-8 tracking-tight">Upgrade your society today.</h2>
             <p className="text-2xl text-muted mb-12 font-light">Join the vanguard of modern residential management.</p>
