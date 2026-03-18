@@ -98,8 +98,8 @@ export const Notices = () => {
                   </div>
                 </div>
                 
-                <div className="prose prose-invert max-w-none">
-                  <p className="text-muted-2 leading-relaxed text-sm md:text-base">
+                <div className="mt-4">
+                  <p className="leading-relaxed text-sm md:text-base" style={{ color: "rgba(255,255,255,0.85)" }}>
                     {notice.content}
                   </p>
                 </div>

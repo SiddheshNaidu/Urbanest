@@ -25,6 +25,40 @@ export const Visitors = () => {
   const totalOnCampus = visitors.filter(v => v.status === 'ON_CAMPUS').length;
   const totalDaily = visitors.length; // Mock daily total
 
+  const handleExportCSV = () => {
+    if (visitors.length === 0) {
+      toast.error('No visitor data to export.');
+      return;
+    }
+
+    const headers = ['ID', 'Name', 'Flat ID', 'Purpose', 'Status', 'Entry Time', 'Exit Time', 'Added By'];
+    const csvContent = [
+      headers.join(','),
+      ...visitors.map(v => [
+        v.id,
+        `"${v.name}"`,
+        `"${v.flatId}"`,
+        v.purpose,
+        v.status,
+        v.entryTime || '',
+        v.exitTime || '',
+        `"${v.addedBy || ''}"`
+      ].join(','))
+    ].join('\\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.setAttribute('href', url);
+    link.setAttribute('download', `visitor-log-${new Date().toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+    
+    toast.success('Visitor log exported securely as CSV.');
+  };
+
   const getPurposeIcon = (purpose: string) => {
     switch (purpose) {
       case 'DELIVERY': return <Package size={16} className="text-amber" />;
@@ -113,7 +147,7 @@ export const Visitors = () => {
             <Plus size={18} /> Pre-Approve
           </button>
           <button 
-            onClick={() => toast.success('CSV Export downloaded.')}
+            onClick={handleExportCSV}
             className="bg-gradient-to-r from-gold to-amber hover:from-amber hover:to-gold text-black font-bold py-3 px-6 rounded-xl shadow-[0_0_15px_rgba(234,179,8,0.2)] flex items-center justify-center gap-2 transition-all transform hover:scale-[1.02]"
           >
             <Download size={18} /> Export Log

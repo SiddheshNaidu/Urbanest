@@ -5,53 +5,60 @@ import {
   ArrowUpRight, Download, Receipt, Wallet, Activity, CheckCircle2, AlertCircle, RefreshCw, X, QrCode, CreditCard, Smartphone 
 } from 'lucide-react';
 import toast from 'react-hot-toast';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
-// ── Helper: Generate and download a bill as a text file ──────────────────────
-function downloadBill(transaction: { id: string; title: string; amount: string; date: string; status: string; flat?: string; type?: string }) {
+// ── Helper: Generate and download a bill as a PDF ──────────────────────
+function downloadBill(transaction: { id: string; title?: string; amount: string; date: string; status: string; flat?: string; type?: string }) {
+  const doc = new jsPDF();
   const flatId = transaction.flat || 'A-101';
-  const billContent = [
-    '═══════════════════════════════════════════',
-    '              URBANEST SOCIETY              ',
-    '           OFFICIAL INVOICE / RECEIPT       ',
-    '═══════════════════════════════════════════',
-    '',
-    `  Invoice No    : ${transaction.id}`,
-    `  Date          : ${transaction.date}`,
-    `  Flat No       : ${flatId}`,
-    '',
-    '───────────────────────────────────────────',
-    '  DESCRIPTION                     AMOUNT   ',
-    '───────────────────────────────────────────',
-    `  ${transaction.title.padEnd(32)} ₹${transaction.amount}`,
-    '───────────────────────────────────────────',
-    `  TOTAL                           ₹${transaction.amount}`,
-    '───────────────────────────────────────────',
-    '',
-    `  Status        : ${transaction.status}`,
-    `  Payment Mode  : UPI / Online`,
-    '',
-    '───────────────────────────────────────────',
-    '  Urbanest Society Management Committee',
-    '  Tower A, Urbanest Residences',
-    '  Mumbai, Maharashtra 400001',
-    '  Email: accounts@urbanest.in',
-    '───────────────────────────────────────────',
-    '',
-    '  This is a computer-generated document.',
-    '  No signature required.',
-    '═══════════════════════════════════════════',
-  ].join('\n');
+  
+  // Header
+  doc.setFontSize(22);
+  doc.setTextColor(234, 179, 8); // Gold color
+  doc.text('URBANEST SOCIETY', 105, 20, { align: 'center' });
+  
+  doc.setFontSize(12);
+  doc.setTextColor(100, 100, 100);
+  doc.text('OFFICIAL INVOICE / RECEIPT', 105, 30, { align: 'center' });
+  
+  // Details
+  doc.setFontSize(11);
+  doc.setTextColor(0, 0, 0);
+  doc.text(`Invoice No: ${transaction.id}`, 20, 50);
+  doc.text(`Date: ${transaction.date}`, 20, 60);
+  doc.text(`Flat No: ${flatId}`, 20, 70);
+  doc.text(`Status: ${transaction.status}`, 140, 50);
+  doc.text(`Payment Mode: UPI / Online`, 140, 60);
 
-  const blob = new Blob([billContent], { type: 'text/plain;charset=utf-8' });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement('a');
-  link.href = url;
-  link.download = `Urbanest_${transaction.id}_${transaction.date.replace(/ /g, '_')}.txt`;
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-  URL.revokeObjectURL(url);
-  toast.success(`Bill ${transaction.id} downloaded`);
+  const description = transaction.title || transaction.type || 'Maintenance Dues';
+
+  // Table
+  autoTable(doc, {
+    startY: 85,
+    head: [['Description', 'Amount']],
+    body: [
+      [description, 'Rs. ' + transaction.amount],
+    ],
+    foot: [['TOTAL', 'Rs. ' + transaction.amount]],
+    theme: 'grid',
+    headStyles: { fillColor: [234, 179, 8] },
+    footStyles: { fillColor: [30, 30, 30] }
+  });
+
+  // Footer
+  const finalY = (doc as any).lastAutoTable.finalY || 120;
+  doc.setFontSize(10);
+  doc.setTextColor(150, 150, 150);
+  doc.text('Urbanest Society Management Committee', 20, finalY + 30);
+  doc.text('Tower A, Urbanest Residences, Mumbai 400001', 20, finalY + 36);
+  doc.text('Email: accounts@urbanest.in', 20, finalY + 42);
+  
+  doc.setFontSize(9);
+  doc.text('This is a computer-generated document. No signature required.', 105, finalY + 60, { align: 'center' });
+
+  doc.save(`Urbanest_Receipt_${transaction.id}.pdf`);
+  toast.success(`Receipt ${transaction.id} downloaded as PDF`);
 }
 
 // ── Payment Modal Component ──────────────────────────────────────────────────
@@ -333,6 +340,15 @@ export const Financials = () => {
   const [genMonth, setGenMonth] = useState('');
   const [genAmount, setGenAmount] = useState('4500');
 
+  // Sorted data logic
+  const parseDate = (dateStr: string) => {
+    const timestamp = Date.parse(dateStr);
+    return isNaN(timestamp) ? 0 : timestamp;
+  };
+
+  const sortedTransactions = [...transactions].sort((a, b) => parseDate(b.date) - parseDate(a.date));
+  const sortedAdminInvoices = [...adminInvoices].sort((a, b) => parseDate(b.date) - parseDate(a.date));
+
   return (
     <div className="max-w-[1200px] mx-auto space-y-12">
       {/* Payment Modal */}
@@ -446,7 +462,7 @@ export const Financials = () => {
             <h2 className="text-2xl font-bold text-white mb-6">Recent Transactions</h2>
             <div className="bg-surface border border-border-dark rounded-[2rem] overflow-hidden">
               <div className="divide-y divide-border-dark/50">
-                {adminInvoices.map((inv) => (
+                {sortedAdminInvoices.map((inv) => (
                   <div key={inv.id} className="p-6 flex flex-col sm:flex-row sm:items-center justify-between hover:bg-white/[0.02] transition-colors gap-4">
                     <div className="flex items-center gap-6">
                       <div className="hidden sm:flex w-12 h-12 rounded-2xl bg-surface-2 border border-white/5 items-center justify-center text-muted">
@@ -555,7 +571,7 @@ export const Financials = () => {
             <h2 className="text-2xl font-bold text-white mb-6">Payment History</h2>
             
             <div className="space-y-4">
-              {transactions.map((txn: Transaction) => (
+              {sortedTransactions.map((txn: Transaction) => (
                 <div key={txn.id} className="bg-surface border border-border-dark rounded-3xl p-5 flex flex-col sm:flex-row sm:items-center justify-between hover:bg-white/[0.02] transition-colors gap-4">
                   <div className="flex items-center gap-5">
                     <div className={`w-14 h-14 rounded-2xl flex items-center justify-center border shadow-inner ${

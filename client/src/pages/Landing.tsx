@@ -2,9 +2,12 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { ShieldCheck, Zap, Building2, ChevronRight, Lock, HeadphonesIcon, CreditCard, Users, QrCode, FileText, type LucideIcon } from 'lucide-react';
+import { AnimatePresence } from 'framer-motion';
+import { LoadingScreen } from '../components/ui/loading-screen';
+import { AuroraFlow } from '../components/ui/aurora-flow';
+import { EtheralShadow } from '../components/ui/etheral-shadow';
 import HeroShaders from '../components/ui/hero-demo';
 import { BeamsBackground } from '../components/ui/beams-background';
-import { BackgroundPaths } from '../components/ui/background-paths';
 
 const FeatureCard = ({ icon: Icon, title, description }: { icon: LucideIcon, title: string, description: string }) => (
   <motion.div
@@ -48,6 +51,7 @@ const FlowStep = ({ number, title, description }: { number: string, title: strin
 
 export const Landing = () => {
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -58,7 +62,10 @@ export const Landing = () => {
   }, []);
 
   return (
-    <div className="bg-base min-h-screen selection:bg-gold selection:text-base overflow-x-hidden relative">
+    <div className={`bg-base min-h-screen selection:bg-gold selection:text-base overflow-x-hidden relative ${isLoading ? 'h-screen overflow-hidden' : ''}`}>
+      <AnimatePresence>
+        {isLoading && <LoadingScreen onComplete={() => setIsLoading(false)} />}
+      </AnimatePresence>
       
       {/* Navbar */}
       <nav className={`fixed top-0 left-0 right-0 z-50 px-6 py-4 flex items-center justify-between transition-all duration-300 ${
@@ -138,9 +145,18 @@ export const Landing = () => {
         
       </section>
 
-      {/* Problem / Solution Overview - BackgroundPaths section */}
-      <BackgroundPaths className="py-32 px-6 relative z-20" id="overview">
-        <div className="max-w-6xl mx-auto relative z-10">
+      {/* Problem / Solution Overview - Etheral Shadow section */}
+      <section className="relative py-32 px-6 z-20 bg-base overflow-hidden" id="overview">
+        <EtheralShadow 
+          color="rgba(245, 158, 11, 0.25)" 
+          sizing="stretch" 
+          animation={{ scale: 100, speed: 90 }}
+          noise={{ opacity: 0.5, scale: 1.2 }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#0B0B0B] via-transparent to-[#0B0B0B] pointer-events-none opacity-60" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#0B0B0B]/50 via-transparent to-[#0B0B0B]/50 pointer-events-none z-0" />
+        
+        <div className="max-w-6xl mx-auto relative z-10 pointer-events-none">
           <motion.div 
             initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -196,7 +212,7 @@ export const Landing = () => {
             </div>
           </motion.div>
         </div>
-      </BackgroundPaths>
+      </section>
 
       {/* How It Works - The Workflows */}
       <section className="py-32 px-6 relative z-20 bg-base overflow-hidden">
@@ -240,13 +256,13 @@ export const Landing = () => {
         </div>
       </section>
 
-      {/* Features Grid - Enterprise Infrastructure — CSS-only background (no ShaderAnimation) */}
+      {/* Features Grid - Enterprise Infrastructure */}
       <section className="relative min-h-screen py-32 px-6 z-20 overflow-hidden">
         <div className="absolute inset-0 z-0">
           <div className="absolute inset-0 bg-base" />
-          <div className="absolute inset-0 bg-gradient-to-br from-gold/8 via-transparent to-amber/5" />
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gold/5 rounded-full blur-[120px]" />
-          <div className="absolute inset-0 bg-gradient-to-b from-base via-transparent to-base" />
+          <AuroraFlow />
+          <div className="absolute inset-0 bg-gradient-to-br from-gold/10 via-transparent to-amber/5 pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-b from-base via-transparent to-base pointer-events-none" />
         </div>
 
         <div className="max-w-6xl mx-auto relative z-10">

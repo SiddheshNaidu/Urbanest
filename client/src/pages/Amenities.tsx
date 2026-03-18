@@ -268,12 +268,27 @@ export const Amenities = () => {
                     className="w-full bg-base border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-gold transition-colors appearance-none"
                   >
                     <option value="" disabled>Select a block</option>
-                    <option value="06:00 AM - 07:00 AM">06:00 AM - 07:00 AM</option>
-                    <option value="07:00 AM - 08:00 AM">07:00 AM - 08:00 AM</option>
-                    <option value="08:00 AM - 09:00 AM">08:00 AM - 09:00 AM</option>
-                    <option value="17:00 PM - 18:00 PM">17:00 PM - 18:00 PM</option>
-                    <option value="18:00 PM - 19:00 PM">18:00 PM - 19:00 PM</option>
-                    <option value="19:00 PM - 20:00 PM">19:00 PM - 20:00 PM</option>
+                    {[
+                      "06:00 AM - 07:00 AM",
+                      "07:00 AM - 08:00 AM",
+                      "08:00 AM - 09:00 AM",
+                      "17:00 PM - 18:00 PM",
+                      "18:00 PM - 19:00 PM",
+                      "19:00 PM - 20:00 PM"
+                    ].map(slot => {
+                      const isBooked = bookingDate && selectedAmenity ? bookings.some(b => 
+                        b.amenityId === selectedAmenity.id && 
+                        b.date === bookingDate && 
+                        b.timeSlot === slot &&
+                        b.status === 'CONFIRMED'
+                      ) : false;
+
+                      return (
+                        <option key={slot} value={slot} disabled={isBooked}>
+                          {slot} {isBooked ? '(Unavailable)' : ''}
+                        </option>
+                      );
+                    })}
                   </select>
                 </div>
                 

@@ -1,14 +1,44 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
+import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
 import { useStore } from '../store/useStore';
 import { ArrowUpRight, Settings, Users, AlertCircle } from 'lucide-react';
 import { AddResidentModal } from '../components/AddResidentModal';
 import toast from 'react-hot-toast';
 
 export const AdminDashboard = () => {
-  const { visitors } = useStore();
+  const { visitors, adminInvoices } = useStore();
   const activeVisitors = visitors.filter(v => v.status === 'ON_CAMPUS').length;
   const [showAddResident, setShowAddResident] = useState(false);
+  const [timeRange, setTimeRange] = useState<'6m' | '1y'>('6m');
+
+  const chartData = useMemo(() => {
+    // Generate an array of the last 12 months anchored to today
+    const months = [];
+    const now = new Date();
+    for (let i = 11; i >= 0; i--) {
+      const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      months.push({
+         month: d.toLocaleString('default', { month: 'short' }),
+         fullDate: d,
+         revenue: Math.floor(Math.random() * 20000) + 30000 // Base historical dummy revenue ~30k-50k
+      });
+    }
+
+    // Merge in real data from store transactions/invoices
+    adminInvoices.forEach(inv => {
+      if (inv.status === 'Paid') {
+        const d = new Date(inv.date);
+        const mName = d.toLocaleString('default', { month: 'short' });
+        const target = months.find(m => m.month === mName && m.fullDate.getFullYear() === d.getFullYear());
+        if (target) {
+          target.revenue += parseInt(inv.amount.replace(/,/g, '')) || 0;
+        }
+      }
+    });
+
+    return timeRange === '6m' ? months.slice(6) : months;
+  }, [timeRange, adminInvoices]);
 
   return (
     <div className="max-w-[1400px] mx-auto space-y-8">
@@ -81,43 +111,56 @@ export const AdminDashboard = () => {
           <div className="bg-surface border border-border-dark rounded-[2rem] p-8">
             <div className="flex items-center justify-between mb-8">
               <h2 className="text-xl font-heading font-bold text-white">Financial Trend</h2>
-              <select className="bg-surface-2 border border-border-dark text-muted-2 text-xs font-bold px-3 py-1.5 rounded-lg focus:outline-none">
-                <option>Last 6 Months</option>
-                <option>This Year</option>
+              <select 
+                value={timeRange}
+                onChange={(e) => setTimeRange(e.target.value as '6m' | '1y')}
+                className="bg-surface-2 border border-border-dark text-muted-2 text-xs font-bold px-3 py-1.5 rounded-lg focus:outline-none transition-colors hover:text-white"
+              >
+                <option value="6m">Last 6 Months</option>
+                <option value="1y">This Year</option>
               </select>
             </div>
             
-            {/* Minimal SVG Sparkline Chart */}
-            <div className="h-48 w-full border-b border-border-dark/50 relative flex items-end">
-              <svg className="w-full h-full" viewBox="0 0 800 200" preserveAspectRatio="none">
-                <defs>
-                  <linearGradient id="gradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                    <stop offset="0%" stopColor="#10B981" stopOpacity="0.2" />
-                    <stop offset="100%" stopColor="#10B981" stopOpacity="0" />
-                  </linearGradient>
-                </defs>
-                <path 
-                  d="M0,150 C100,140 200,80 300,100 C400,120 500,40 600,60 C700,80 800,20 800,20 L800,200 L0,200 Z" 
-                  fill="url(#gradient)" 
-                />
-                <path 
-                  d="M0,150 C100,140 200,80 300,100 C400,120 500,40 600,60 C700,80 800,20 800,20" 
-                  fill="none" 
-                  stroke="#10B981" 
-                  strokeWidth="4" 
-                  strokeLinecap="round" 
-                  strokeLinejoin="round" 
-                />
-              </svg>
-              {/* Fake X-axis labels */}
-              <div className="absolute bottom-[-30px] left-0 w-full flex justify-between text-[10px] uppercase font-bold text-muted-2 px-2">
-                <span>Oct</span>
-                <span>Nov</span>
-                <span>Dec</span>
-                <span>Jan</span>
-                <span>Feb</span>
-                <span>Mar</span>
-              </div>
+            <div className="h-64 w-full mt-4">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={chartData} margin={{ top: 10, right: 0, left: -20, bottom: 0 }}>
+                  <defs>
+                    <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#10B981" stopOpacity={0.3}/>
+                      <stop offset="95%" stopColor="#10B981" stopOpacity={0}/>
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#27272A" vertical={false} />
+                  <XAxis 
+                    dataKey="month" 
+                    axisLine={false} 
+                    tickLine={false} 
+                    tick={{ fill: '#71717A', fontSize: 10, fontWeight: 'bold' }} 
+                    dy={10}
+                  />
+                  <YAxis 
+                    axisLine={false} 
+                    tickLine={false} 
+                    tick={{ fill: '#71717A', fontSize: 10, fontWeight: 'bold' }}
+                    tickFormatter={(value) => `₹${(value/1000).toFixed(0)}k`}
+                  />
+                  <Tooltip 
+                    contentStyle={{ backgroundColor: '#18181B', borderColor: '#27272A', borderRadius: '12px', color: '#fff', boxShadow: '0 10px 30px -10px rgba(16, 185, 129, 0.2)' }}
+                    itemStyle={{ color: '#10B981', fontWeight: 'bold' }}
+                    formatter={(value: number) => [`₹${value.toLocaleString('en-IN')}`, 'Revenue']}
+                  />
+                  <Area 
+                    type="monotone" 
+                    dataKey="revenue" 
+                    stroke="#10B981" 
+                    strokeWidth={3}
+                    fillOpacity={1} 
+                    fill="url(#colorRevenue)" 
+                    animationDuration={1500}
+                    activeDot={{ r: 6, fill: '#10B981', stroke: '#18181B', strokeWidth: 3 }}
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
             </div>
           </div>
 

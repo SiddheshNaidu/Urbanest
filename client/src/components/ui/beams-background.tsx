@@ -184,16 +184,12 @@ export function BeamsBackground({
         >
             <canvas
                 ref={canvasRef}
-                className="absolute inset-0"
-                style={{ filter: "blur(50px)" }}
+                className="absolute inset-0 blur-[20px] md:blur-[50px]"
             />
 
             {/* Replaced framer-motion with CSS animation for GPU compositing */}
             <div
-                className="absolute inset-0 bg-base/10 animate-beams-overlay"
-                style={{
-                    backdropFilter: "blur(50px)",
-                }}
+                className="absolute inset-0 bg-base/5 md:bg-base/10 animate-beams-overlay backdrop-blur-none md:backdrop-blur-[50px]"
             />
 
             <div className="relative z-10 w-full h-full">

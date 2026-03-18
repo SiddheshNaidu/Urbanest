@@ -1,4 +1,4 @@
-import { useState, useEffect, type MouseEvent } from 'react';
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
 import { useStore, type Role } from '../store/useStore';
@@ -19,12 +19,6 @@ export const Signup = () => {
   const [flatId, setFlatId] = useState('');
   const [error, setError] = useState('');
 
-  // Detect if device supports hover (i.e. NOT a touch-only device)
-  const [canHover, setCanHover] = useState(true);
-  useEffect(() => {
-    setCanHover(window.matchMedia('(hover: hover)').matches);
-  }, []);
-
   // 3D Tilt Effect
   const x = useMotionValue(0);
   const y = useMotionValue(0);
@@ -35,7 +29,7 @@ export const Signup = () => {
   const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], ["6deg", "-6deg"]);
   const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], ["-6deg", "6deg"]);
 
-  const handleMouseMove = (e: MouseEvent<HTMLDivElement>) => {
+  const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
     const width = rect.width;
     const height = rect.height;
@@ -47,7 +41,7 @@ export const Signup = () => {
     y.set(yPct);
   };
 
-  const handleMouseLeave = () => {
+  const handlePointerLeave = () => {
     x.set(0);
     y.set(0);
   };
@@ -129,12 +123,12 @@ export const Signup = () => {
         </div>
 
         <motion.div
-          onMouseMove={canHover ? handleMouseMove : undefined}
-          onMouseLeave={canHover ? handleMouseLeave : undefined}
+          onPointerMove={handlePointerMove}
+          onPointerLeave={handlePointerLeave}
           style={{
-            rotateX: canHover ? rotateX : 0,
-            rotateY: canHover ? rotateY : 0,
-            transformStyle: canHover ? "preserve-3d" : undefined,
+            rotateX,
+            rotateY,
+            transformStyle: "preserve-3d",
           }}
           className="w-full mb-12"
         >
