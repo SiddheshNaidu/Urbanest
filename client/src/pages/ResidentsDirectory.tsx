@@ -5,7 +5,7 @@ import { AddResidentModal } from '../components/AddResidentModal';
 
 const MOCK_RESIDENTS = [
   { id: '1', name: 'Ramesh Sharma', flat: 'A-101', status: 'Active', moveInDate: '12 Jan 2023', type: 'Owner' },
-  { id: '2', name: 'Suresh Kumar', flat: 'C-205', status: 'Active', moveInDate: '05 Mar 2024', type: 'Tenant' },
+  { id: '2', name: 'Suresh Kumar', flat: 'C-205', status: 'Active', moveInDate: '05 Mar 2026', type: 'Tenant' },
   { id: '3', name: 'Priya Singh', flat: 'B-302', status: 'On Notice', moveInDate: '22 Aug 2022', type: 'Tenant' },
   { id: '4', name: 'Amit Patel', flat: 'D-404', status: 'Active', moveInDate: '15 Nov 2021', type: 'Owner' },
   { id: '5', name: 'Nisha Gupta', flat: 'A-505', status: 'Inactive', moveInDate: '10 Feb 2020', type: 'Owner' },

@@ -147,8 +147,8 @@ const MOCK_AMENITIES: Amenity[] = [
 ];
 
 const MOCK_BOOKINGS: Booking[] = [
-  { id: 'b1', amenityId: 'a2', residentName: 'Arthur Pendragon', flatId: '402', date: '2024-11-20', timeSlot: '08:00 AM - 09:00 AM', status: 'CONFIRMED' },
-  { id: 'b2', amenityId: 'a1', residentName: 'Julian Vane', flatId: 'NORTH-402', date: '2024-11-21', timeSlot: '06:00 AM - 07:00 AM', status: 'CONFIRMED' },
+  { id: 'b1', amenityId: 'a2', residentName: 'Arthur Pendragon', flatId: '402', date: '2026-11-20', timeSlot: '08:00 AM - 09:00 AM', status: 'CONFIRMED' },
+  { id: 'b2', amenityId: 'a1', residentName: 'Julian Vane', flatId: 'NORTH-402', date: '2026-11-21', timeSlot: '06:00 AM - 07:00 AM', status: 'CONFIRMED' },
 ];
 
 const SEED_USERS: RegisteredUser[] = [
@@ -158,25 +158,25 @@ const SEED_USERS: RegisteredUser[] = [
 ];
 
 const SEED_TRANSACTIONS: Transaction[] = [
-  { id: 'TXN-9091', title: 'Maintenance Q1', amount: '4,500.00', status: 'OVERDUE', date: '01 Mar 2024', type: 'debit' },
-  { id: 'TXN-9092', title: 'Clubhouse Booking', amount: '1,200.00', status: 'PAID', date: '12 Feb 2024', type: 'credit' },
-  { id: 'TXN-9093', title: 'Maintenance Q4', amount: '4,500.00', status: 'PAID', date: '01 Dec 2023', type: 'credit' },
-  { id: 'TXN-9094', title: 'Plumbing Service', amount: '350.00', status: 'PAID', date: '15 Nov 2023', type: 'credit' },
+  { id: 'TXN-9091', title: 'Maintenance Q1', amount: '4,500.00', status: 'OVERDUE', date: '01 Mar 2026', type: 'debit' },
+  { id: 'TXN-9092', title: 'Clubhouse Booking', amount: '1,200.00', status: 'PAID', date: '12 Feb 2026', type: 'credit' },
+  { id: 'TXN-9093', title: 'Maintenance Q4', amount: '4,500.00', status: 'PAID', date: '01 Dec 2025', type: 'credit' },
+  { id: 'TXN-9094', title: 'Plumbing Service', amount: '350.00', status: 'PAID', date: '15 Nov 2025', type: 'credit' },
 ];
 
 const SEED_ADMIN_INVOICES: AdminInvoice[] = [
-  { id: 'INV-1001', flat: 'A-101', type: 'Maintenance Q1', amount: '4,500', status: 'Paid', date: '01 Mar 2024' },
-  { id: 'INV-1002', flat: 'B-302', type: 'Maintenance Q1', amount: '4,500', status: 'Overdue', date: '01 Mar 2024' },
-  { id: 'INV-1003', flat: 'C-205', type: 'Clubhouse Booking', amount: '1,200', status: 'Pending', date: '12 Mar 2024' },
-  { id: 'INV-1004', flat: 'D-404', type: 'Maintenance Q1', amount: '4,500', status: 'Paid', date: '05 Mar 2024' },
+  { id: 'INV-1001', flat: 'A-101', type: 'Maintenance Q1', amount: '4,500', status: 'Paid', date: '01 Mar 2026' },
+  { id: 'INV-1002', flat: 'B-302', type: 'Maintenance Q1', amount: '4,500', status: 'Overdue', date: '01 Mar 2026' },
+  { id: 'INV-1003', flat: 'C-205', type: 'Clubhouse Booking', amount: '1,200', status: 'Pending', date: '12 Mar 2026' },
+  { id: 'INV-1004', flat: 'D-404', type: 'Maintenance Q1', amount: '4,500', status: 'Paid', date: '05 Mar 2026' },
 ];
 
 const SEED_TICKETS: Ticket[] = [
   { id: 'TKT-201', flat: 'A-505', category: 'Plumbing', issue: 'Leaking pipe in master bathroom', status: 'In Progress', priority: 'High', date: 'Today, 10:30 AM', assigneeInitials: 'JD' },
   { id: 'TKT-202', flat: 'B-302', category: 'Electrical', issue: 'Living room fan not working', status: 'Open', priority: 'Medium', date: 'Yesterday, 4:15 PM' },
-  { id: 'TKT-203', flat: 'C-205', category: 'Maintenance', issue: 'Pest control schedule check', status: 'Resolved', priority: 'Low', date: '10 Mar 2024', assigneeInitials: 'SV' },
+  { id: 'TKT-203', flat: 'C-205', category: 'Maintenance', issue: 'Pest control schedule check', status: 'Resolved', priority: 'Low', date: '10 Mar 2026', assigneeInitials: 'SV' },
   { id: 'TKT-204', flat: 'A-101', category: 'Security', issue: 'Main door access card issue', status: 'Open', priority: 'High', date: 'Today, 08:00 AM' },
-  { id: 'TKT-205', flat: 'D-404', category: 'Plumbing', issue: 'Low water pressure', status: 'In Progress', priority: 'Medium', date: '11 Mar 2024', assigneeInitials: 'JD' },
+  { id: 'TKT-205', flat: 'D-404', category: 'Plumbing', issue: 'Low water pressure', status: 'In Progress', priority: 'Medium', date: '11 Mar 2026', assigneeInitials: 'JD' },
 ];
 
 const SEED_NOTICES: Notice[] = [
@@ -184,7 +184,7 @@ const SEED_NOTICES: Notice[] = [
     id: 1,
     title: 'Annual General Body Meeting',
     isUrgent: true,
-    date: '15 Mar 2024',
+    date: '15 Mar 2026',
     author: 'Secretary',
     content: 'The AGM for the current financial year will be held in the clubhouse. All owners are requested to attend. The agenda includes budget approvals and new committee elections.',
     readRatio: 85,
@@ -193,7 +193,7 @@ const SEED_NOTICES: Notice[] = [
     id: 2,
     title: 'Swimming Pool Maintenance',
     isUrgent: false,
-    date: '12 Mar 2024',
+    date: '12 Mar 2026',
     author: 'Facility Manager',
     content: 'The swimming pool will be closed for routine maintenance and deep cleaning this weekend from 8 AM to 6 PM. We apologize for the inconvenience.',
     readRatio: 62,
@@ -202,7 +202,7 @@ const SEED_NOTICES: Notice[] = [
     id: 3,
     title: 'Lift B Out of Service',
     isUrgent: true,
-    date: '10 Mar 2024',
+    date: '10 Mar 2026',
     author: 'Maintenance Dept',
     content: 'Lift B in Tower 2 is currently undergoing mandatory compliance testing and repairs. It will be out of service until tomorrow morning 09:00 AM.',
     readRatio: 94,
@@ -297,7 +297,7 @@ export const useStore = create<AppState>()(
       })),
     }),
     {
-      name: 'urbanest-storage',
+      name: 'urbanest-storage-v2',
     }
   )
 );

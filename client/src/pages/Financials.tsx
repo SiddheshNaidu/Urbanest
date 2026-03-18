@@ -468,11 +468,11 @@ export const Financials = () => {
               <div className="flex items-center gap-6 text-xs font-bold">
                 <div className="flex items-center gap-2">
                   <div className="w-3 h-3 rounded-sm bg-gold" />
-                  <span className="text-muted">2024-25</span>
+                  <span className="text-muted">2026-27</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="w-3 h-3 rounded-sm bg-white/15" />
-                  <span className="text-muted">2023-24</span>
+                  <span className="text-muted">2025-26</span>
                 </div>
               </div>
             </div>
