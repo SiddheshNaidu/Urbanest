@@ -59,7 +59,7 @@ function NewTicketModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
         <form onSubmit={handleSubmit} className="px-7 pb-7 space-y-5">
           <div>
             <label className="block text-xs font-bold text-muted uppercase tracking-wider mb-2">Reporting From</label>
-            <div className="w-full bg-base border border-white/10 rounded-xl px-4 py-3 text-muted-2 text-sm font-mono select-none">
+            <div className="w-full bg-app-dark border border-white/10 rounded-xl px-4 py-3 text-muted-2 text-sm font-mono select-none">
               {currentUser?.flatId ? `Flat ${currentUser.flatId}` : currentUser?.name || 'Staff / Security'}
             </div>
           </div>
@@ -67,7 +67,7 @@ function NewTicketModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
           <div>
             <label className="block text-xs font-bold text-muted uppercase tracking-wider mb-2">Category</label>
             <select value={category} onChange={e => setCategory(e.target.value)}
-              className="w-full bg-base border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-gold transition-colors appearance-none">
+              className="w-full bg-app-dark border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-gold transition-colors appearance-none">
               <option>Plumbing</option>
               <option>Electrical</option>
               <option>Maintenance</option>
@@ -99,7 +99,7 @@ function NewTicketModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
             <label className="block text-xs font-bold text-muted uppercase tracking-wider mb-2">Issue Description</label>
             <textarea value={issue} onChange={e => setIssue(e.target.value)} required
               placeholder="Describe the problem in detail..." rows={4}
-              className="w-full bg-base border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-muted-2 focus:outline-none focus:border-gold transition-colors resize-none text-sm"
+              className="w-full bg-app-dark border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-muted-2 focus:outline-none focus:border-gold transition-colors resize-none text-sm"
             />
           </div>
 

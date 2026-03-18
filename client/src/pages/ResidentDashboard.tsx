@@ -307,7 +307,7 @@ export const ResidentDashboard = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-base/80 backdrop-blur-sm"
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-app-dark/80 backdrop-blur-sm"
           >
             <motion.div 
               initial={{ scale: 0.95, opacity: 0, y: 20 }}
@@ -332,7 +332,7 @@ export const ResidentDashboard = () => {
                         onChange={(e) => setVisitorName(e.target.value)}
                         placeholder="e.g. Amazon Delivery" 
                         required
-                        className="w-full bg-base border border-white/10 rounded-xl px-4 py-3 text-white placeholder-muted-2 focus:outline-none focus:border-gold transition-colors"
+                        className="w-full bg-app-dark border border-white/10 rounded-xl px-4 py-3 text-white placeholder-muted-2 focus:outline-none focus:border-gold transition-colors"
                       />
                     </div>
                     <div>
@@ -340,7 +340,7 @@ export const ResidentDashboard = () => {
                       <select 
                         value={purpose}
                         onChange={(e) => setPurpose(e.target.value as Visitor['purpose'])}
-                        className="w-full bg-base border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-gold transition-colors appearance-none"
+                        className="w-full bg-app-dark border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-gold transition-colors appearance-none"
                       >
                         <option value="GUEST">Personal Guest</option>
                         <option value="DELIVERY">Delivery</option>
@@ -377,7 +377,7 @@ export const ResidentDashboard = () => {
                     />
                   </div>
                   
-                  <div className="bg-base rounded-xl p-4 mb-6">
+                  <div className="bg-app-dark rounded-xl p-4 mb-6">
                     <p className="text-lg font-bold text-white">{generatedVisitor.name}</p>
                     <p className="text-sm text-gold font-medium uppercase tracking-widest mb-3">{generatedVisitor.purpose}</p>
                     <div className="flex items-center gap-2 bg-surface-2 rounded-lg px-3 py-2 border border-white/5">

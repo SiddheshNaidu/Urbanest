@@ -312,7 +312,7 @@ export const SecurityDashboard = () => {
                     value={manualToken}
                     onChange={(e) => setManualToken(e.target.value)}
                     placeholder="e.g. QR-abc123def"
-                    className="w-full bg-base border border-white/10 rounded-lg px-4 py-3 text-white focus:border-gold transition-colors text-sm font-mono"
+                    className="w-full bg-app-dark border border-white/10 rounded-lg px-4 py-3 text-white focus:border-gold transition-colors text-sm font-mono"
                   />
                   <button type="submit" className="w-full bg-gold hover:bg-gold-light text-black font-semibold py-3 rounded-lg cursor-pointer">
                     Verify
@@ -415,7 +415,7 @@ export const SecurityDashboard = () => {
                       <div className="absolute top-0 right-0 p-16 bg-emerald/5 rounded-bl-full pointer-events-none group-hover:bg-emerald/10 transition-colors" />
                       
                       <div className="flex items-center gap-5 mb-8">
-                        <div className="w-16 h-16 rounded-full bg-gradient-to-tr from-base to-surface-2 border border-white/10 flex items-center justify-center text-2xl font-black text-white shadow-xl">
+                        <div className="w-16 h-16 rounded-full bg-gradient-to-tr from-app-dark to-surface-2 border border-white/10 flex items-center justify-center text-2xl font-black text-white shadow-xl">
                           {scanResult.visitor?.name.charAt(0)}
                         </div>
                         <div>
@@ -448,7 +448,7 @@ export const SecurityDashboard = () => {
 
                     <div className="space-y-2">
                        <p className="text-[10px] text-muted uppercase tracking-[0.2em] font-bold pl-1">System Signature</p>
-                       <div className="bg-base rounded-2xl p-4 border border-white/5 font-mono text-[10px] text-muted-2 relative overflow-hidden group">
+                       <div className="bg-app-dark rounded-2xl p-4 border border-white/5 font-mono text-[10px] text-muted-2 relative overflow-hidden group">
                          <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                             <div className="w-1.5 h-1.5 rounded-full bg-white/10" />
                             <div className="w-1.5 h-1.5 rounded-full bg-white/10" />

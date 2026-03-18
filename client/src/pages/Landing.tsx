@@ -37,7 +37,7 @@ const FlowStep = ({ number, title, description }: { number: string, title: strin
     className="flex gap-6 relative"
   >
     <div className="flex flex-col items-center">
-      <div className="w-12 h-12 rounded-full border-2 border-gold bg-base flex items-center justify-center text-gold font-bold font-heading z-10">
+      <div className="w-12 h-12 rounded-full border-2 border-gold bg-app-dark flex items-center justify-center text-gold font-bold font-heading z-10">
         {number}
       </div>
       <div className="w-0.5 h-full bg-gradient-to-b from-gold/50 to-transparent mt-2 absolute top-12 bottom-0" />

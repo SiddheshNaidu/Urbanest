@@ -37,7 +37,7 @@ export const AddResidentModal = ({ isOpen, onClose }: Props) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-base/80 backdrop-blur-sm">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-app-dark/80 backdrop-blur-sm">
       <div className="bg-surface border border-border-dark rounded-[2rem] p-8 w-full max-w-md shadow-2xl relative overflow-hidden">
         <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-gold to-amber" />
 
@@ -54,7 +54,7 @@ export const AddResidentModal = ({ isOpen, onClose }: Props) => {
             <input
               type="text" required value={name} onChange={e => setName(e.target.value)}
               placeholder="e.g. Rahul Sharma"
-              className="w-full bg-base border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-muted-2 focus:outline-none focus:border-gold transition-colors"
+              className="w-full bg-app-dark border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-muted-2 focus:outline-none focus:border-gold transition-colors"
             />
           </div>
           <div>
@@ -62,7 +62,7 @@ export const AddResidentModal = ({ isOpen, onClose }: Props) => {
             <input
               type="email" required value={email} onChange={e => setEmail(e.target.value)}
               placeholder="rahul@example.com"
-              className="w-full bg-base border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-muted-2 focus:outline-none focus:border-gold transition-colors"
+              className="w-full bg-app-dark border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-muted-2 focus:outline-none focus:border-gold transition-colors"
             />
           </div>
           <div>
@@ -70,7 +70,7 @@ export const AddResidentModal = ({ isOpen, onClose }: Props) => {
             <input
               type="text" required value={flatId} onChange={e => setFlatId(e.target.value)}
               placeholder="e.g. B-204"
-              className="w-full bg-base border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-muted-2 focus:outline-none focus:border-gold transition-colors"
+              className="w-full bg-app-dark border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-muted-2 focus:outline-none focus:border-gold transition-colors"
             />
           </div>
           <div>
