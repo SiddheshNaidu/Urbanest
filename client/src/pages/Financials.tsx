@@ -458,6 +458,85 @@ export const Financials = () => {
             </div>
           </div>
 
+          {/* Financial Trends — Dynamic YoY Growth */}
+          <div className="bg-surface border border-border-dark rounded-3xl p-8">
+            <div className="flex items-center justify-between mb-8">
+              <div>
+                <h2 className="text-2xl font-bold text-white mb-1">Financial Trends</h2>
+                <p className="text-sm text-muted">Monthly revenue vs. previous year</p>
+              </div>
+              <div className="flex items-center gap-6 text-xs font-bold">
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 rounded-sm bg-gold" />
+                  <span className="text-muted">2024-25</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 rounded-sm bg-white/15" />
+                  <span className="text-muted">2023-24</span>
+                </div>
+              </div>
+            </div>
+            
+            <div className="flex items-end gap-3 h-52">
+              {[
+                { month: 'Oct', current: 38, prev: 32, growth: 18.7 },
+                { month: 'Nov', current: 42, prev: 35, growth: 20.0 },
+                { month: 'Dec', current: 35, prev: 33, growth: 6.1 },
+                { month: 'Jan', current: 48, prev: 36, growth: 33.3 },
+                { month: 'Feb', current: 44, prev: 38, growth: 15.8 },
+                { month: 'Mar', current: 45, prev: 40, growth: 12.5 },
+              ].map((d) => (
+                <div key={d.month} className="flex-1 flex flex-col items-center gap-2">
+                  {/* YoY Growth Badge */}
+                  <span className={`text-[10px] font-black uppercase tracking-tighter px-1.5 py-0.5 rounded ${
+                    d.growth >= 15 ? 'text-emerald bg-emerald/10' : 'text-amber bg-amber/10'
+                  }`}>
+                    +{d.growth}%
+                  </span>
+                  <div className="w-full flex gap-1 items-end" style={{ height: '160px' }}>
+                    {/* Previous year bar */}
+                    <div 
+                      className="flex-1 bg-white/10 rounded-t-lg transition-all duration-700 hover:bg-white/15 relative group"
+                      style={{ height: `${(d.prev / 50) * 100}%` }}
+                    >
+                      <div className="absolute -top-7 left-1/2 -translate-x-1/2 bg-surface-2 text-white text-[10px] font-bold px-1.5 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap border border-white/10">
+                        ₹{d.prev}K
+                      </div>
+                    </div>
+                    {/* Current year bar */}
+                    <div 
+                      className="flex-1 bg-gradient-to-t from-gold/80 to-amber rounded-t-lg transition-all duration-700 hover:from-gold hover:to-amber relative group shadow-[0_0_10px_rgba(234,179,8,0.15)]"
+                      style={{ height: `${(d.current / 50) * 100}%` }}
+                    >
+                      <div className="absolute -top-7 left-1/2 -translate-x-1/2 bg-surface-2 text-gold text-[10px] font-bold px-1.5 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap border border-gold/20">
+                        ₹{d.current}K
+                      </div>
+                    </div>
+                  </div>
+                  <span className="text-[11px] font-bold text-muted uppercase tracking-wider">{d.month}</span>
+                </div>
+              ))}
+            </div>
+
+            {/* Summary row */}
+            <div className="mt-8 pt-6 border-t border-border-dark/50 grid grid-cols-3 gap-4">
+              <div className="text-center">
+                <p className="text-xs text-muted uppercase tracking-wider font-bold mb-1">Avg Monthly</p>
+                <p className="text-xl font-heading font-black text-white">₹42K</p>
+              </div>
+              <div className="text-center">
+                <p className="text-xs text-muted uppercase tracking-wider font-bold mb-1">YoY Growth</p>
+                <p className="text-xl font-heading font-black text-emerald flex items-center justify-center gap-1">
+                  <ArrowUpRight size={18} /> 17.7%
+                </p>
+              </div>
+              <div className="text-center">
+                <p className="text-xs text-muted uppercase tracking-wider font-bold mb-1">Collection Rate</p>
+                <p className="text-xl font-heading font-black text-white">93.4%</p>
+              </div>
+            </div>
+          </div>
+
           <div>
             <h2 className="text-2xl font-bold text-white mb-6">Recent Transactions</h2>
             <div className="bg-surface border border-border-dark rounded-[2rem] overflow-hidden">

@@ -173,6 +173,32 @@
   }
 }
 
+/* Gold glow pulse — used by CSSHeroGlow */
+@keyframes css-hero-pulse {
+  0%, 100% { opacity: 0.6; transform: scale(1); }
+  50%       { opacity: 1;   transform: scale(1.08); }
+}
+
+/* Background path breathing — used by FloatingPaths */
+@keyframes path-breathe {
+  0%, 100% { opacity: var(--path-opacity, 0.05); }
+  50%       { opacity: calc(var(--path-opacity, 0.05) * 2.5); }
+}
+
+/* CSS beam movement — used by CSSBeams in BeamsBackground */
+@keyframes css-beam-move {
+  0%        { transform: skewX(-25deg) translateY(0%);    opacity: 0; }
+  10%       { opacity: 1; }
+  90%       { opacity: 1; }
+  100%      { transform: skewX(-25deg) translateY(-40%);  opacity: 0; }
+}
+
+/* Concentric ring pulse — used by CSSShaderFallback */
+@keyframes css-ring-pulse {
+  0%, 100% { transform: scale(1);    opacity: 0.8; }
+  50%       { transform: scale(1.12); opacity: 0.4; }
+}
+
 /* iPhone safe area support for bottom nav */
 .h-safe-area-inset-bottom {
   height: env(safe-area-inset-bottom, 0px);
