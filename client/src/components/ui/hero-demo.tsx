@@ -18,7 +18,7 @@ export default function HeroShaders() {
   // Tier MID: WebGL canvas but simplified shader + reduced DPR
   // Tier HIGH: full shader
   return (
-    <div className="absolute inset-0 w-full h-full pointer-events-none opacity-60 mix-blend-screen">
+    <div className="absolute inset-0 w-full h-full pointer-events-none opacity-100 mix-blend-lighten">
       <Canvas
         camera={{ position: [0, 0, 3], fov: 45 }}
         dpr={tier === 'high' ? [1, 1.5] : [1, 1]}
@@ -28,7 +28,7 @@ export default function HeroShaders() {
         <ShaderPlane
           position={[0, 0, -2]}
           color1="#EAB308"
-          color2="#0B0B0B"
+
           simplified={tier === 'mid'}
         />
       </Canvas>

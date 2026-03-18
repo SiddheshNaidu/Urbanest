@@ -29,7 +29,7 @@ function createBeam(width: number, height: number): Beam {
         length: height * 2.5,
         angle: angle,
         speed: 0.6 + Math.random() * 1.2,
-        opacity: 0.12 + Math.random() * 0.16,
+        opacity: 0.18 + Math.random() * 0.20,
         hue: 35 + Math.random() * 15,
         pulse: Math.random() * Math.PI * 2,
         pulseSpeed: 0.02 + Math.random() * 0.03,
@@ -235,7 +235,7 @@ export function BeamsBackground({
             />
 
             <div
-                className="absolute inset-0 bg-base/10 animate-beams-overlay"
+                className="absolute inset-0 bg-base/5 animate-beams-overlay"
                 style={{
                     backdropFilter: `blur(${BLUR_PX}px)`,
                 }}

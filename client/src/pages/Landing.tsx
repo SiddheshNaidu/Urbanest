@@ -5,7 +5,7 @@ import { ShieldCheck, Zap, Building2, ChevronRight, Lock, HeadphonesIcon, Credit
 import HeroShaders from '../components/ui/hero-demo';
 import { BeamsBackground } from '../components/ui/beams-background';
 import { BackgroundPaths } from '../components/ui/background-paths';
-import { CSSShaderFallback } from '../components/ui/shader-animation';
+import { ShaderAnimation, CSSShaderFallback } from '../components/ui/shader-animation';
 import { useDeviceCapability, type CapabilityTier } from '../hooks/useDeviceCapability';
 
 const FeatureCard = ({
@@ -19,15 +19,16 @@ const FeatureCard = ({
   description: string;
   tier: CapabilityTier;
 }) => {
-  const duration = tier === 'high' ? 0.6 : tier === 'mid' ? 0.4 : 0.15;
+  const duration = tier === 'high' ? 0.6 : tier === 'mid' ? 0.4 : 0.3;
 
   return (
     <motion.div
       variants={{
-        hidden: { opacity: 0, y: tier === 'low' ? 0 : 16 },
+        hidden: { opacity: 0, y: tier === 'low' ? 20 : 40, scale: tier === 'low' ? 0.98 : 0.95 },
         visible: {
           opacity: 1,
           y: 0,
+          scale: 1,
           transition: { duration, ease: [0.16, 1, 0.3, 1] },
         },
       }}
@@ -56,13 +57,13 @@ const FlowStep = ({
   description: string;
   tier: CapabilityTier;
 }) => {
-  const duration = tier === 'high' ? 0.5 : tier === 'mid' ? 0.3 : 0.1;
+  const duration = tier === 'high' ? 0.5 : tier === 'mid' ? 0.3 : 0.25;
 
   return (
     <motion.div
-      initial={{ opacity: 0, x: tier === 'low' ? 0 : -10 }}
+      initial={{ opacity: 0, x: -10 }}
       whileInView={{ opacity: 1, x: 0 }}
-      viewport={{ once: true, margin: "0px" }}
+      viewport={{ once: true, margin: "-50px" }}
       transition={{ duration, ease: "easeOut" }}
       className="flex gap-6 relative"
     >
@@ -86,8 +87,8 @@ export const Landing = () => {
 
   // Helper for tier-aware hero transition durations
   const heroTransition = (baseDelay: number) => ({
-    duration: tier === 'high' ? 0.8 : tier === 'mid' ? 0.5 : 0.2,
-    delay: tier === 'low' ? 0 : baseDelay,
+    duration: tier === 'high' ? 0.8 : tier === 'mid' ? 0.5 : 0.4,
+    delay: tier === 'low' ? baseDelay * 0.5 : baseDelay,
     ease: [0.16, 1, 0.3, 1] as const,
   });
 
@@ -186,7 +187,7 @@ export const Landing = () => {
           <motion.div 
             initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-10px" }}
+            viewport={{ once: true, margin: "-50px" }}
             transition={{ duration: tier === 'high' ? 0.8 : tier === 'mid' ? 0.5 : 0.2 }}
             className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center"
           >
@@ -285,40 +286,45 @@ export const Landing = () => {
       {/* Features Grid - Enterprise Infrastructure — Tier-aware background */}
       <section className="relative min-h-screen py-32 px-6 z-20 overflow-hidden">
         <div className="absolute inset-0 z-0">
-          {tier === 'mid' ? (
-            // Animated CSS rings — mid-tier
+          {tier === 'high' ? (
+            // Full WebGL shader — only for high-end devices
             <>
-              <CSSShaderFallback />
-              <div className="absolute inset-0 bg-base/70" />
+              <ShaderAnimation />
+              <div className="absolute inset-0 bg-base/60" />
               <div className="absolute inset-0 bg-gradient-to-b from-base via-transparent to-base" />
             </>
           ) : (
-            // Static gradient — low-tier and high-tier both use CSS here (ShaderAnimation removed)
+            // Animated CSS rings — mid and low-tier
             <>
-              <div className="absolute inset-0 bg-base" />
-              <div className="absolute inset-0 bg-gradient-to-br from-gold/8 via-transparent to-amber/5" />
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gold/5 rounded-full blur-[120px]" />
+              <CSSShaderFallback />
+              <div className={`absolute inset-0 ${tier === 'low' ? 'bg-base/85' : 'bg-base/70'}`} />
               <div className="absolute inset-0 bg-gradient-to-b from-base via-transparent to-base" />
             </>
           )}
         </div>
 
         <div className="max-w-6xl mx-auto relative z-10">
-          <div className="text-left mb-20">
+          <motion.div
+            className="text-left mb-20"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-50px" }}
+            transition={{ duration: tier === 'high' ? 0.7 : 0.4, ease: [0.16, 1, 0.3, 1] }}
+          >
             <h2 className="text-4xl md:text-6xl font-heading font-bold text-white mb-6 tracking-tight">Enterprise Infrastructure.</h2>
             <p className="text-xl text-muted max-w-2xl">Everything required to run a massive residential complex, embedded into one meticulously crafted application.</p>
-          </div>
+          </motion.div>
 
           <motion.div
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, margin: "0px" }}
+            viewport={{ once: true, margin: "-50px" }}
             variants={{
               hidden: {},
               visible: {
                 transition: {
-                  staggerChildren: tier === 'low' ? 0.03 : tier === 'mid' ? 0.06 : 0.09
+                  staggerChildren: tier === 'low' ? 0.05 : tier === 'mid' ? 0.1 : 0.15
                 }
               }
             }}

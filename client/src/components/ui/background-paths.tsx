@@ -39,9 +39,9 @@ function FloatingPaths({ position, color = "rgba(234,179,8" }: FloatingPathsProp
                         strokeWidth={path.width}
                         // CSS animation via inline style — GPU composited, zero JS cost
                         style={{
+                            '--path-opacity': String(path.opacity),
                             animation: `path-breathe ${path.animDuration} ease-in-out ${path.animDelay} infinite`,
-                            opacity: path.opacity,
-                        }}
+                        } as React.CSSProperties}
                     />
                 ))}
             </svg>
