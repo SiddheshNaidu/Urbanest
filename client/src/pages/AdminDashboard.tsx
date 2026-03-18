@@ -14,7 +14,7 @@ export const AdminDashboard = () => {
 
   const chartData = useMemo(() => {
     // Generate an array of the last 12 months anchored to today
-    const months = [];
+    const months: { month: string; fullDate: Date; revenue: number }[] = [];
     const now = new Date();
     for (let i = 11; i >= 0; i--) {
       const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
@@ -147,7 +147,7 @@ export const AdminDashboard = () => {
                   <Tooltip 
                     contentStyle={{ backgroundColor: '#18181B', borderColor: '#27272A', borderRadius: '12px', color: '#fff', boxShadow: '0 10px 30px -10px rgba(16, 185, 129, 0.2)' }}
                     itemStyle={{ color: '#10B981', fontWeight: 'bold' }}
-                    formatter={(value: number) => [`₹${value.toLocaleString('en-IN')}`, 'Revenue']}
+                    formatter={(value: any) => [`₹${Number(value).toLocaleString('en-IN')}`, 'Revenue']}
                   />
                   <Area 
                     type="monotone" 

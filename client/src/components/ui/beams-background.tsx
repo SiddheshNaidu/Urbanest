@@ -78,7 +78,6 @@ export function BeamsBackground({
     // Tier-aware parameters
     const BEAM_COUNT = tier === 'high' ? 12 : tier === 'mid' ? 7 : 0;
     const MAX_DPR = tier === 'high' ? 1.5 : 1.0;
-    const BLUR_PX = tier === 'high' ? 50 : 35;
     const SKIP_FRAME = tier === 'mid';
 
     // Low tier: CSS-only beams
