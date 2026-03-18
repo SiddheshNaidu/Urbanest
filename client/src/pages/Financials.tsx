@@ -362,7 +362,7 @@ export const Financials = () => {
 
       {/* Generate Bills Modal */}
       {showGenerate && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-base/80 backdrop-blur-sm">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-app-dark/80 backdrop-blur-sm">
           <div className="bg-surface border border-border-dark rounded-[2rem] p-8 w-full max-w-sm shadow-2xl relative overflow-hidden">
             <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-gold to-amber" />
             <div className="flex items-center justify-between mb-6">
@@ -373,12 +373,12 @@ export const Financials = () => {
               <div>
                 <label className="block text-xs font-bold text-muted-2 uppercase tracking-wider mb-2">Billing Month</label>
                 <input type="month" required value={genMonth} onChange={e => setGenMonth(e.target.value)}
-                  className="w-full bg-base border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-gold transition-colors" />
+                  className="w-full bg-app-dark border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-gold transition-colors" />
               </div>
               <div>
                 <label className="block text-xs font-bold text-muted-2 uppercase tracking-wider mb-2">Amount per Flat (₹)</label>
                 <input type="number" required value={genAmount} onChange={e => setGenAmount(e.target.value)}
-                  className="w-full bg-base border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-gold transition-colors" />
+                  className="w-full bg-app-dark border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-gold transition-colors" />
               </div>
               <div className="bg-surface-2 rounded-xl p-4 border border-white/5">
                 <p className="text-xs text-muted">This will generate invoices for all <span className="text-white font-bold">450 active flats</span>.</p>

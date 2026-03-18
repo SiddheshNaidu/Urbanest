@@ -99,7 +99,7 @@ export const Notices = () => {
                 </div>
                 
                 <div className="mt-4">
-                  <p className="leading-relaxed text-sm md:text-base" style={{ color: "rgba(255,255,255,0.85)" }}>
+                  <p className="leading-relaxed text-sm md:text-base text-white/90">
                     {notice.content}
                   </p>
                 </div>

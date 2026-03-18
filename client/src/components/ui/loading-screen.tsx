@@ -33,7 +33,7 @@ export function LoadingScreen({ onComplete }: { onComplete: () => void }) {
       initial={{ opacity: 1 }}
       exit={{ opacity: 0, scale: 1.05, filter: "blur(10px)" }}
       transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-      className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-base overflow-hidden"
+      className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-app-dark overflow-hidden"
     >
       {/* Background ambient glow matching the main theme */}
       <div className="absolute inset-0 bg-gradient-to-br from-gold/10 via-transparent to-amber/5 opacity-50" />

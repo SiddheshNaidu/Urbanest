@@ -6,7 +6,7 @@ import { Outlet } from 'react-router-dom';
 
 export const Layout = () => {
   return (
-    <div className="flex min-h-screen bg-base">
+    <div className="flex min-h-screen bg-app-dark">
       <Sidebar />
       <main className="main-content md:ml-[260px] flex-1 flex flex-col min-h-screen">
         <TopNav />

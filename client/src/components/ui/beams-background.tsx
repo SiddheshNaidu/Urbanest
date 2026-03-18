@@ -60,7 +60,7 @@ function CSSBeams() {
                 />
             ))}
             {/* Dark base */}
-            <div className="absolute inset-0 bg-base/60" />
+            <div className="absolute inset-0 bg-app-dark/60" />
         </div>
     );
 }
@@ -83,7 +83,7 @@ export function BeamsBackground({
     // Low tier: CSS-only beams
     if (tier === 'low') {
         return (
-            <div className={`relative w-full overflow-hidden bg-base ${className || ''}`}>
+            <div className={`relative w-full overflow-hidden bg-app-dark ${className || ''}`}>
                 <CSSBeams />
                 <div className="relative z-10 w-full h-full">{children}</div>
             </div>
@@ -225,7 +225,7 @@ export function BeamsBackground({
 
     return (
         <div
-            className={`relative w-full overflow-hidden bg-base ${className || ""}`}
+            className={`relative w-full overflow-hidden bg-app-dark ${className || ""}`}
         >
             <canvas
                 ref={canvasRef}
@@ -233,7 +233,7 @@ export function BeamsBackground({
             />
 
             <div
-                className="absolute inset-0 bg-base/5 md:bg-base/10 animate-beams-overlay backdrop-blur-none md:backdrop-blur-[50px]"
+                className="absolute inset-0 bg-app-dark/5 md:bg-app-dark/10 animate-beams-overlay backdrop-blur-none md:backdrop-blur-[50px]"
             />
 
             <div className="relative z-10 w-full h-full">

@@ -7,7 +7,7 @@ export default {
   theme: {
     extend: {
       colors: {
-        base: '#0B0B0B',
+        'app-dark': '#0B0B0B',
         sidebar: '#070707',
         surface: '#121212',
         'surface-hover': '#18181B',

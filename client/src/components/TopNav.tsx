@@ -23,7 +23,7 @@ export const TopNav = () => {
   const { subtitle, title } = getHeaderTitle();
 
   return (
-    <header className="px-8 py-8 flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-border-dark bg-base/80 backdrop-blur-md sticky top-0 z-30">
+    <header className="px-8 py-8 flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-border-dark bg-app-dark/80 backdrop-blur-md sticky top-0 z-30">
       <div>
         <p className="text-xs font-semibold text-gold uppercase tracking-[0.15em] mb-1">{subtitle}</p>
         <h1 className="font-heading font-semibold text-3xl text-white tracking-tight">{title}</h1>

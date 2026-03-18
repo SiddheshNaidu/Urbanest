@@ -91,7 +91,7 @@ export const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-base flex items-center justify-center p-4 relative overflow-hidden">
+    <div className="min-h-screen bg-app-dark flex items-center justify-center p-4 relative overflow-hidden">
       {/* Full-page Background Image */}
       <div className="absolute inset-0 z-0">
         <img 

@@ -62,7 +62,7 @@ export const Landing = () => {
   }, []);
 
   return (
-    <div className={`bg-base min-h-screen selection:bg-gold selection:text-base overflow-x-hidden relative ${isLoading ? 'h-screen overflow-hidden' : ''}`}>
+    <div className={`bg-app-dark min-h-screen selection:bg-gold selection:text-app-dark overflow-x-hidden relative ${isLoading ? 'h-screen overflow-hidden' : ''}`}>
       <AnimatePresence>
         {isLoading && <LoadingScreen onComplete={() => setIsLoading(false)} />}
       </AnimatePresence>
@@ -70,12 +70,12 @@ export const Landing = () => {
       {/* Navbar */}
       <nav className={`fixed top-0 left-0 right-0 z-50 px-6 py-4 flex items-center justify-between transition-all duration-300 ${
         isScrolled 
-          ? 'bg-base/60 backdrop-blur-xl border-b border-white/5' 
+          ? 'bg-app-dark/60 backdrop-blur-xl border-b border-white/5' 
           : 'bg-transparent border-b border-transparent'
       }`}>
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 bg-gradient-to-br from-gold to-amber rounded-xl flex items-center justify-center shadow-[0_0_20px_rgba(234,179,8,0.3)]">
-            <Building2 size={20} className="text-base" strokeWidth={2.5} />
+            <Building2 size={20} className="text-app-dark" strokeWidth={2.5} />
           </div>
           <span className="font-heading font-bold text-xl text-white tracking-tight">Urbanest</span>
         </div>
@@ -83,17 +83,17 @@ export const Landing = () => {
           <Link to="/login" className="text-sm font-medium text-muted hover:text-white transition-colors hidden sm:block">
             Sign In
           </Link>
-          <Link to="/signup" className="text-sm font-semibold bg-white text-base hover:bg-gold px-5 py-2.5 rounded-full transition-all duration-300 shadow-[0_0_20px_rgba(255,255,255,0.1)] hover:shadow-[0_0_20px_rgba(234,179,8,0.3)] hover:scale-105">
+          <Link to="/signup" className="text-sm font-semibold bg-white text-app-dark hover:bg-gold px-5 py-2.5 rounded-full transition-all duration-300 shadow-[0_0_20px_rgba(255,255,255,0.1)] hover:shadow-[0_0_20px_rgba(234,179,8,0.3)] hover:scale-105">
             Get Started
           </Link>
         </div>
       </nav>
 
       {/* Hero Section with WebGL Shaders */}
-      <section className="relative min-h-screen flex items-center justify-center pt-20 px-4 overflow-hidden bg-base">
+      <section className="relative min-h-screen flex items-center justify-center pt-20 px-4 overflow-hidden bg-app-dark">
         <div className="absolute inset-0 z-0">
           <HeroShaders />
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-base/80" />
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-app-dark/80" />
         </div>
         
         <motion.div 
@@ -134,7 +134,7 @@ export const Landing = () => {
             transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
             className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6"
           >
-            <Link to="/signup" className="w-full sm:w-auto h-14 flex items-center justify-center gap-2 bg-gradient-to-r from-gold to-amber hover:from-amber hover:to-gold text-base font-extrabold px-10 rounded-2xl transition-all duration-300 hover:scale-[1.03] active:scale-95 shadow-[0_0_40px_rgba(234,179,8,0.2)]">
+            <Link to="/signup" className="w-full sm:w-auto h-14 flex items-center justify-center gap-2 bg-gradient-to-r from-gold to-amber hover:from-amber hover:to-gold text-app-dark font-extrabold px-10 rounded-2xl transition-all duration-300 hover:scale-[1.03] active:scale-95 shadow-[0_0_40px_rgba(234,179,8,0.2)]">
               Create Workspace <ChevronRight size={18} />
             </Link>
             <a href="#overview" className="w-full sm:w-auto h-14 flex items-center justify-center gap-2 bg-white/5 backdrop-blur-md text-white hover:bg-white/10 border border-white/10 hover:border-gold/30 font-bold px-10 rounded-2xl transition-all duration-300 hover:scale-[1.03] active:scale-95">
@@ -146,7 +146,7 @@ export const Landing = () => {
       </section>
 
       {/* Problem / Solution Overview - Etheral Shadow section */}
-      <section className="relative py-32 px-6 z-20 bg-base overflow-hidden" id="overview">
+      <section className="relative py-32 px-6 z-20 bg-app-dark overflow-hidden" id="overview">
         <EtheralShadow 
           color="rgba(245, 158, 11, 0.25)" 
           sizing="stretch" 
@@ -215,7 +215,7 @@ export const Landing = () => {
       </section>
 
       {/* How It Works - The Workflows */}
-      <section className="py-32 px-6 relative z-20 bg-base overflow-hidden">
+      <section className="py-32 px-6 relative z-20 bg-app-dark overflow-hidden">
         {/* Subtle background decoration */}
         <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-gradient-to-bl from-gold/5 via-transparent to-transparent rounded-full blur-3xl pointer-events-none" />
         
@@ -259,10 +259,10 @@ export const Landing = () => {
       {/* Features Grid - Enterprise Infrastructure */}
       <section className="relative min-h-screen py-32 px-6 z-20 overflow-hidden">
         <div className="absolute inset-0 z-0">
-          <div className="absolute inset-0 bg-base" />
+          <div className="absolute inset-0 bg-app-dark" />
           <AuroraFlow />
           <div className="absolute inset-0 bg-gradient-to-br from-gold/10 via-transparent to-amber/5 pointer-events-none" />
-          <div className="absolute inset-0 bg-gradient-to-b from-base via-transparent to-base pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-b from-app-dark via-transparent to-app-dark pointer-events-none" />
         </div>
 
         <div className="max-w-6xl mx-auto relative z-10">
@@ -321,7 +321,7 @@ export const Landing = () => {
           <div className="max-w-4xl mx-auto text-center relative z-10 py-32 px-6">
             <h2 className="text-5xl md:text-7xl font-heading font-bold text-white mb-8 tracking-tight">Upgrade your society today.</h2>
             <p className="text-2xl text-muted mb-12 font-light">Join the vanguard of modern residential management.</p>
-            <Link to="/signup" className="inline-flex items-center justify-center gap-3 bg-white text-base hover:bg-gold hover:text-black font-bold px-12 py-6 rounded-full transition-all duration-300 hover:scale-105 active:scale-95 shadow-[0_0_50px_rgba(255,255,255,0.2)] hover:shadow-[0_0_50px_rgba(234,179,8,0.4)] text-lg">
+            <Link to="/signup" className="inline-flex items-center justify-center gap-3 bg-white text-app-dark hover:bg-gold px-12 py-6 rounded-full transition-all duration-300 hover:scale-105 active:scale-95 shadow-[0_0_50px_rgba(255,255,255,0.2)] hover:shadow-[0_0_50px_rgba(234,179,8,0.4)] text-lg">
               Start Free Trial <ChevronRight size={24} />
             </Link>
           </div>
@@ -329,7 +329,7 @@ export const Landing = () => {
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-white/10 py-12 px-6 bg-base">
+      <footer className="border-t border-white/10 py-12 px-6 bg-app-dark">
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
           <div className="flex items-center gap-3">
             <Building2 size={24} className="text-gold" />

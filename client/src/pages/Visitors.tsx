@@ -72,7 +72,7 @@ export const Visitors = () => {
     <div className="max-w-[1400px] mx-auto space-y-8">
       {/* Pre-Approve Modal */}
       {showPreApprove && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-base/80 backdrop-blur-sm">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-app-dark/80 backdrop-blur-sm">
           <div className="bg-surface border border-border-dark rounded-[2rem] p-8 w-full max-w-md shadow-2xl relative overflow-hidden">
             <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-gold to-amber" />
             <div className="flex items-center justify-between mb-6">
@@ -100,18 +100,18 @@ export const Visitors = () => {
                 <label className="block text-xs font-bold text-muted-2 uppercase tracking-wider mb-2">Visitor Name</label>
                 <input type="text" required value={paName} onChange={e => setPaName(e.target.value)}
                   placeholder="e.g. Amazon Delivery" 
-                  className="w-full bg-base border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-muted-2 focus:outline-none focus:border-gold transition-colors" />
+                  className="w-full bg-app-dark border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-muted-2 focus:outline-none focus:border-gold transition-colors" />
               </div>
               <div>
                 <label className="block text-xs font-bold text-muted-2 uppercase tracking-wider mb-2">Flat Number</label>
                 <input type="text" required value={paFlat} onChange={e => setPaFlat(e.target.value)}
                   placeholder="e.g. A-101"
-                  className="w-full bg-base border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-muted-2 focus:outline-none focus:border-gold transition-colors" />
+                  className="w-full bg-app-dark border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-muted-2 focus:outline-none focus:border-gold transition-colors" />
               </div>
               <div>
                 <label className="block text-xs font-bold text-muted-2 uppercase tracking-wider mb-2">Purpose</label>
                 <select value={paPurpose} onChange={e => setPaPurpose(e.target.value as Visitor['purpose'])}
-                  className="w-full bg-base border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-gold transition-colors appearance-none">
+                  className="w-full bg-app-dark border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-gold transition-colors appearance-none">
                   <option value="GUEST">Personal Guest</option>
                   <option value="DELIVERY">Delivery</option>
                   <option value="SERVICE">Service & Repair</option>
