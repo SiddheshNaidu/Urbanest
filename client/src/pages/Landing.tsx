@@ -6,7 +6,6 @@ import Preloader from '../components/ui/preloader';
 import { AuroraFlow } from '../components/ui/aurora-flow';
 import { EtheralShadow } from '../components/ui/etheral-shadow';
 import HeroShaders from '../components/ui/hero-demo';
-import { BeamsBackground } from '../components/ui/beams-background';
 
 const FeatureCard = ({ icon: Icon, title, description }: { icon: LucideIcon, title: string, description: string }) => (
   <motion.div
@@ -98,7 +97,8 @@ export const Landing = () => {
       <section className="relative min-h-[100dvh] flex items-center justify-center pt-32 pb-24 px-4 overflow-hidden bg-app-dark">
         <div className="absolute inset-0 z-0">
           <HeroShaders />
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-app-dark/80" />
+          <div className="absolute top-0 inset-x-0 h-32 bg-gradient-to-b from-app-dark to-transparent pointer-events-none z-0" />
+          <div className="absolute bottom-0 inset-x-0 h-64 bg-gradient-to-t from-app-dark to-transparent pointer-events-none z-0" />
         </div>
         
         <motion.div 
@@ -163,7 +163,9 @@ export const Landing = () => {
           noise={{ opacity: 0.5, scale: 1.2 }}
         />
         <div className="absolute inset-0 bg-gradient-to-r from-[#0B0B0B] via-transparent to-[#0B0B0B] pointer-events-none opacity-60" />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#0B0B0B]/50 via-transparent to-[#0B0B0B]/50 pointer-events-none z-0" />
+        {/* Strong top and bottom fades so the shadow doesn't clip horizontally */}
+        <div className="absolute top-0 inset-x-0 h-40 bg-gradient-to-b from-app-dark to-transparent pointer-events-none z-0" />
+        <div className="absolute bottom-0 inset-x-0 h-64 bg-gradient-to-t from-app-dark to-transparent pointer-events-none z-0" />
         
         <div className="max-w-6xl mx-auto relative z-10 pointer-events-none">
           <motion.div 
@@ -226,7 +228,7 @@ export const Landing = () => {
       {/* How It Works - The Workflows */}
       <section className="py-32 px-6 relative z-20 bg-app-dark overflow-hidden">
         {/* Subtle background decoration */}
-        <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-gradient-to-bl from-gold/5 via-transparent to-transparent rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-gradient-to-bl from-gold/5 via-transparent to-transparent rounded-full blur-xl md:blur-3xl pointer-events-none" />
         
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-24">
@@ -283,16 +285,18 @@ export const Landing = () => {
         </div>
       </section>
 
-      {/* Features Grid - Enterprise Infrastructure */}
-      <section className="relative min-h-screen py-32 px-6 z-20 overflow-hidden">
+      {/* Features Grid - Enterprise Infrastructure & CTA Section */}
+      <section className="relative min-h-screen pt-32 z-20 overflow-hidden">
         <div className="absolute inset-0 z-0">
           <div className="absolute inset-0 bg-app-dark" />
           <AuroraFlow />
           <div className="absolute inset-0 bg-gradient-to-br from-gold/10 via-transparent to-amber/5 pointer-events-none" />
-          <div className="absolute inset-0 bg-gradient-to-b from-app-dark via-transparent to-app-dark pointer-events-none" />
+          {/* Definitively fade top and bottom bounds of the canvas so it never has a hard line */}
+          <div className="absolute top-0 inset-x-0 h-40 bg-gradient-to-b from-app-dark to-transparent pointer-events-none z-0" />
+          <div className="absolute bottom-0 inset-x-0 h-40 bg-gradient-to-t from-app-dark to-transparent pointer-events-none z-0" />
         </div>
 
-        <div className="max-w-6xl mx-auto relative z-10">
+        <div className="max-w-6xl mx-auto relative z-10 px-6">
           <div className="text-left mb-20">
             <h2 className="text-4xl md:text-6xl font-heading font-bold text-white mb-6 tracking-tight">Enterprise Infrastructure.</h2>
             <p className="text-xl text-muted max-w-2xl">Everything required to run a massive residential complex, embedded into one meticulously crafted application.</p>
@@ -340,11 +344,9 @@ export const Landing = () => {
             />
           </motion.div>
         </div>
-      </section>
 
-      {/* CTA Section */}
-      <section className="relative z-20 overflow-hidden border-t border-white/5">
-        <BeamsBackground intensity="medium">
+        {/* CTA Section - Merged into Enterprise Infrastructure */}
+        <div className="relative z-10 border-t border-white/5 mt-32">
           <div className="max-w-4xl mx-auto text-center relative z-10 py-32 px-6">
             <h2 className="text-5xl md:text-7xl font-heading font-bold text-white mb-8 tracking-tight">Upgrade your society today.</h2>
             <p className="text-2xl text-muted mb-12 font-light">Join the vanguard of modern residential management.</p>
@@ -352,7 +354,7 @@ export const Landing = () => {
               Start Free Trial <ChevronRight size={24} />
             </Link>
           </div>
-        </BeamsBackground>
+        </div>
       </section>
 
       {/* Footer */}

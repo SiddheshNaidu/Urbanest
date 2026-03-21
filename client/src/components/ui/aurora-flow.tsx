@@ -106,11 +106,8 @@ export const AuroraBackground = () => {
     mesh.position.z = -50;
     scene.add(mesh);
     
-    const animate = () => {
-      material.uniforms.time.value += 0.01;
-      requestAnimationFrame(animate);
-    };
-    animate();
+    // Store material on a ref to update time uniform inside useFrame
+    mesh.userData.material = material;
     
     return () => {
       scene.remove(mesh);
@@ -118,6 +115,16 @@ export const AuroraBackground = () => {
       material.dispose();
     };
   }, [scene]);
+  
+  // Use React Three Fiber's native frame loop which automatically pauses when out of view
+  useFrame((_state, delta) => {
+    // Only query scene children if we didn't use a direct ref
+    scene.children.forEach(child => {
+      if (child instanceof THREE.Mesh && child.userData.material instanceof THREE.ShaderMaterial) {
+        child.userData.material.uniforms.time.value += delta * 0.5;
+      }
+    });
+  });
   
   return null;
 };
@@ -152,11 +159,12 @@ export const AuroraFlow = () => {
     <div className="absolute inset-0 w-full h-full opacity-60 mix-blend-screen pointer-events-none">
       <Canvas
         camera={{ position: [0, 0, 30], fov: 75 }}
-        dpr={isMobile ? [0.5, 0.75] : [1, 1.5]}
+        dpr={isMobile ? [0.2, 0.4] : [0.8, 1.2]}
         gl={{ 
-          antialias: !isMobile, // Disable antialiasing on mobile to save GPU cycles
+          antialias: !isMobile,
           alpha: false,
-          powerPreference: "high-performance"
+          powerPreference: "high-performance",
+          stencil: false
         }}
       >
         <AuroraBackground />

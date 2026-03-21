@@ -14,7 +14,11 @@ export default function HeroShaders() {
 
   return (
     <div className="absolute inset-0 w-full h-full pointer-events-none opacity-60 mix-blend-screen">
-      <Canvas camera={{ position: [0, 0, 3], fov: 45 }} dpr={isMobile ? [0.5, 0.75] : [1, 1.5]}>
+      <Canvas 
+        camera={{ position: [0, 0, 3], fov: 45 }} 
+        dpr={isMobile ? [0.2, 0.4] : [0.8, 1.2]}
+        gl={{ powerPreference: "high-performance", antialias: false, stencil: false }}
+      >
         <ambientLight intensity={0.5} />
         
         {/* Core dynamic plane in the background */}
