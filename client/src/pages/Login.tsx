@@ -154,7 +154,7 @@ export const Login = () => {
                     placeholder="Email (e.g. admin@urbanest.com)"
                     value={email}
                     onChange={(e) => { setEmail(e.target.value); setError(''); }}
-                    className="w-full bg-black/40 border border-white/5 rounded-2xl px-4 py-3 sm:py-4 text-sm sm:text-base text-white placeholder-muted-2 focus:outline-none focus:border-gold transition-all"
+                    className="w-full bg-black/40 border border-white/5 rounded-2xl px-4 py-3 sm:py-4 text-base text-white placeholder-muted-2 focus:outline-none focus:border-gold transition-all"
                   />
                 </div>
                 <div>
@@ -164,7 +164,7 @@ export const Login = () => {
                     placeholder="Password (e.g. admin123)"
                     value={password}
                     onChange={(e) => { setPassword(e.target.value); setError(''); }}
-                    className="w-full bg-black/40 border border-white/5 rounded-2xl px-4 py-3 sm:py-4 text-sm sm:text-base text-white placeholder-muted-2 focus:outline-none focus:border-gold transition-all"
+                    className="w-full bg-black/40 border border-white/5 rounded-2xl px-4 py-3 sm:py-4 text-base text-white placeholder-muted-2 focus:outline-none focus:border-gold transition-all"
                   />
                 </div>
 
