@@ -1,9 +1,8 @@
-import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { useState } from 'react';
+import { motion, useScroll, useMotionValueEvent, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { ShieldCheck, Zap, Building2, ChevronRight, Lock, HeadphonesIcon, CreditCard, Users, QrCode, FileText, type LucideIcon } from 'lucide-react';
-import { AnimatePresence } from 'framer-motion';
-import { LoadingScreen } from '../components/ui/loading-screen';
+import Preloader from '../components/ui/preloader';
 import { AuroraFlow } from '../components/ui/aurora-flow';
 import { EtheralShadow } from '../components/ui/etheral-shadow';
 import HeroShaders from '../components/ui/hero-demo';
@@ -50,44 +49,49 @@ const FlowStep = ({ number, title, description }: { number: string, title: strin
 );
 
 export const Landing = () => {
-  const [isScrolled, setIsScrolled] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const { scrollY } = useScroll();
+  
+  useMotionValueEvent(scrollY, "change", (latest) => {
+    setIsScrolled(latest > 20);
+  });
 
   return (
     <div className={`bg-app-dark min-h-screen selection:bg-gold selection:text-app-dark overflow-x-hidden relative ${isLoading ? 'h-screen overflow-hidden' : ''}`}>
-      <AnimatePresence>
-        {isLoading && <LoadingScreen onComplete={() => setIsLoading(false)} />}
+      <AnimatePresence mode="wait">
+        {isLoading && <Preloader onComplete={() => setIsLoading(false)} />}
       </AnimatePresence>
       
-      {/* Navbar */}
-      <nav className={`fixed top-0 left-0 right-0 z-50 px-6 py-4 flex items-center justify-between transition-all duration-300 ${
-        isScrolled 
-          ? 'bg-app-dark/60 backdrop-blur-xl border-b border-white/5' 
-          : 'bg-transparent border-b border-transparent'
-      }`}>
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-gradient-to-br from-gold to-amber rounded-xl flex items-center justify-center shadow-[0_0_20px_rgba(234,179,8,0.3)]">
-            <Building2 size={20} className="text-app-dark" strokeWidth={2.5} />
+      {/* Navbar Container */}
+      <div 
+        className={`fixed left-0 right-0 z-50 flex justify-center pointer-events-none px-4 md:px-6 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+          isScrolled ? 'pt-4' : 'pt-0'
+        }`}
+      >
+        <nav 
+          className={`pointer-events-auto flex items-center justify-between w-full transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] overflow-hidden ${
+            isScrolled 
+              ? 'max-w-4xl bg-[#0B0B0B]/85 backdrop-blur-xl border border-white/10 rounded-full px-5 py-2.5 shadow-[0_10px_40px_rgba(0,0,0,0.8)]' 
+              : 'max-w-7xl bg-transparent border border-transparent rounded-[2rem] px-4 md:px-8 py-5 shadow-none'
+          }`}
+        >
+          <div className="flex items-center gap-3 scale-90 md:scale-100 origin-left">
+            <div className="w-8 h-8 md:w-10 md:h-10 bg-gradient-to-br from-gold to-amber rounded-lg md:rounded-xl flex items-center justify-center shadow-[0_0_20px_rgba(234,179,8,0.3)]">
+              <Building2 className="text-app-dark w-4 h-4 md:w-5 md:h-5" strokeWidth={2.5} />
+            </div>
+            <span className="font-heading font-bold text-lg md:text-xl text-white tracking-tight">Urbanest</span>
           </div>
-          <span className="font-heading font-bold text-xl text-white tracking-tight">Urbanest</span>
-        </div>
-        <div className="flex items-center gap-6">
-          <Link to="/login" className="text-sm font-medium text-muted hover:text-white transition-colors hidden sm:block">
-            Sign In
-          </Link>
-          <Link to="/signup" className="text-sm font-semibold bg-white text-app-dark hover:bg-gold px-5 py-2.5 rounded-full transition-all duration-300 shadow-[0_0_20px_rgba(255,255,255,0.1)] hover:shadow-[0_0_20px_rgba(234,179,8,0.3)] hover:scale-105">
-            Get Started
-          </Link>
-        </div>
-      </nav>
+          <div className="flex items-center gap-3 md:gap-6">
+            <Link to="/login" className="text-xs md:text-sm font-medium text-muted hover:text-white transition-colors">
+              Sign In
+            </Link>
+            <Link to="/signup" className="text-xs md:text-sm font-semibold bg-white text-app-dark hover:bg-gold px-4 py-2 md:px-5 md:py-2.5 rounded-full transition-all duration-300 shadow-[0_0_20px_rgba(255,255,255,0.1)] hover:shadow-[0_0_20px_rgba(234,179,8,0.3)] hover:scale-105">
+              Get Started
+            </Link>
+          </div>
+        </nav>
+      </div>
 
       {/* Hero Section with WebGL Shaders */}
       <section className="relative min-h-screen flex items-center justify-center pt-20 px-4 overflow-hidden bg-app-dark">
@@ -113,7 +117,7 @@ export const Landing = () => {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-            className="text-6xl md:text-8xl lg:text-[7.5rem] font-heading font-extrabold text-white tracking-tighter leading-[1.05] mb-8"
+            className="text-5xl sm:text-6xl md:text-8xl lg:text-[7.5rem] font-heading font-extrabold text-white tracking-tighter leading-[1.05] mb-8"
           >
             Manage societies with <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-gold via-yellow-200 to-amber">absolute precision.</span>
@@ -134,8 +138,12 @@ export const Landing = () => {
             transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
             className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6"
           >
-            <Link to="/signup" className="w-full sm:w-auto h-14 flex items-center justify-center gap-2 bg-gradient-to-r from-gold to-amber hover:from-amber hover:to-gold text-app-dark font-extrabold px-10 rounded-2xl transition-all duration-300 hover:scale-[1.03] active:scale-95 shadow-[0_0_40px_rgba(234,179,8,0.2)]">
-              Create Workspace <ChevronRight size={18} />
+            <Link to="/signup" className="group relative overflow-hidden w-full sm:w-auto h-14 flex items-center justify-center gap-2 bg-gradient-to-r from-gold to-amber text-app-dark font-extrabold px-10 rounded-2xl transition-all duration-500 hover:scale-[1.05] active:scale-95 shadow-[0_0_40px_rgba(234,179,8,0.2)] hover:shadow-[0_0_40px_rgba(234,179,8,0.6)]">
+              <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/50 to-transparent group-hover:translate-x-full transition-transform duration-1000 ease-in-out" />
+              <span className="relative z-10 flex items-center gap-2">
+                Create Workspace 
+                <ChevronRight size={18} className="transition-transform duration-300 group-hover:translate-x-1" />
+              </span>
             </Link>
             <a href="#overview" className="w-full sm:w-auto h-14 flex items-center justify-center gap-2 bg-white/5 backdrop-blur-md text-white hover:bg-white/10 border border-white/10 hover:border-gold/30 font-bold px-10 rounded-2xl transition-all duration-300 hover:scale-[1.03] active:scale-95">
               Discover Features
