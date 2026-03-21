@@ -2,7 +2,7 @@ import { NavLink } from 'react-router-dom';
 import { useStore } from '../store/useStore';
 import {
   LayoutDashboard, Users, CreditCard, HeadphonesIcon,
-  LogIn, Bell, ShieldCheck, Home, Dumbbell
+  LogIn, Bell, ShieldCheck, Home, Dumbbell, LogOut
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 
@@ -13,7 +13,7 @@ interface NavItem {
 }
 
 export const BottomNav = () => {
-  const { currentUser } = useStore();
+  const { currentUser, logout } = useStore();
 
   const adminLinks: NavItem[] = [
     { to: '/dashboard',  icon: LayoutDashboard, label: 'Home' },
@@ -41,20 +41,20 @@ export const BottomNav = () => {
   if (currentUser?.role === 'SECURITY') links = securityLinks;
   if (currentUser?.role === 'RESIDENT') links = residentLinks;
 
-  // Max 5 items to fit on narrow screens
-  const visibleLinks = links.slice(0, 5);
+  // Max 4 items to fit on narrow screens, reserving 5th slot for Logout
+  const visibleLinks = links.slice(0, 4);
 
   if (visibleLinks.length === 0) return null;
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-40 md:hidden bg-sidebar/95 backdrop-blur-xl border-t border-border-dark">
-      <div className="flex items-stretch h-16">
+      <div className="flex items-stretch h-14 sm:h-16">
         {visibleLinks.map((link) => (
           <NavLink
             key={link.to}
             to={link.to}
             className={({ isActive }) =>
-              `flex-1 flex flex-col items-center justify-center gap-1 text-[10px] font-bold uppercase tracking-wider transition-colors ${
+              `flex-1 flex flex-col items-center justify-center gap-1 text-[9px] sm:text-[10px] font-bold uppercase tracking-wider transition-colors ${
                 isActive ? 'text-gold' : 'text-muted hover:text-white'
               }`
             }
@@ -67,6 +67,15 @@ export const BottomNav = () => {
             )}
           </NavLink>
         ))}
+        
+        {/* Explicit Logout Button for Mobile */}
+        <button
+          onClick={logout}
+          className="flex-1 flex flex-col items-center justify-center gap-1 text-[9px] sm:text-[10px] font-bold uppercase tracking-wider transition-colors text-muted hover:text-crimson"
+        >
+          <LogOut size={20} />
+          <span>Logout</span>
+        </button>
       </div>
       {/* Safe area spacer for phones with home indicators */}
       <div className="h-safe-area-inset-bottom bg-sidebar/95" />

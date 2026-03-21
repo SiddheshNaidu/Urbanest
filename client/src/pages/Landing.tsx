@@ -51,6 +51,7 @@ const FlowStep = ({ number, title, description }: { number: string, title: strin
 export const Landing = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [activeTab, setActiveTab] = useState<'resident' | 'security' | 'admin'>('resident');
   const { scrollY } = useScroll();
   
   useMotionValueEvent(scrollY, "change", (latest) => {
@@ -94,7 +95,7 @@ export const Landing = () => {
       </div>
 
       {/* Hero Section with WebGL Shaders */}
-      <section className="relative min-h-screen flex items-center justify-center pt-20 px-4 overflow-hidden bg-app-dark">
+      <section className="relative min-h-[100dvh] flex items-center justify-center pt-32 pb-24 px-4 overflow-hidden bg-app-dark">
         <div className="absolute inset-0 z-0">
           <HeroShaders />
           <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-app-dark/80" />
@@ -190,30 +191,30 @@ export const Landing = () => {
               <div className="absolute inset-0 bg-gold/10 blur-[100px] rounded-full pointer-events-none" />
               <div className="bg-black/60 backdrop-blur-sm border border-gold/20 rounded-3xl p-8 shadow-2xl shadow-gold/10 relative z-10">
                 <div className="flex items-center gap-4 mb-6 pb-6 border-b border-white/5">
-                  <div className="w-12 h-12 rounded-full bg-emerald/20 flex items-center justify-center text-emerald">
+                  <div className="w-12 h-12 rounded-full bg-emerald/20 flex items-center justify-center text-emerald shrink-0">
                     <CheckIcon />
                   </div>
                   <div>
-                    <h4 className="text-white font-bold text-lg">Instant Sync</h4>
-                    <p className="text-sm text-muted">Across all executive dashboards</p>
+                    <h4 className="text-white font-bold text-lg">Always Updated</h4>
+                    <p className="text-sm text-muted leading-relaxed">Everyone sees the exact same real-time data</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-4 mb-6 pb-6 border-b border-white/5">
-                  <div className="w-12 h-12 rounded-full bg-gold/20 flex items-center justify-center text-gold">
+                  <div className="w-12 h-12 rounded-full bg-gold/20 flex items-center justify-center text-gold shrink-0">
                     <CheckIcon />
                   </div>
                   <div>
-                    <h4 className="text-white font-bold text-lg">Strict RBAC</h4>
-                    <p className="text-sm text-muted">Role-based security isolation</p>
+                    <h4 className="text-white font-bold text-lg">Secure Access</h4>
+                    <p className="text-sm text-muted leading-relaxed">Complete digital privacy and identity protection</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-full bg-amber/20 flex items-center justify-center text-amber">
+                  <div className="w-12 h-12 rounded-full bg-amber/20 flex items-center justify-center text-amber shrink-0">
                     <CheckIcon />
                   </div>
                   <div>
-                    <h4 className="text-white font-bold text-lg">Predictable UX</h4>
-                    <p className="text-sm text-muted">Zero learning curve for residents</p>
+                    <h4 className="text-white font-bold text-lg">Simple to Use</h4>
+                    <p className="text-sm text-muted leading-relaxed">Anyone can navigate the portal effortlessly</p>
                   </div>
                 </div>
               </div>
@@ -233,33 +234,51 @@ export const Landing = () => {
             <p className="text-xl text-muted max-w-2xl mx-auto">See how Urbanest connects the dots between residents, security, and administration in real-time.</p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-            <div>
-              <h3 className="text-2xl font-bold text-white mb-8 flex items-center gap-3">
-                <Users className="text-gold" /> The Resident
-              </h3>
-              <FlowStep number="1" title="Pre-approve Visitors" description="Generate a secure, one-time QR pass directly from the dashboard and share it via WhatsApp." />
-              <FlowStep number="2" title="Track Dues" description="Always know exactly what maintenance or ad-hoc fees are pending with the visual ledger." />
-              <FlowStep number="3" title="Raise Complaints" description="Log helpdesk tickets with categorized severity and track live resolution status." />
-            </div>
-            
-            <div className="pt-12 md:pt-0">
-              <h3 className="text-2xl font-bold text-white mb-8 flex items-center gap-3">
-                <ShieldCheck className="text-emerald" /> The Security
-              </h3>
-              <FlowStep number="1" title="Scan QR Pass" description="Use the built-in HTML5 camera scanner to instantly validate visitor QR codes at the gate." />
-              <FlowStep number="2" title="Instant Logging" description="Entry is recorded automatically. The resident is notified without making a single phone call." />
-              <FlowStep number="3" title="Strict Isolation" description="Security personnel only see the visitor log. Financial and personal data is strictly isolated." />
-            </div>
+          <div className="flex flex-wrap justify-center gap-3 md:gap-4 mb-16">
+            <button 
+              onClick={() => setActiveTab('resident')}
+              className={`flex items-center gap-2 px-6 py-3 rounded-full text-sm font-bold transition-all duration-300 ${activeTab === 'resident' ? 'bg-gold text-app-dark shadow-[0_0_20px_rgba(234,179,8,0.3)]' : 'bg-white/5 border border-white/10 text-white/60 hover:bg-white/10 hover:text-white'}`}
+            >
+              <Users size={18} /> For Residents
+            </button>
+            <button 
+              onClick={() => setActiveTab('security')}
+              className={`flex items-center gap-2 px-6 py-3 rounded-full text-sm font-bold transition-all duration-300 ${activeTab === 'security' ? 'bg-emerald text-app-dark shadow-[0_0_20px_rgba(16,185,129,0.3)]' : 'bg-white/5 border border-white/10 text-white/60 hover:bg-white/10 hover:text-white'}`}
+            >
+              <ShieldCheck size={18} /> For Guards
+            </button>
+            <button 
+              onClick={() => setActiveTab('admin')}
+              className={`flex items-center gap-2 px-6 py-3 rounded-full text-sm font-bold transition-all duration-300 ${activeTab === 'admin' ? 'bg-amber text-app-dark shadow-[0_0_20px_rgba(245,158,11,0.3)]' : 'bg-white/5 border border-white/10 text-white/60 hover:bg-white/10 hover:text-white'}`}
+            >
+              <Building2 size={18} /> For Admins
+            </button>
+          </div>
 
-            <div className="pt-12 md:pt-0">
-              <h3 className="text-2xl font-bold text-white mb-8 flex items-center gap-3">
-                <Building2 className="text-amber" /> The Admin
-              </h3>
-              <FlowStep number="1" title="Bird's Eye View" description="Monitor real-time KPIs covering financials, active visitors, and urgent helpdesk tickets." />
-              <FlowStep number="2" title="Manage Ledger" description="Generate invoices, record payments, and track defaulters across all residential blocks." />
-              <FlowStep number="3" title="Broadcast Notices" description="Push urgent updates or AGM meeting links to all resident dashboards simultaneously." />
-            </div>
+          <div className="relative min-h-[360px] max-w-5xl mx-auto">
+            <AnimatePresence mode="wait">
+              {activeTab === 'resident' && (
+                <motion.div key="resident" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.3 }} className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                  <FlowStep number="1" title="Invite Guests Easily" description="Create a fast, secure QR pass on your phone and send it directly to your visitors." />
+                  <FlowStep number="2" title="Track Payments" description="See exactly what maintenance fees are pending in a simple, easy-to-read dashboard." />
+                  <FlowStep number="3" title="Report Issues" description="Log maintenance complaints instantly and see when they are getting fixed." />
+                </motion.div>
+              )}
+              {activeTab === 'security' && (
+                <motion.div key="security" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.3 }} className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                  <FlowStep number="1" title="Quick QR Scanner" description="Instantly scan guest passes using any smartphone camera to allow entry." />
+                  <FlowStep number="2" title="Auto-Logging" description="Guest entries are recorded automatically. Residents are told without needing a phone call." />
+                  <FlowStep number="3" title="Focused Privacy" description="Guards only see the visitor system. Financial and personal information is completely hidden." />
+                </motion.div>
+              )}
+              {activeTab === 'admin' && (
+                <motion.div key="admin" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.3 }} className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                  <FlowStep number="1" title="Community Overview" description="See how many visitors are active and view urgent helpdesk tickets all on one screen." />
+                  <FlowStep number="2" title="Manage Billing" description="Send digital invoices, track late payments, and keep the community's ledger organized." />
+                  <FlowStep number="3" title="Send Updates" description="Notify all residents immediately with important announcements or meeting links." />
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         </div>
       </section>
@@ -291,33 +310,33 @@ export const Landing = () => {
           >
             <FeatureCard 
               icon={QrCode} 
-              title="HTML5 QR Scanning" 
-              description="Zero-friction visitor entry. Launch the native camera directly from the web app to validate encrypted guest passes in milliseconds."
+              title="Fast Gate Access" 
+              description="Guards can scan encrypted guest passes using any mobile device to approve entries instantly."
             />
             <FeatureCard 
               icon={CreditCard} 
-              title="Automated Financials" 
-              description="Generate block-wise invoices, track arrears, and maintain a crystal-clear digital ledger accessible by both management and flat owners."
+              title="Track Dues Easily" 
+              description="Manage community payments, view invoices, and keep a clear record of all transactions in one single place."
             />
             <FeatureCard 
               icon={HeadphonesIcon} 
-              title="Centralized Helpdesk" 
-              description="SLA-driven complaint tracking. Route structural or electrical issues instantly to maintenance teams with rich priority tagging."
+              title="Help is a Tap Away" 
+              description="Residents can log maintenance requests, report issues, and follow the progress directly until they are resolved."
             />
             <FeatureCard 
               icon={Lock} 
-              title="Strict RBAC Matrix" 
-              description="Granular permission matrices mathematically isolate Admin, Security, and Resident views to guarantee data privacy."
-            />
-            <FeatureCard 
-              icon={FileText} 
-              title="Notice Board Broadcast" 
-              description="Publish rich-text notices. Eliminate scattered circulars and ensure critical information reaches the centralized resident feed."
+              title="Total Privacy Control" 
+              description="Guards, residents, and admins only see what they strictly need to see. Your personal community data is always secure."
             />
             <FeatureCard 
               icon={Zap} 
-              title="Zustand State Engine" 
-              description="Experience zero-latency updates. An action taken at the security gate immediately paints onto the admin's live overview."
+              title="Real-Time Updates" 
+              description="Information moves at light speed. A payment made by a resident immediately updates the central billing ledger."
+            />
+            <FeatureCard 
+              icon={FileText} 
+              title="Simpler Document Storage" 
+              description="Host important society meetings, notices, and community policies securely so every resident can easily find them."
             />
           </motion.div>
         </div>

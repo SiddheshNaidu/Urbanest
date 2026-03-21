@@ -87,9 +87,9 @@ export const Signup = () => {
   };
 
   return (
-    <div className="min-h-screen bg-app-dark flex items-center justify-center p-4 relative overflow-hidden">
+    <div className="min-h-[100dvh] bg-app-dark flex items-center justify-center p-4 relative overflow-y-auto sm:overflow-hidden w-full">
       {/* Full-page Background Image */}
-      <div className="absolute inset-0 z-0">
+      <div className="fixed inset-0 z-0">
         <img 
           src={brandingImage} 
           alt="Background" 
@@ -101,25 +101,25 @@ export const Signup = () => {
       {/* Back to Home */}
       <Link
         to="/"
-        className="absolute top-6 left-6 z-20 flex items-center gap-2 text-sm font-medium text-muted hover:text-white transition-colors group"
+        className="absolute top-4 left-4 sm:top-6 sm:left-6 z-20 flex items-center gap-2 text-xs sm:text-sm font-medium text-muted hover:text-white transition-colors group bg-black/20 p-2 sm:bg-transparent sm:p-0 rounded-full backdrop-blur-md sm:backdrop-blur-none"
       >
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="group-hover:-translate-x-1 transition-transform">
           <path d="M19 12H5M12 19l-7-7 7-7" />
         </svg>
-        Back to Home
+        <span className="hidden sm:inline">Back to Home</span>
       </Link>
 
-      <div className="w-full max-w-md relative z-10 flex flex-col items-center">
+      <div className="w-full max-w-md relative z-10 flex flex-col items-center my-auto pt-14 sm:pt-0">
         
-        <div className="mb-8 text-center">
-          <div className="w-12 h-12 bg-gold rounded-xl mx-auto mb-4 flex items-center justify-center shadow-[0_0_30px_rgba(234,179,8,0.3)]">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0B0B0B" strokeWidth="2.5">
+        <div className="mb-4 sm:mb-6 text-center">
+          <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gold rounded-xl mx-auto mb-2 sm:mb-4 flex items-center justify-center shadow-[0_0_30px_rgba(234,179,8,0.3)]">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0B0B0B" strokeWidth="2.5" className="sm:w-6 sm:h-6">
               <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
               <polyline points="9 22 9 12 15 12 15 22" />
             </svg>
           </div>
-          <h1 className="font-heading font-bold text-4xl text-white tracking-tight">Join Urbanest</h1>
-          <p className="text-muted-2 text-xs uppercase tracking-[0.3em] mt-2 font-bold">New workspace initialization</p>
+          <h1 className="font-heading font-bold text-3xl sm:text-4xl text-white tracking-tight">Join Urbanest</h1>
+          <p className="text-muted-2 text-[10px] sm:text-xs uppercase tracking-[0.3em] mt-1 font-bold">New workspace initialization</p>
         </div>
 
         <motion.div
@@ -130,16 +130,16 @@ export const Signup = () => {
             rotateY,
             transformStyle: "preserve-3d",
           }}
-          className="w-full mb-12"
+          className="w-full mb-6 sm:mb-12"
         >
           <div
             style={{ transform: "translateZ(80px)" }}
-            className="bg-surface/40 backdrop-blur-2xl border border-white/10 rounded-[2.5rem] p-8 shadow-2xl relative overflow-hidden"
+            className="bg-surface/40 backdrop-blur-2xl border border-white/10 rounded-[2rem] sm:rounded-[2.5rem] p-6 sm:p-8 shadow-2xl relative overflow-hidden"
           >
             <div className="absolute inset-0 bg-gradient-to-br from-gold/10 to-transparent pointer-events-none" />
             
-            <form onSubmit={handleSignup} className="space-y-5 relative z-10">
-              <div className="grid grid-cols-2 gap-4">
+            <form onSubmit={handleSignup} className="space-y-3 sm:space-y-4 relative z-10">
+              <div className="grid grid-cols-2 gap-3 sm:gap-4">
                 <div>
                   <label className="block text-[10px] font-bold text-muted-2 uppercase tracking-widest mb-2 ml-1">First Name</label>
                   <input 
@@ -244,21 +244,21 @@ export const Signup = () => {
               <button 
                 type="submit"
                 disabled={isLoading}
-                className="w-full bg-gold hover:bg-gold-light text-[#0B0B0B] font-bold py-4 px-4 rounded-2xl transition-all flex items-center justify-center cursor-pointer mt-6 shadow-lg shadow-gold/10 active:scale-[0.98]"
+                className="w-full bg-gold hover:bg-gold-light text-[#0B0B0B] font-bold py-3 sm:py-4 px-4 rounded-2xl transition-all flex items-center justify-center cursor-pointer mt-4 sm:mt-6 shadow-lg shadow-gold/10 active:scale-[0.98] text-sm sm:text-base"
               >
                 {isLoading ? 'Creating Account...' : 'Create Account'}
               </button>
             </form>
             
-            <div className="mt-8 text-center relative z-10">
-              <p className="text-sm text-muted">
+            <div className="mt-4 sm:mt-6 text-center relative z-10">
+              <p className="text-xs sm:text-sm text-muted">
                 Already have an account? <Link to="/login" className="text-gold font-bold hover:underline">Sign in</Link>
               </p>
             </div>
           </div>
         </motion.div>
         
-        <div className="text-muted-2 text-[10px] font-bold uppercase tracking-widest">
+        <div className="text-muted-2 text-[10px] font-bold uppercase tracking-widest pb-6 sm:pb-0">
            ISO 27001 & SOC2 Type II Certified
         </div>
       </div>

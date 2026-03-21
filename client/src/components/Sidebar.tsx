@@ -1,7 +1,7 @@
 
 import { NavLink } from 'react-router-dom';
 import { useStore } from '../store/useStore';
-import { LayoutDashboard, Users, CreditCard, HeadphonesIcon, LogIn, Bell, ShieldCheck, Home, Dumbbell } from 'lucide-react';
+import { LayoutDashboard, Users, CreditCard, HeadphonesIcon, LogIn, Bell, ShieldCheck, Home, Dumbbell, LogOut } from 'lucide-react';
 import { motion } from 'framer-motion';
 import type { LucideIcon } from 'lucide-react';
 
@@ -85,15 +85,20 @@ export const Sidebar = () => {
         ))}
       </nav>
 
-      <div className="p-4 border-t border-border-dark cursor-pointer" onClick={logout}>
-        <div className="flex items-center gap-3 px-3 py-2 hover:bg-white/5 rounded-md transition-colors">
-          <div className="w-8 h-8 rounded-full bg-surface-2 border border-border-dark flex items-center justify-center text-xs font-bold text-white uppercase">
-            {currentUser?.name.charAt(0) || 'U'}
+      <div className="p-4 border-t border-border-dark">
+        <div className="flex items-center justify-between px-3 py-2 bg-white/5 rounded-md hover:bg-white/10 transition-colors">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-full bg-surface-2 border border-border-dark flex items-center justify-center text-xs font-bold text-white uppercase">
+              {currentUser?.name.charAt(0) || 'U'}
+            </div>
+            <div>
+              <p className="text-xs font-medium text-white truncate max-w-[100px]">{currentUser?.name}</p>
+              <p className="text-[10px] text-muted-2">{currentUser?.role}</p>
+            </div>
           </div>
-          <div>
-            <p className="text-xs font-medium text-white">{currentUser?.name}</p>
-            <p className="text-[10px] text-muted-2">{currentUser?.role} - {currentUser?.flatId || 'Urbanest HQ'}</p>
-          </div>
+          <button onClick={logout} className="text-muted hover:text-crimson transition-colors p-1" title="Log Out">
+            <LogOut size={16} />
+          </button>
         </div>
       </div>
     </aside>

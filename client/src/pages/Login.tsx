@@ -91,7 +91,7 @@ export const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-app-dark flex items-center justify-center p-4 relative overflow-hidden">
+    <div className="min-h-[100dvh] bg-app-dark flex items-center justify-center p-4 relative overflow-y-auto sm:overflow-hidden">
       {/* Full-page Background Image */}
       <div className="absolute inset-0 z-0">
         <img 
@@ -113,17 +113,17 @@ export const Login = () => {
         Back to Home
       </Link>
 
-      <div className="w-full max-w-md relative z-10 flex flex-col items-center">
+      <div className="w-full max-w-md relative z-10 flex flex-col items-center my-auto pt-10 sm:pt-0">
         
-        <div className="mb-8 text-center">
-          <div className="w-12 h-12 bg-gold rounded-xl mx-auto mb-4 flex items-center justify-center shadow-[0_0_30px_rgba(234,179,8,0.3)]">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0B0B0B" strokeWidth="2.5">
+        <div className="mb-4 sm:mb-8 text-center">
+          <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gold rounded-xl mx-auto mb-2 sm:mb-4 flex items-center justify-center shadow-[0_0_30px_rgba(234,179,8,0.3)]">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0B0B0B" strokeWidth="2.5" className="sm:w-6 sm:h-6">
               <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
               <polyline points="9 22 9 12 15 12 15 22" />
             </svg>
           </div>
-          <h1 className="font-heading font-bold text-4xl text-white tracking-tight">Urbanest</h1>
-          <p className="text-muted-2 text-xs uppercase tracking-[0.3em] mt-2 font-bold">Executive workstation</p>
+          <h1 className="font-heading font-bold text-3xl sm:text-4xl text-white tracking-tight">Urbanest</h1>
+          <p className="text-muted-2 text-[10px] sm:text-xs uppercase tracking-[0.3em] mt-1 font-bold">Executive workstation</p>
         </div>
 
         <motion.div
@@ -138,38 +138,38 @@ export const Login = () => {
         >
           <div
             style={{ transform: "translateZ(80px)" }}
-            className="bg-surface/40 backdrop-blur-2xl border border-white/10 rounded-[2.5rem] p-8 lg:p-10 shadow-2xl relative overflow-hidden"
+            className="bg-surface/40 backdrop-blur-2xl border border-white/10 rounded-[2rem] sm:rounded-[2.5rem] p-6 sm:p-8 lg:p-10 shadow-2xl relative overflow-hidden"
           >
             <div className="absolute inset-0 bg-gradient-to-br from-gold/10 to-transparent pointer-events-none" />
             
             <div className="relative z-10 text-center lg:text-left">
-              <h2 className="text-2xl font-heading font-bold text-white mb-2">Welcome back</h2>
-              <p className="text-muted text-sm mb-8">Sign in with your registered credentials</p>
+              <h2 className="text-xl sm:text-2xl font-heading font-bold text-white mb-1 sm:mb-2">Welcome back</h2>
+              <p className="text-muted text-xs sm:text-sm mb-4 sm:mb-8">Sign in with your registered credentials</p>
               
-              <form onSubmit={handleLogin} className="space-y-5">
+              <form onSubmit={handleLogin} className="space-y-3 sm:space-y-5">
                 <div>
-                  <label className="block text-[10px] font-bold text-muted-2 uppercase tracking-widest mb-2 ml-1">Email Address</label>
+                  <label className="text-[10px] font-bold text-muted-2 uppercase tracking-widest mb-1 sm:mb-2 ml-1 hidden sm:block">Email Address</label>
                   <input 
                     type="email" 
-                    placeholder="admin@urbanest.com"
+                    placeholder="Email (e.g. admin@urbanest.com)"
                     value={email}
                     onChange={(e) => { setEmail(e.target.value); setError(''); }}
-                    className="w-full bg-black/40 border border-white/5 rounded-2xl px-4 py-4 text-white placeholder-muted-2 focus:outline-none focus:border-gold transition-all"
+                    className="w-full bg-black/40 border border-white/5 rounded-2xl px-4 py-3 sm:py-4 text-sm sm:text-base text-white placeholder-muted-2 focus:outline-none focus:border-gold transition-all"
                   />
                 </div>
                 <div>
-                  <label className="block text-[10px] font-bold text-muted-2 uppercase tracking-widest mb-2 ml-1">Password</label>
+                  <label className="text-[10px] font-bold text-muted-2 uppercase tracking-widest mb-1 sm:mb-2 ml-1 hidden sm:block">Password</label>
                   <input 
                     type="password" 
-                    placeholder="••••••••"
+                    placeholder="Password (e.g. admin123)"
                     value={password}
                     onChange={(e) => { setPassword(e.target.value); setError(''); }}
-                    className="w-full bg-black/40 border border-white/5 rounded-2xl px-4 py-4 text-white placeholder-muted-2 focus:outline-none focus:border-gold transition-all"
+                    className="w-full bg-black/40 border border-white/5 rounded-2xl px-4 py-3 sm:py-4 text-sm sm:text-base text-white placeholder-muted-2 focus:outline-none focus:border-gold transition-all"
                   />
                 </div>
 
                 {error && (
-                  <div className="bg-crimson/10 border border-crimson/20 rounded-xl px-4 py-3 text-crimson text-sm font-medium">
+                  <div className="bg-crimson/10 border border-crimson/20 rounded-xl px-4 py-2 sm:py-3 text-crimson text-xs sm:text-sm font-medium">
                     {error}
                   </div>
                 )}
@@ -177,16 +177,16 @@ export const Login = () => {
                 <button 
                   type="submit"
                   disabled={isLoading}
-                  className="w-full bg-gold hover:bg-gold-light text-[#0B0B0B] font-bold py-4 px-4 rounded-2xl transition-all flex items-center justify-center cursor-pointer shadow-lg shadow-gold/10 hover:shadow-gold/20 active:scale-[0.98]"
+                  className="w-full bg-gold hover:bg-gold-light text-[#0B0B0B] font-bold py-3 sm:py-4 px-4 rounded-2xl transition-all flex items-center justify-center cursor-pointer shadow-lg shadow-gold/10 hover:shadow-gold/20 active:scale-[0.98] text-sm sm:text-base mt-2"
                 >
                   {isLoading ? 'Authenticating...' : 'Sign In'}
                 </button>
               </form>
 
               {/* Demo credentials hint */}
-              <div className="mt-6 bg-white/5 rounded-xl p-4 border border-white/5">
-                <p className="text-[9px] font-bold text-gold uppercase tracking-[0.2em] mb-3 text-center">Demo Accounts</p>
-                <div className="space-y-2 text-xs text-muted">
+              <div className="mt-4 sm:mt-6 bg-white/5 rounded-xl p-3 sm:p-4 border border-white/5 hidden sm:block">
+                <p className="text-[9px] font-bold text-gold uppercase tracking-[0.2em] mb-2 sm:mb-3 text-center">Demo Accounts</p>
+                <div className="space-y-1 sm:space-y-2 text-[10px] sm:text-xs text-muted">
                   <div className="flex justify-between items-center">
                     <span className="font-mono text-white/70">admin@urbanest.com</span>
                     <span className="font-mono text-muted-2">admin123</span>
@@ -202,34 +202,34 @@ export const Login = () => {
                 </div>
               </div>
 
-              <div className="mt-6 pt-6 border-t border-white/5">
-                <p className="text-[9px] font-bold text-gold uppercase tracking-[0.2em] mb-4 text-center">Quick Access — Select Role</p>
-                <div className="grid grid-cols-3 gap-3">
+              <div className="mt-4 sm:mt-6 pt-4 sm:pt-6 border-t border-white/5">
+                <p className="text-[9px] font-bold text-gold uppercase tracking-[0.2em] mb-3 sm:mb-4 text-center">Quick Access — Select Role</p>
+                <div className="grid grid-cols-3 gap-2 sm:gap-3">
                   <button 
                     onClick={() => handleMockLogin('ADMIN')}
                     disabled={isLoading}
-                    className="bg-white/5 hover:bg-white/10 border border-white/5 text-white font-bold py-3 px-2 rounded-2xl transition-all text-xs cursor-pointer active:scale-[0.98]"
+                    className="bg-white/5 hover:bg-white/10 border border-white/5 text-white font-bold py-2 sm:py-3 px-2 rounded-xl sm:rounded-2xl transition-all text-[10px] sm:text-xs cursor-pointer active:scale-[0.98]"
                   >
                     Admin
                   </button>
                   <button 
                     onClick={() => handleMockLogin('SECURITY')}
                     disabled={isLoading}
-                    className="bg-white/5 hover:bg-white/10 border border-white/5 text-white font-bold py-3 px-2 rounded-2xl transition-all text-xs cursor-pointer active:scale-[0.98]"
+                    className="bg-white/5 hover:bg-white/10 border border-white/5 text-white font-bold py-2 sm:py-3 px-2 rounded-xl sm:rounded-2xl transition-all text-[10px] sm:text-xs cursor-pointer active:scale-[0.98]"
                   >
                     Security
                   </button>
                   <button 
                     onClick={() => handleMockLogin('RESIDENT')}
                     disabled={isLoading}
-                    className="bg-white/5 hover:bg-white/10 border border-white/5 text-white font-bold py-3 px-2 rounded-2xl transition-all text-xs cursor-pointer active:scale-[0.98]"
+                    className="bg-white/5 hover:bg-white/10 border border-white/5 text-white font-bold py-2 sm:py-3 px-2 rounded-xl sm:rounded-2xl transition-all text-[10px] sm:text-xs cursor-pointer active:scale-[0.98]"
                   >
                     Resident
                   </button>
                 </div>
               </div>
               
-              <div className="mt-8 text-center">
+              <div className="mt-5 sm:mt-8 text-center">
                 <p className="text-sm text-muted">
                   Don't have an account? <Link to="/signup" className="text-gold font-bold hover:underline">Register workspace</Link>
                 </p>
@@ -238,7 +238,7 @@ export const Login = () => {
           </div>
         </motion.div>
         
-        <div className="mt-12 text-muted-2 text-[10px] font-bold uppercase tracking-widest flex items-center gap-2">
+        <div className="mt-6 sm:mt-12 text-muted-2 text-[10px] font-bold uppercase tracking-widest flex items-center gap-2 pb-6 sm:pb-0">
            <span className="w-1.5 h-1.5 rounded-full bg-emerald shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
            Secure Cloud Architecture v2.4
         </div>
