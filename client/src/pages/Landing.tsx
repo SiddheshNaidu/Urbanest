@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import { motion, useScroll, useMotionValueEvent, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { ShieldCheck, Zap, Building2, ChevronRight, Lock, HeadphonesIcon, CreditCard, Users, QrCode, FileText, type LucideIcon } from 'lucide-react';
+import { ShieldCheck, Zap, Building2, ChevronRight, Lock, HeadphonesIcon, CreditCard, Users, QrCode, FileText, CheckCircle2, XCircle, Crown, type LucideIcon } from 'lucide-react';
 import Preloader from '../components/ui/preloader';
 import { AuroraFlow } from '../components/ui/aurora-flow';
 import { EtheralShadow } from '../components/ui/etheral-shadow';
 import HeroShaders from '../components/ui/hero-demo';
+import { BackgroundLines } from '../components/ui/animated-svg-background';
+import * as PricingCard from '../components/ui/pricing-card';
 
 const FeatureCard = ({ icon: Icon, title, description }: { icon: LucideIcon, title: string, description: string }) => (
   <motion.div
@@ -345,15 +347,189 @@ export const Landing = () => {
           </motion.div>
         </div>
 
-        {/* CTA Section - Merged into Enterprise Infrastructure */}
-        <div className="relative z-10 border-t border-white/5 mt-32">
-          <div className="max-w-4xl mx-auto text-center relative z-10 py-32 px-6">
-            <h2 className="text-5xl md:text-7xl font-heading font-bold text-white mb-8 tracking-tight">Upgrade your society today.</h2>
-            <p className="text-2xl text-muted mb-12 font-light">Join the vanguard of modern residential management.</p>
-            <Link to="/signup" className="inline-flex items-center justify-center gap-3 bg-white text-app-dark hover:bg-gold px-12 py-6 rounded-full transition-all duration-300 hover:scale-105 active:scale-95 shadow-[0_0_50px_rgba(255,255,255,0.2)] hover:shadow-[0_0_50px_rgba(234,179,8,0.4)] text-lg">
-              Start Free Trial <ChevronRight size={24} />
-            </Link>
+        {/* ── Pricing Section ────────────────────────────────────────── */}
+        <div className="relative z-10 border-t border-white/5 mt-32 pb-32 px-6" id="pricing">
+          <div className="max-w-6xl mx-auto">
+            <div className="text-center mb-16">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6 }}
+              >
+                <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-gold/30 bg-gold/10 text-gold text-xs font-semibold uppercase tracking-widest mb-6">
+                  <Crown size={12} />
+                  Simple Pricing
+                </span>
+                <h2 className="text-4xl md:text-6xl font-heading font-bold text-white mb-5 tracking-tight">Plans built for societies.</h2>
+                <p className="text-xl text-muted max-w-2xl mx-auto">Start free, scale when your community demands more. No hidden charges, no per-resident fees.</p>
+              </motion.div>
+            </div>
+
+            <div className="flex flex-col md:flex-row items-stretch justify-center gap-8 lg:gap-12">
+
+              {/* ── Free Card ── */}
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.1 }}
+                className="w-full max-w-sm mx-auto md:mx-0"
+              >
+                <PricingCard.Card className="h-full flex flex-col">
+                  <PricingCard.Header>
+                    <PricingCard.Plan>
+                      <PricingCard.PlanName>
+                        <Users size={16} className="text-white/50" />
+                        <span>Community Free</span>
+                      </PricingCard.PlanName>
+                      <PricingCard.Badge>Basic</PricingCard.Badge>
+                    </PricingCard.Plan>
+                    <PricingCard.Price>
+                      <PricingCard.MainPrice>₹0</PricingCard.MainPrice>
+                      <PricingCard.Period>&nbsp;/ month</PricingCard.Period>
+                    </PricingCard.Price>
+                    <PricingCard.Description className="mb-5">
+                      Get started with essential tools for smaller housing societies.
+                    </PricingCard.Description>
+                    <Link
+                      to="/signup"
+                      className="block w-full text-center py-2.5 rounded-xl border border-white/15 bg-white/5 text-sm font-semibold text-white transition-all duration-300 hover:bg-white/10 hover:border-white/30"
+                    >
+                      Get Started Free
+                    </Link>
+                  </PricingCard.Header>
+                  <PricingCard.Body className="flex-1">
+                    <PricingCard.List>
+                      {[
+                        'QR-based visitor entry',
+                        'Resident portal access',
+                        'Helpdesk ticket logging',
+                        'Basic notice board',
+                        'Single admin account only',
+                      ].map(f => (
+                        <PricingCard.ListItem key={f}>
+                          <CheckCircle2 size={16} className="text-emerald-400 mt-0.5 shrink-0" />
+                          <span>{f}</span>
+                        </PricingCard.ListItem>
+                      ))}
+                    </PricingCard.List>
+                    <PricingCard.Separator>Not included</PricingCard.Separator>
+                    <PricingCard.List>
+                      {[
+                        'Ad-supported experience',
+                        'Full committee access',
+                        'Advanced financial reports',
+                        'Priority support',
+                      ].map(f => (
+                        <PricingCard.ListItem key={f} className="opacity-50">
+                          <XCircle size={16} className="text-white/30 mt-0.5 shrink-0" />
+                          <span>{f}</span>
+                        </PricingCard.ListItem>
+                      ))}
+                    </PricingCard.List>
+                  </PricingCard.Body>
+                </PricingCard.Card>
+              </motion.div>
+
+              {/* ── Pro Card ── */}
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.22 }}
+                className="w-full max-w-sm mx-auto md:mx-0"
+              >
+                {/* Outer wrapper for glow containment */}
+                <div className="relative rounded-2xl p-[2px] bg-gradient-to-b from-gold via-amber/50 to-gold/10 shadow-[0_0_50px_rgba(234,179,8,0.2)]">
+                  {/* Most popular label */}
+                  <div className="absolute -top-4 left-1/2 -translate-x-1/2 z-20 px-5 py-1.5 bg-gradient-to-r from-gold to-amber rounded-full text-xs font-bold text-app-dark shadow-[0_0_20px_rgba(234,179,8,0.5)] whitespace-nowrap">
+                    ✦ Most Popular
+                  </div>
+                  <PricingCard.Card className="h-full flex flex-col border-0 bg-[#111111] rounded-[calc(1rem-2px)]">
+                    <PricingCard.Header
+                      className="border-gold/20"
+                      style={{
+                        background: 'linear-gradient(135deg, rgba(234,179,8,0.1) 0%, rgba(245,158,11,0.04) 100%)',
+                      }}
+                    >
+                      <PricingCard.Plan>
+                        <PricingCard.PlanName>
+                          <Crown size={16} className="text-gold" />
+                          <span className="text-gold">Society Pro</span>
+                        </PricingCard.PlanName>
+                        <PricingCard.Badge className="border-gold/40 bg-gold/15 text-gold">Premium</PricingCard.Badge>
+                      </PricingCard.Plan>
+                      <PricingCard.Price>
+                        <PricingCard.MainPrice className="text-gold">₹4,999</PricingCard.MainPrice>
+                        <PricingCard.Period>&nbsp;/ month</PricingCard.Period>
+                        <PricingCard.OriginalPrice className="text-white/40">₹6,499</PricingCard.OriginalPrice>
+                      </PricingCard.Price>
+                      <PricingCard.Description className="mb-5 text-white/50">
+                        Built for large residential complexes and premium housing societies.
+                      </PricingCard.Description>
+                      <Link
+                        to="/signup"
+                        className="group relative block w-full overflow-hidden text-center py-2.5 rounded-xl bg-gradient-to-r from-gold to-amber text-sm font-bold text-app-dark transition-all duration-300 hover:shadow-[0_0_25px_rgba(234,179,8,0.4)] hover:scale-[1.02]"
+                      >
+                        <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/30 to-transparent group-hover:translate-x-full transition-transform duration-700" />
+                        <span className="relative">Start Pro Trial</span>
+                      </Link>
+                    </PricingCard.Header>
+                    <PricingCard.Body className="flex-1">
+                      <PricingCard.List>
+                        {[
+                          'Everything in Free',
+                          'Zero advertisements',
+                          'Full society committee access',
+                          'Multi-admin role management',
+                          'Advanced financial ledger & reports',
+                          'Priority 24/7 support',
+                          'Unlimited residents & visitors',
+                          'Custom announcements & notices',
+                        ].map(f => (
+                          <PricingCard.ListItem key={f}>
+                            <CheckCircle2 size={16} className="text-gold mt-0.5 shrink-0" />
+                            <span className="text-white/75">{f}</span>
+                          </PricingCard.ListItem>
+                        ))}
+                      </PricingCard.List>
+                    </PricingCard.Body>
+                  </PricingCard.Card>
+                </div>
+              </motion.div>
+
+            </div>{/* end cards row */}
+
+            {/* Annual callout */}
+            <motion.p
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.4 }}
+              className="text-center text-sm text-muted mt-14"
+            >
+              Annual plans available at&nbsp;
+              <span className="text-gold font-semibold">₹49,999 / year</span>
+              &nbsp;— save ₹9,989. All prices exclude applicable GST.
+            </motion.p>
           </div>
+        </div>
+
+        {/* CTA Section — laser-projection background, no blur */}
+        <div className="relative z-10 border-t border-white/5">
+          <BackgroundLines
+            className="relative flex items-center justify-center h-auto md:h-auto"
+            svgOptions={{ duration: 3.5 }}
+          >
+            <div className="max-w-4xl mx-auto text-center relative z-20 py-32 px-6">
+              <h2 className="text-5xl md:text-7xl font-heading font-bold text-white mb-8 tracking-tight">Upgrade your society today.</h2>
+              <p className="text-2xl text-muted mb-12 font-light">Join the vanguard of modern residential management.</p>
+              <Link to="/signup" className="inline-flex items-center justify-center gap-3 bg-white text-app-dark hover:bg-gold px-12 py-6 rounded-full transition-all duration-300 hover:scale-105 active:scale-95 shadow-[0_0_50px_rgba(255,255,255,0.2)] hover:shadow-[0_0_50px_rgba(234,179,8,0.4)] text-lg font-bold">
+                Start Free Trial <ChevronRight size={24} />
+              </Link>
+            </div>
+          </BackgroundLines>
         </div>
       </section>
 
