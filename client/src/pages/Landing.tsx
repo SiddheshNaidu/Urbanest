@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { motion, useScroll, useMotionValueEvent, AnimatePresence } from 'framer-motion';
+import { useState, useRef } from 'react';
+import { motion, useScroll, useMotionValueEvent, AnimatePresence, useTransform } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { ShieldCheck, Zap, Building2, ChevronRight, Lock, HeadphonesIcon, CreditCard, Users, QrCode, FileText, type LucideIcon } from 'lucide-react';
 import Preloader from '../components/ui/preloader';
@@ -51,11 +51,34 @@ export const Landing = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isScrolled, setIsScrolled] = useState(false);
   const [activeTab, setActiveTab] = useState<'resident' | 'security' | 'admin'>('resident');
+  
   const { scrollY } = useScroll();
   
   useMotionValueEvent(scrollY, "change", (latest) => {
     setIsScrolled(latest > 20);
   });
+
+  const overviewRef = useRef<HTMLElement>(null);
+  const { scrollYProgress: overviewProgress } = useScroll({
+    target: overviewRef,
+    offset: ["start end", "end start"]
+  });
+  const overviewCardY = useTransform(overviewProgress, [0, 1], [100, -100]);
+
+  const workflowRef = useRef<HTMLElement>(null);
+  const { scrollYProgress: workflowProgress } = useScroll({
+    target: workflowRef,
+    offset: ["start end", "end start"]
+  });
+  const workflowDecorY = useTransform(workflowProgress, [0, 1], ["-20%", "20%"]);
+
+  const scrollToSection = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
+    e.preventDefault();
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
 
   return (
     <div className={`bg-app-dark min-h-screen selection:bg-gold selection:text-app-dark overflow-x-hidden relative ${isLoading ? 'h-screen overflow-hidden' : ''}`}>
@@ -82,8 +105,28 @@ export const Landing = () => {
             </div>
             <span className="font-heading font-bold text-lg md:text-xl text-white tracking-tight">Urbanest</span>
           </div>
+
+          <div className="hidden lg:flex items-center gap-8">
+            <a href="#hero" onClick={(e) => scrollToSection(e, 'hero')} className="relative text-sm font-medium tracking-wide text-white/70 hover:text-white transition-colors duration-300 group">
+              Home
+              <span className="absolute -bottom-1.5 left-0 w-0 h-[2px] bg-gradient-to-r from-gold to-amber rounded-full transition-all duration-300 group-hover:w-full opacity-0 group-hover:opacity-100" />
+            </a>
+            <a href="#overview" onClick={(e) => scrollToSection(e, 'overview')} className="relative text-sm font-medium tracking-wide text-white/70 hover:text-white transition-colors duration-300 group">
+              Overview
+              <span className="absolute -bottom-1.5 left-0 w-0 h-[2px] bg-gradient-to-r from-gold to-amber rounded-full transition-all duration-300 group-hover:w-full opacity-0 group-hover:opacity-100" />
+            </a>
+            <a href="#workflows" onClick={(e) => scrollToSection(e, 'workflows')} className="relative text-sm font-medium tracking-wide text-white/70 hover:text-white transition-colors duration-300 group">
+              Workflows
+              <span className="absolute -bottom-1.5 left-0 w-0 h-[2px] bg-gradient-to-r from-gold to-amber rounded-full transition-all duration-300 group-hover:w-full opacity-0 group-hover:opacity-100" />
+            </a>
+            <a href="#infrastructure" onClick={(e) => scrollToSection(e, 'infrastructure')} className="relative text-sm font-medium tracking-wide text-white/70 hover:text-white transition-colors duration-300 group">
+              Infrastructure
+              <span className="absolute -bottom-1.5 left-0 w-0 h-[2px] bg-gradient-to-r from-gold to-amber rounded-full transition-all duration-300 group-hover:w-full opacity-0 group-hover:opacity-100" />
+            </a>
+          </div>
+
           <div className="flex items-center gap-3 md:gap-6">
-            <Link to="/login" className="text-xs md:text-sm font-medium text-muted hover:text-white transition-colors">
+            <Link to="/login" className="hidden sm:block text-xs md:text-sm font-medium text-muted hover:text-white transition-colors">
               Sign In
             </Link>
             <Link to="/signup" className="text-xs md:text-sm font-semibold bg-white text-app-dark hover:bg-gold px-4 py-2 md:px-5 md:py-2.5 rounded-full transition-all duration-300 shadow-[0_0_20px_rgba(255,255,255,0.1)] hover:shadow-[0_0_20px_rgba(234,179,8,0.3)] hover:scale-105">
@@ -94,7 +137,7 @@ export const Landing = () => {
       </div>
 
       {/* Hero Section with WebGL Shaders */}
-      <section className="relative min-h-[100dvh] flex items-center justify-center pt-32 pb-24 px-4 overflow-hidden bg-app-dark">
+      <section id="hero" className="relative min-h-[100dvh] flex items-center justify-center pt-32 pb-24 px-4 overflow-hidden bg-app-dark">
         <div className="absolute inset-0 z-0">
           <HeroShaders />
           <div className="absolute top-0 inset-x-0 h-32 bg-gradient-to-b from-app-dark to-transparent pointer-events-none z-0" />
@@ -155,7 +198,7 @@ export const Landing = () => {
       </section>
 
       {/* Problem / Solution Overview - Etheral Shadow section */}
-      <section className="relative py-32 px-6 z-20 bg-app-dark overflow-hidden" id="overview">
+      <section ref={overviewRef} className="relative py-32 px-6 z-20 bg-app-dark overflow-hidden" id="overview">
         <EtheralShadow 
           color="rgba(245, 158, 11, 0.25)" 
           sizing="stretch" 
@@ -191,7 +234,10 @@ export const Landing = () => {
             </div>
             <div className="relative">
               <div className="absolute inset-0 bg-gold/10 blur-[100px] rounded-full pointer-events-none" />
-              <div className="bg-black/60 backdrop-blur-sm border border-gold/20 rounded-3xl p-8 shadow-2xl shadow-gold/10 relative z-10">
+              <motion.div 
+                style={{ y: overviewCardY }}
+                className="bg-black/60 backdrop-blur-sm border border-gold/20 rounded-3xl p-8 shadow-2xl shadow-gold/10 relative z-10"
+              >
                 <div className="flex items-center gap-4 mb-6 pb-6 border-b border-white/5">
                   <div className="w-12 h-12 rounded-full bg-emerald/20 flex items-center justify-center text-emerald shrink-0">
                     <CheckIcon />
@@ -219,16 +265,19 @@ export const Landing = () => {
                     <p className="text-sm text-muted leading-relaxed">Anyone can navigate the portal effortlessly</p>
                   </div>
                 </div>
-              </div>
+              </motion.div>
             </div>
           </motion.div>
         </div>
       </section>
 
       {/* How It Works - The Workflows */}
-      <section className="py-32 px-6 relative z-20 bg-app-dark overflow-hidden">
+      <section id="workflows" ref={workflowRef} className="py-32 px-6 relative z-20 bg-app-dark overflow-hidden">
         {/* Subtle background decoration */}
-        <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-gradient-to-bl from-gold/5 via-transparent to-transparent rounded-full blur-xl md:blur-3xl pointer-events-none" />
+        <motion.div 
+          style={{ y: workflowDecorY }}
+          className="absolute top-0 right-0 w-[800px] h-[800px] bg-gradient-to-bl from-gold/5 via-transparent to-transparent rounded-full blur-xl md:blur-3xl pointer-events-none" 
+        />
         
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-24">
@@ -285,8 +334,8 @@ export const Landing = () => {
         </div>
       </section>
 
-      {/* Features Grid - Enterprise Infrastructure & CTA Section */}
-      <section className="relative min-h-screen pt-32 z-20 overflow-hidden">
+      {/* Features Grid - Enterprise Infrastructure */}
+      <section id="infrastructure" className="relative min-h-[80vh] pt-32 pb-32 z-20 overflow-hidden">
         <div className="absolute inset-0 z-0">
           <div className="absolute inset-0 bg-app-dark" />
           <AuroraFlow />
@@ -344,16 +393,23 @@ export const Landing = () => {
             />
           </motion.div>
         </div>
+      </section>
 
-        {/* CTA Section - Merged into Enterprise Infrastructure */}
-        <div className="relative z-10 border-t border-white/5 mt-32">
-          <div className="max-w-4xl mx-auto text-center relative z-10 py-32 px-6">
+      {/* CTA Section */}
+      <section className="relative z-20 border-t border-white/5 bg-app-dark">
+        <div className="max-w-4xl mx-auto text-center relative z-10 py-32 px-6">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+          >
             <h2 className="text-5xl md:text-7xl font-heading font-bold text-white mb-8 tracking-tight">Upgrade your society today.</h2>
             <p className="text-2xl text-muted mb-12 font-light">Join the vanguard of modern residential management.</p>
-            <Link to="/signup" className="inline-flex items-center justify-center gap-3 bg-white text-app-dark hover:bg-gold px-12 py-6 rounded-full transition-all duration-300 hover:scale-105 active:scale-95 shadow-[0_0_50px_rgba(255,255,255,0.2)] hover:shadow-[0_0_50px_rgba(234,179,8,0.4)] text-lg">
-              Start Free Trial <ChevronRight size={24} />
+            <Link to="/signup" className="inline-flex items-center justify-center gap-3 bg-white text-app-dark hover:bg-gold px-12 py-6 rounded-full transition-all duration-300 hover:scale-105 active:scale-95 shadow-[0_0_50px_rgba(255,255,255,0.2)] hover:shadow-[0_0_50px_rgba(234,179,8,0.4)] text-lg h-16 group">
+              Start Free Trial <ChevronRight size={24} className="transition-transform duration-300 group-hover:translate-x-1" />
             </Link>
-          </div>
+          </motion.div>
         </div>
       </section>
 
