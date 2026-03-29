@@ -21,6 +21,7 @@ export const AdminDashboard = () => {
       months.push({
          month: d.toLocaleString('default', { month: 'short' }),
          fullDate: d,
+         // eslint-disable-next-line react-hooks/purity
          revenue: Math.floor(Math.random() * 20000) + 30000 // Base historical dummy revenue ~30k-50k
       });
     }
@@ -147,7 +148,7 @@ export const AdminDashboard = () => {
                   <Tooltip 
                     contentStyle={{ backgroundColor: '#18181B', borderColor: '#27272A', borderRadius: '12px', color: '#fff', boxShadow: '0 10px 30px -10px rgba(16, 185, 129, 0.2)' }}
                     itemStyle={{ color: '#10B981', fontWeight: 'bold' }}
-                    formatter={(value: any) => [`₹${Number(value).toLocaleString('en-IN')}`, 'Revenue']}
+                    formatter={(value) => [`₹${Number(value ?? 0).toLocaleString('en-IN')}`, 'Revenue']}
                   />
                   <Area 
                     type="monotone" 

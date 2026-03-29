@@ -70,10 +70,11 @@ export const SecurityDashboard = () => {
       // Start the clean capture loop
       runCaptureLoop();
 
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('[Scanner] Hardware Link Failure:', err);
       clearTimeout(timeoutId);
-      setScanResult({ success: false, message: `Hardware Link Error: ${err.message}` });
+      const message = err instanceof Error ? err.message : String(err);
+      setScanResult({ success: false, message: `Hardware Link Error: ${message}` });
       resetScanner();
     }
   };
@@ -145,11 +146,11 @@ export const SecurityDashboard = () => {
     setScanResult(null);
   };
 
-  const verifyToken = (token: string, payload?: any): { success: boolean; message: string; visitor?: Visitor } => {
+  const verifyToken = (token: string, payload?: { name: string; flatId: string; purpose?: string }): { success: boolean; message: string; visitor?: Visitor } => {
     const currentState = useStore.getState();
     const freshVisitors = currentState.visitors;
     
-    let visitor = freshVisitors.find(v => v.qrToken === token && v.status === 'EXPECTED');
+    const visitor = freshVisitors.find(v => v.qrToken === token && v.status === 'EXPECTED');
 
     if (visitor) {
       const now = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
@@ -166,7 +167,7 @@ export const SecurityDashboard = () => {
       const newVisitor = currentState.addVisitor({
         name: payload.name,
         flatId: payload.flatId,
-        purpose: payload.purpose || 'GUEST',
+        purpose: (payload.purpose || 'GUEST') as 'GUEST' | 'DELIVERY' | 'SERVICE' | 'DOMESTIC_STAFF',
         status: 'ON_CAMPUS',
         qrToken: token,
         entryTime: now
@@ -196,7 +197,7 @@ export const SecurityDashboard = () => {
       try {
         payload = JSON.parse(token);
         token = payload.token || payload.qrToken || 'JSON-DATA';
-      } catch { }
+      } catch { /* Invalid JSON — treat raw string as token */ }
     }
 
     const result = verifyToken(token, payload);

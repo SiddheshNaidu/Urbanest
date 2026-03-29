@@ -75,22 +75,15 @@ export function BeamsBackground({
     const beamsRef = useRef<Beam[]>([]);
     const animationFrameRef = useRef<number>(0);
 
-    // Tier-aware parameters
-    const BEAM_COUNT = tier === 'high' ? 12 : tier === 'mid' ? 7 : 0;
-    const MAX_DPR = tier === 'high' ? 1.5 : 1.0;
-    const SKIP_FRAME = tier === 'mid';
-
-    // Low tier: CSS-only beams
-    if (tier === 'low') {
-        return (
-            <div className={`relative w-full overflow-hidden bg-app-dark ${className || ''}`}>
-                <CSSBeams />
-                <div className="relative z-10 w-full h-full">{children}</div>
-            </div>
-        );
-    }
-
     useEffect(() => {
+        // Tier-aware parameters (inside effect to satisfy exhaustive-deps)
+        const BEAM_COUNT = tier === 'high' ? 12 : tier === 'mid' ? 7 : 0;
+        const MAX_DPR = tier === 'high' ? 1.5 : 1.0;
+        const SKIP_FRAME = tier === 'mid';
+
+        // Low tier uses CSS-only beams — skip canvas setup
+        if (tier === 'low') return;
+
         const opacityMap = {
             subtle: 0.7,
             medium: 0.85,
@@ -222,6 +215,16 @@ export function BeamsBackground({
             }
         };
     }, [intensity, tier]);
+
+    // Low tier: CSS-only beams
+    if (tier === 'low') {
+        return (
+            <div className={`relative w-full overflow-hidden bg-app-dark ${className || ''}`}>
+                <CSSBeams />
+                <div className="relative z-10 w-full h-full">{children}</div>
+            </div>
+        );
+    }
 
     return (
         <div

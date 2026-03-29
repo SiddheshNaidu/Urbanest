@@ -30,6 +30,7 @@ function scoreDevice(): number {
   else if (cores <= 2) score -= 20;
 
   // RAM — available in Chrome/Edge (not Safari/Firefox, defaults to undefined)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const ram = (navigator as any).deviceMemory;
   if (ram !== undefined) {
     if (ram >= 8) score += 20;
@@ -38,6 +39,7 @@ function scoreDevice(): number {
   }
 
   // Connection type — a slow connection often signals a low-end device
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const conn = (navigator as any).connection;
   if (conn) {
     if (conn.effectiveType === '4g' && !conn.saveData) score += 5;
@@ -74,7 +76,7 @@ export function useDeviceCapability(): DeviceCapability {
       else setTier('low');
     }, 100);
     return () => clearTimeout(timer);
-  }, []);
+  }, [hasWebGL, prefersReducedMotion]);
 
   return { tier, prefersReducedMotion, hasWebGL };
 }

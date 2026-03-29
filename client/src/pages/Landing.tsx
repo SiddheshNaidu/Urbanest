@@ -1,13 +1,12 @@
 import { useState, useRef } from 'react';
 import { motion, useScroll, useMotionValueEvent, AnimatePresence, useTransform } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { ShieldCheck, Zap, Building2, ChevronRight, Lock, HeadphonesIcon, CreditCard, Users, QrCode, FileText, CheckCircle2, XCircle, Crown, type LucideIcon } from 'lucide-react';
+import { ShieldCheck, Zap, Building2, ChevronRight, Lock, HeadphonesIcon, CreditCard, Users, QrCode, FileText, type LucideIcon } from 'lucide-react';
 import Preloader from '../components/ui/preloader';
 import { AuroraFlow } from '../components/ui/aurora-flow';
 import { EtheralShadow } from '../components/ui/etheral-shadow';
 import HeroShaders from '../components/ui/hero-demo';
-import { BackgroundLines } from '../components/ui/animated-svg-background';
-import * as PricingCard from '../components/ui/pricing-card';
+
 
 const FeatureCard = ({ icon: Icon, title, description }: { icon: LucideIcon, title: string, description: string }) => (
   <motion.div

@@ -47,7 +47,7 @@ function downloadBill(transaction: { id: string; title?: string; amount: string;
   });
 
   // Footer
-  const finalY = (doc as any).lastAutoTable.finalY || 120;
+  const finalY = (doc as { lastAutoTable?: { finalY?: number } }).lastAutoTable?.finalY || 120;
   doc.setFontSize(10);
   doc.setTextColor(150, 150, 150);
   doc.text('Urbanest Society Management Committee', 20, finalY + 30);
@@ -132,6 +132,7 @@ function PaymentModal({
               <CheckCircle2 size={40} className="text-emerald" />
             </div>
             <h4 className="text-xl font-bold text-white mb-2">Payment Successful!</h4>
+            {/* eslint-disable-next-line react-hooks/purity */}
             <p className="text-muted text-sm mb-6">Transaction ID: TXN-{Date.now().toString().slice(-8)}</p>
             <button onClick={handleClose} className="w-full bg-white text-black font-bold py-3 rounded-xl hover:bg-gray-200 transition-colors">
               Done

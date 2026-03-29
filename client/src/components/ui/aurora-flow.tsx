@@ -135,10 +135,12 @@ const CameraController = () => {
   
   useFrame((state) => {
     const time = state.clock.elapsedTime;
+    /* eslint-disable react-hooks/immutability */
     camera.position.x = Math.sin(time * 0.05) * 3;
     camera.position.y = Math.cos(time * 0.07) * 2;
     camera.position.z = 30;
     camera.lookAt(0, 0, -30);
+    /* eslint-enable react-hooks/immutability */
   });
   
   return null;
